@@ -69,6 +69,8 @@ trait Quiz_Translation_Helper {
 
 						update_post_meta( $translated_question_id, 'category', $translated_category_id );
 						update_post_meta( $translated_question_id, 'number', $number );
+
+						$this->create_translations_for_question_category( $category );
 					}
 
 					update_post_meta( $translated_question_id, '_quiz_id', $translated_quiz_id );
@@ -77,6 +79,37 @@ trait Quiz_Translation_Helper {
 					update_post_meta( $translated_question_id, '_quiz_question_order' . $translated_quiz_id, $question_order );
 				}
 			}
+		}
+	}
+
+	/**
+	 * Create translations for questions in the category.
+	 *
+	 * @param int $question_category_id Question category ID.
+	 */
+	private function create_translations_for_question_category( $question_category_id ) {
+		$args = array(
+			'post_type'        => 'question',
+			'posts_per_page'   => -1,
+			// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
+			'tax_query'        => array(
+				array(
+					'taxonomy' => 'question-category',
+					'field'    => 'term_id',
+					'terms'    => $question_category_id,
+				),
+			),
+			'post_status'      => 'any',
+			'suppress_filters' => 0,
+		);
+
+		$category_questions = get_posts( $args );
+		if ( empty( $category_questions ) ) {
+			return;
+		}
+
+		foreach ( $category_questions as $question ) {
+			$this->admin_make_post_duplicates( $question->ID );
 		}
 	}
 }
