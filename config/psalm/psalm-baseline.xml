@@ -5795,6 +5795,14 @@
       <code>is_wp_error( $question_id )</code>
     </DocblockTypeContradiction>
   </file>
+  <file src="includes/wpml/trait-quiz-translation-helper.php">
+    <InvalidArgument occurrences="1">
+      <code>$args</code>
+    </InvalidArgument>
+    <PossiblyInvalidPropertyFetch occurrences="1">
+      <code>$question-&gt;ID</code>
+    </PossiblyInvalidPropertyFetch>
+  </file>
   <file src="sensei-lms.php">
     <InvalidGlobal occurrences="1">
       <code>global $woothemes_sensei;</code>
