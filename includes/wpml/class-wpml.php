@@ -32,6 +32,8 @@ class WPML {
 		( new Quiz_Progress() )->init();
 		( new Quiz_Submission() )->init();
 		( new Page() )->init();
+		( new Settings() )->init();
+		( new Slug() )->init();
 		( new Utils() )->init();
 	}
 }
