@@ -9,6 +9,8 @@
 /**
  * Sensei_Home_Task_Sell_Course_With_WooCommerce class.
  *
+ * @deprecated $$next-version$$ We're now showing the "Sell your course with Sensei Pro" (Sensei_Home_Task_Pro_Upsell) task instead of this task.
+ *
  * @since 4.8.0
  */
 class Sensei_Home_Task_Sell_Course_With_WooCommerce implements Sensei_Home_Task {
