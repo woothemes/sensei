@@ -175,8 +175,10 @@ function getTourSteps() {
 				await performStepActionsAsync( [
 					{
 						action: () => {
+							const lessonSelector =
+								'[data-type="sensei-lms/course-outline-lesson"]';
 							const lesson = document.querySelector(
-								'[data-type="sensei-lms/course-outline-lesson"]'
+								lessonSelector
 							);
 							if ( lesson ) {
 								lesson.focus();
@@ -185,8 +187,11 @@ function getTourSteps() {
 					},
 					{
 						action: () => {
+							const firstLessonTextAreaSelector =
+								'[data-type="sensei-lms/course-outline-lesson"] textarea';
+
 							const lesson = document.querySelector(
-								'[data-type="sensei-lms/course-outline-lesson"] textarea'
+								firstLessonTextAreaSelector
 							);
 							if ( lesson ) {
 								lesson.focus();
@@ -196,6 +201,14 @@ function getTourSteps() {
 							] );
 						},
 						delay: 100,
+					},
+					{
+						action: () => {
+							const lessonSelector =
+								'[data-type="sensei-lms/course-outline-lesson"] .wp-block-sensei-lms-course-outline-lesson';
+							scrollToCenter( lessonSelector );
+						},
+						delay: 200,
 					},
 				] );
 			},
@@ -233,6 +246,7 @@ function getTourSteps() {
 					},
 					{
 						action: () => {
+							scrollToCenter( inserterSelector );
 							const inserter = document.querySelector(
 								inserterSelector
 							);
@@ -297,6 +311,7 @@ function getTourSteps() {
 					},
 					{
 						action: () => {
+							scrollToCenter( inserterSelector );
 							const inserter = document.querySelector(
 								inserterSelector
 							);
@@ -311,6 +326,7 @@ function getTourSteps() {
 							highlightElementsWithBorders( [
 								inserterSelector,
 							] );
+							scrollToCenter( inserterSelector );
 						},
 					},
 					{
@@ -318,12 +334,13 @@ function getTourSteps() {
 							highlightElementsWithBorders( [
 								insertLessonSelector,
 							] );
-							const module = document.querySelector(
+							const lesson = document.querySelector(
 								insertLessonSelector
 							);
-							if ( module ) {
-								module.focus();
+							if ( lesson ) {
+								lesson.focus();
 							}
+							scrollToCenter( insertLessonSelector );
 						},
 						delay: 400,
 					},
@@ -368,6 +385,9 @@ function getTourSteps() {
 					},
 					{
 						action: () => {
+							const lessonSelector =
+								'.wp-block-sensei-lms-course-outline-lesson';
+							scrollToCenter( lessonSelector );
 							highlightElementsWithBorders( [ optionSelector ] );
 						},
 						delay: 400,
@@ -465,6 +485,7 @@ function getTourSteps() {
 					{
 						action: () => {
 							highlightElementsWithBorders( [ buttonSelector ] );
+							scrollToCenter( buttonSelector );
 						},
 						delay: 400,
 					},
@@ -523,6 +544,7 @@ function getTourSteps() {
 					{
 						action: () => {
 							highlightElementsWithBorders( [ buttonSelector ] );
+							scrollToCenter( buttonSelector );
 						},
 						delay: 400,
 					},
