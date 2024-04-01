@@ -21,6 +21,17 @@ import {
 	waitForElement,
 } from '../helper';
 
+const scrollToCenter = ( selector ) => {
+	const element = document.querySelector( selector );
+	if ( element ) {
+		element.scrollIntoView( {
+			behavior: 'smooth',
+			block: 'center',
+			inline: 'center',
+		} );
+	}
+};
+
 export const getCourseOutlineBlock = () =>
 	getFirstBlockByName(
 		'sensei-lms/course-outline',
@@ -36,7 +47,7 @@ function insertLessonBlock( lessonTitle ) {
 			createBlock( 'sensei-lms/course-outline-lesson', {
 				title: lessonTitle,
 			} ),
-			undefined,
+			0,
 			courseOutlineBlock.clientId
 		);
 	}
@@ -131,6 +142,7 @@ function getTourSteps() {
 							highlightElementsWithBorders( [
 								courseOutlineBlockSelector,
 							] );
+							scrollToCenter( courseOutlineBlockSelector );
 						},
 						delay: 0,
 					},
