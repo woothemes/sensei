@@ -65,15 +65,15 @@ const TaskItem = ( { title, url, done, info, disabled } ) => {
 							className="sensei-home-tasks__external-icon sensei-home-tasks__icon-with-current-color"
 						/>
 					) }
-					{ info && (
-						<Tooltip text={ info }>
-							<Icon
-								className="sensei-home-tasks__icon-with-current-color"
-								icon={ infoIcon }
-							/>
-						</Tooltip>
-					) }
 				</span>
+				{ info && (
+					<Tooltip text={ info }>
+						<Icon
+							className="sensei-home-tasks__icon-with-current-color"
+							icon={ infoIcon }
+						/>
+					</Tooltip>
+				) }
 				{ isActive && (
 					<ChevronRightIcon className="sensei-home-tasks__link-chevron" />
 				) }
