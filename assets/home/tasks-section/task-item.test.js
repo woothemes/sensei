@@ -63,6 +63,22 @@ describe( '<TaskItem />', () => {
 		expect( externalIcon ).toBeNull();
 	} );
 
+	it( 'Should not render external icon when task is not active', () => {
+		const { container } = render(
+			<TaskItem
+				url="www.example.com/something?this=false&external=true"
+				showExternalIcon
+				disabled
+			/>
+		);
+
+		const externalIcon = container.querySelector(
+			'.sensei-home-tasks__external-icon'
+		);
+
+		expect( externalIcon ).toBeNull();
+	} );
+
 	it( 'Should render a span when item is disabled', () => {
 		const { container } = render( <TaskItem url="#" disabled /> );
 

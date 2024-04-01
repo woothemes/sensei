@@ -59,7 +59,7 @@ const TaskItem = ( { title, url, done, info, disabled } ) => {
 				) }
 				<span className="sensei-home-tasks__item-title">
 					{ title }
-					{ isExternal && (
+					{ isExternal && isActive && (
 						<Icon
 							icon={ externalIcon }
 							className="sensei-home-tasks__external-icon sensei-home-tasks__icon-with-current-color"
