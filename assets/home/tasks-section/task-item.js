@@ -6,7 +6,11 @@ import classnames from 'classnames';
 /**
  * WordPress dependencies
  */
-import { Icon, info as infoIcon } from '@wordpress/icons';
+import {
+	Icon,
+	external as externalIcon,
+	info as infoIcon,
+} from '@wordpress/icons';
 import { Tooltip } from '@wordpress/components';
 
 /**
@@ -15,6 +19,10 @@ import { Tooltip } from '@wordpress/components';
 import CheckIcon from '../../icons/checked.svg';
 import ChevronRightIcon from '../../icons/chevron-right.svg';
 import { isUrlExternal } from '../utils';
+
+/**
+ * WordPress dependencies
+ */
 
 /**
  * Tasks item component.
@@ -29,7 +37,9 @@ import { isUrlExternal } from '../utils';
 const TaskItem = ( { title, url, done, info, disabled } ) => {
 	const isActive = ! done && ! disabled;
 	const Tag = isActive ? 'a' : 'span';
-	const isExternal = isUrlExternal( url );
+	const isExternal =
+		isUrlExternal( url ) || url?.indexOf( 'external=true' ) >= 0; // If the URL contains 'external=true', we show the external icon,
+	// It's helpful when it's an internal URL (maybe for tracking purpose) but redirecting to an external one.
 
 	const linkProps = ! done && {
 		href: url,
@@ -47,15 +57,23 @@ const TaskItem = ( { title, url, done, info, disabled } ) => {
 				{ done && (
 					<CheckIcon className="sensei-home-tasks__check-icon" />
 				) }
-				<span className="sensei-home-tasks__item-title">{ title }</span>
-				{ info && (
-					<Tooltip text={ info }>
+				<span className="sensei-home-tasks__item-title">
+					{ title }
+					{ isExternal && (
 						<Icon
-							className="sensei-home-tasks__icon-with-current-color"
-							icon={ infoIcon }
+							icon={ externalIcon }
+							className="sensei-home-tasks__external-icon sensei-home-tasks__icon-with-current-color"
 						/>
-					</Tooltip>
-				) }
+					) }
+					{ info && (
+						<Tooltip text={ info }>
+							<Icon
+								className="sensei-home-tasks__icon-with-current-color"
+								icon={ infoIcon }
+							/>
+						</Tooltip>
+					) }
+				</span>
 				{ isActive && (
 					<ChevronRightIcon className="sensei-home-tasks__link-chevron" />
 				) }

@@ -103,13 +103,13 @@ final class Sensei_Home {
 	/**
 	 * Gets a REST API controller for Sensei Home.
 	 *
-	 * @param string $namespace The REST API namespace.
+	 * @param string $api_namespace The REST API namespace.
 	 *
 	 * @return Sensei_REST_API_Home_Controller
 	 */
-	public function get_rest_api_controller( $namespace ) {
+	public function get_rest_api_controller( $api_namespace ) {
 		return new Sensei_REST_API_Home_Controller(
-			$namespace,
+			$api_namespace,
 			$this->quick_links_provider,
 			$this->help_provider,
 			$this->promo_provider,
