@@ -23,7 +23,7 @@ class Sensei_Home_Task_Sell_Course_With_WooCommerce implements Sensei_Home_Task 
 		if ( is_wp_version_compatible( '6.4' ) ) {
 			_deprecated_class( __CLASS__, '$$next-version$$', 'Sensei_Home_Task_Pro_Upsell' );
 		} else {
-			_deprecated_function( __METHOD__, '$$next-version$$', 'Sensei_Home_Task_Pro_Upsell' );
+			_deprecated_function( __METHOD__, '$$next-version$$', 'Sensei_Home_Task_Pro_Upsell::__construct' );
 		}
 	}
 
