@@ -19,18 +19,8 @@ import {
 	performStepActionsAsync,
 	removeHighlightClasses,
 	waitForElement,
+	scrollToCenter,
 } from '../helper';
-
-const scrollToCenter = ( selector ) => {
-	const element = document.querySelector( selector );
-	if ( element ) {
-		element.scrollIntoView( {
-			behavior: 'smooth',
-			block: 'center',
-			inline: 'center',
-		} );
-	}
-};
 
 export const getCourseOutlineBlock = () =>
 	getFirstBlockByName(

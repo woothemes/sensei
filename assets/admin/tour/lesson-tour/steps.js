@@ -18,6 +18,7 @@ import { getFirstBlockByName } from '../../../blocks/course-outline/data';
 import {
 	highlightElementsWithBorders,
 	performStepActionsAsync,
+	scrollToCenter,
 } from '../helper';
 
 export const getQuizBlock = () =>
@@ -465,14 +466,15 @@ export default function getTourSteps() {
 					// Focus on answer feedback field and highlight answer feedback areas.
 					{
 						action: () => {
+							const correctAnswerFieldSelector =
+								'.sensei-lms-question__answer-feedback__content .block-editor-rich-text__editable';
 							const correctAnswerField = document.querySelector(
-								'.sensei-lms-question__answer-feedback__content .block-editor-rich-text__editable'
+								correctAnswerFieldSelector
 							);
 
 							correctAnswerField.focus();
-							correctAnswerField.scrollIntoView( {
-								block: 'center',
-							} );
+
+							scrollToCenter( correctAnswerFieldSelector );
 
 							highlightElementsWithBorders( [
 								'.sensei-lms-question__answer-feedback--correct',
