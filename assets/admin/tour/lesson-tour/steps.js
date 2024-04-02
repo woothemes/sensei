@@ -18,6 +18,7 @@ import { getFirstBlockByName } from '../../../blocks/course-outline/data';
 import {
 	highlightElementsWithBorders,
 	performStepActionsAsync,
+	scrollToCenter,
 } from '../helper';
 
 export const getQuizBlock = () =>
@@ -295,6 +296,7 @@ export default function getTourSteps() {
 							if ( titleField ) {
 								titleField.focus();
 							}
+							scrollToCenter( titleFieldSelector );
 						},
 						delay: 400,
 					},
@@ -340,6 +342,7 @@ export default function getTourSteps() {
 							if ( descriptionField ) {
 								descriptionField.focus();
 							}
+							scrollToCenter( descriptionFieldSelector );
 						},
 						delay: 400,
 					},
@@ -465,14 +468,15 @@ export default function getTourSteps() {
 					// Focus on answer feedback field and highlight answer feedback areas.
 					{
 						action: () => {
+							const correctAnswerFieldSelector =
+								'.sensei-lms-question__answer-feedback__content .block-editor-rich-text__editable';
 							const correctAnswerField = document.querySelector(
-								'.sensei-lms-question__answer-feedback__content .block-editor-rich-text__editable'
+								correctAnswerFieldSelector
 							);
 
 							correctAnswerField.focus();
-							correctAnswerField.scrollIntoView( {
-								block: 'center',
-							} );
+
+							scrollToCenter( correctAnswerFieldSelector );
 
 							highlightElementsWithBorders( [
 								'.sensei-lms-question__answer-feedback--correct',
@@ -532,6 +536,7 @@ export default function getTourSteps() {
 					// Highlight inserter button.
 					{
 						action: () => {
+							scrollToCenter( inserterSelector );
 							highlightElementsWithBorders( [
 								inserterSelector,
 							] );
@@ -661,6 +666,7 @@ export default function getTourSteps() {
 							const settingsButton = document.querySelector(
 								settingsButtonSelector
 							);
+
 							if ( settingsButton ) {
 								settingsButton.focus();
 								settingsButton.click();
