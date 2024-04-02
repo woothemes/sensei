@@ -296,6 +296,7 @@ export default function getTourSteps() {
 							if ( titleField ) {
 								titleField.focus();
 							}
+							scrollToCenter( titleFieldSelector );
 						},
 						delay: 400,
 					},
@@ -341,6 +342,7 @@ export default function getTourSteps() {
 							if ( descriptionField ) {
 								descriptionField.focus();
 							}
+							scrollToCenter( descriptionFieldSelector );
 						},
 						delay: 400,
 					},
@@ -534,6 +536,7 @@ export default function getTourSteps() {
 					// Highlight inserter button.
 					{
 						action: () => {
+							scrollToCenter( inserterSelector );
 							highlightElementsWithBorders( [
 								inserterSelector,
 							] );
@@ -663,6 +666,7 @@ export default function getTourSteps() {
 							const settingsButton = document.querySelector(
 								settingsButtonSelector
 							);
+
 							if ( settingsButton ) {
 								settingsButton.focus();
 								settingsButton.click();
