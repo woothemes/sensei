@@ -27,15 +27,14 @@ class Slug {
 	 * Init hooks.
 	 */
 	public function init() {
-		$is_wpml_active = $this->is_wpml_active();
-		if ( ! $is_wpml_active ) {
+		if ( ! $this->is_wpml_active() ) {
 			return;
 		}
 
-		add_filter( 'sensei_course_slug', array( $this, 'get_course_slug' ), 10, 1 );
-		add_filter( 'sensei_lesson_slug', array( $this, 'get_lesson_slug' ), 10, 1 );
-		add_filter( 'sensei_quiz_slug', array( $this, 'get_quiz_slug' ), 10, 1 );
-		add_filter( 'sensei_question_slug', array( $this, 'get_question_slug' ), 10, 1 );
+		add_filter( 'sensei_course_slug', array( $this, 'get_course_slug' ) );
+		add_filter( 'sensei_lesson_slug', array( $this, 'get_lesson_slug' ) );
+		add_filter( 'sensei_quiz_slug', array( $this, 'get_quiz_slug' ) );
+		add_filter( 'sensei_question_slug', array( $this, 'get_question_slug' ) );
 	}
 
 	/**
@@ -49,12 +48,11 @@ class Slug {
 	 * @return string
 	 */
 	public function get_course_slug( $slug ) {
-		$use_wpml_slug_translation = Sensei()->settings->get( 'wpml_slug_translation' );
-		if ( $use_wpml_slug_translation ) {
+		if ( Sensei()->settings->get( 'wpml_slug_translation' ) ) {
 			return 'course';
-		} else {
-			return $slug;
 		}
+
+		return $slug;
 	}
 
 	/**
@@ -68,12 +66,11 @@ class Slug {
 	 * @return string
 	 */
 	public function get_lesson_slug( $slug ) {
-		$use_wpml_slug_translation = Sensei()->settings->get( 'wpml_slug_translation' );
-		if ( $use_wpml_slug_translation ) {
+		if ( Sensei()->settings->get( 'wpml_slug_translation' ) ) {
 			return 'lesson';
-		} else {
-			return $slug;
 		}
+
+		return $slug;
 	}
 
 	/**
@@ -87,12 +84,11 @@ class Slug {
 	 * @return string
 	 */
 	public function get_question_slug( $slug ) {
-		$use_wpml_slug_translation = Sensei()->settings->get( 'wpml_slug_translation' );
-		if ( $use_wpml_slug_translation ) {
+		if ( Sensei()->settings->get( 'wpml_slug_translation' ) ) {
 			return 'question';
-		} else {
-			return $slug;
 		}
+
+		return $slug;
 	}
 
 	/**
@@ -106,11 +102,10 @@ class Slug {
 	 * @return string
 	 */
 	public function get_quiz_slug( $slug ) {
-		$use_wpml_slug_translation = Sensei()->settings->get( 'wpml_slug_translation' );
-		if ( $use_wpml_slug_translation ) {
+		if ( Sensei()->settings->get( 'wpml_slug_translation' ) ) {
 			return 'quiz';
-		} else {
-			return $slug;
 		}
+
+		return $slug;
 	}
 }
