@@ -17,6 +17,17 @@ class Sensei_Home_Task_Sell_Course_With_WooCommerce implements Sensei_Home_Task 
 	const VISITED_WOOCOMMERCE_ADMIN_OPTION_KEY = 'sensei_home_task_visited_woocommerce';
 
 	/**
+	 * Class constructor.
+	 */
+	public function __construct() {
+		if ( is_wp_version_compatible( '6.4' ) ) {
+			_deprecated_class( __CLASS__, '$$next-version$$', 'Sensei_Home_Task_Pro_Upsell' );
+		} else {
+			_deprecated_function( __METHOD__, '$$next-version$$', 'Sensei_Home_Task_Pro_Upsell' );
+		}
+	}
+
+	/**
 	 * The ID for the task.
 	 *
 	 * @return string
