@@ -25,17 +25,17 @@ class Course_Progress {
 	 * Init hooks.
 	 */
 	public function init() {
-		add_filter( 'sensei_course_is_user_enrolled_course_id', array( $this, 'translate_course_id' ), 10, 1 );
-		add_filter( 'sensei_block_take_course_course_id', array( $this, 'translate_course_id' ), 10, 1 );
-		add_filter( 'sensei_course_progress_create_course_id', array( $this, 'translate_course_id' ), 10, 1 );
-		add_filter( 'sensei_course_progress_get_course_id', array( $this, 'translate_course_id' ), 10, 1 );
-		add_filter( 'sensei_course_progress_has_course_id', array( $this, 'translate_course_id' ), 10, 1 );
-		add_filter( 'sensei_course_progress_delete_for_course_course_id', array( $this, 'translate_course_id' ), 10, 1 );
-		add_filter( 'sensei_course_progress_find_course_id', array( $this, 'translate_course_id' ), 10, 1 );
-		add_filter( 'sensei_lesson_progress_count_course_id', array( $this, 'translate_course_id' ), 10, 1 );
-		add_filter( 'sensei_course_start_course_id', array( $this, 'translate_course_id' ), 10, 1 );
-		add_filter( 'sensei_course_manual_enrolment_enroll_learner_course_id', array( $this, 'translate_course_id' ), 10, 1 );
-		add_filter( 'sensei_course_manual_enrolment_withdraw_learner_course_id', array( $this, 'translate_course_id' ), 10, 1 );
+		add_filter( 'sensei_course_is_user_enrolled_course_id', array( $this, 'translate_course_id' ) );
+		add_filter( 'sensei_block_take_course_course_id', array( $this, 'translate_course_id' ) );
+		add_filter( 'sensei_course_progress_create_course_id', array( $this, 'translate_course_id' ) );
+		add_filter( 'sensei_course_progress_get_course_id', array( $this, 'translate_course_id' ) );
+		add_filter( 'sensei_course_progress_has_course_id', array( $this, 'translate_course_id' ) );
+		add_filter( 'sensei_course_progress_delete_for_course_course_id', array( $this, 'translate_course_id' ) );
+		add_filter( 'sensei_course_progress_find_course_id', array( $this, 'translate_course_id' ) );
+		add_filter( 'sensei_lesson_progress_count_course_id', array( $this, 'translate_course_id' ) );
+		add_filter( 'sensei_course_start_course_id', array( $this, 'translate_course_id' ) );
+		add_filter( 'sensei_course_manual_enrolment_enroll_learner_course_id', array( $this, 'translate_course_id' ) );
+		add_filter( 'sensei_course_manual_enrolment_withdraw_learner_course_id', array( $this, 'translate_course_id' ) );
 	}
 
 	/**
