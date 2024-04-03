@@ -44,7 +44,8 @@ class Lesson_Progress {
 	 * @return int
 	 */
 	public function translate_lesson_id( $lesson_id ) {
-		$details = (array) apply_filters(
+		$lesson_id = (int) $lesson_id;
+		$details   = (array) apply_filters(
 			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 			'wpml_element_language_details',
 			null,

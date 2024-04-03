@@ -43,6 +43,7 @@ class Quiz_Progress {
 	 * @return int
 	 */
 	public function translate_quiz_id( $quiz_id ) {
+		$quiz_id = (int) $quiz_id;
 		$details = (array) apply_filters(
 			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 			'wpml_element_language_details',
