@@ -53,10 +53,6 @@ class Lesson_Actions {
 	 * @return string The complete lesson button.
 	 */
 	private function render_complete_lesson( string $button_class, bool $is_outline_style, bool $is_disabled ): string {
-		if ( ! sensei_can_user_view_lesson() ) {
-			return '';
-		}
-
 		$button_style_class = $is_outline_style ? 'is-style-outline' : '';
 		$disabled_attribute = $is_disabled ? 'disabled' : '';
 
