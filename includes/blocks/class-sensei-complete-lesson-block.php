@@ -37,11 +37,7 @@ class Sensei_Complete_Lesson_Block {
 	 *
 	 * @return string The block HTML.
 	 */
-	public function render( array $attributes, string $content ): string {
-		if ( ! sensei_can_user_view_lesson() ) {
-			return '';
-		}
-
+	public function render( array $attributes, string $content ) : string {
 		$lesson = get_post();
 
 		if ( empty( $lesson ) ) {
@@ -55,6 +51,7 @@ class Sensei_Complete_Lesson_Block {
 		}
 
 		if ( false === Sensei()->lesson->lesson_has_quiz_with_questions_and_pass_required( $lesson->ID ) ) {
+
 			return $this->render_with_form( $attributes, $content );
 		}
 
@@ -69,7 +66,7 @@ class Sensei_Complete_Lesson_Block {
 	 *
 	 * @return string The HTML to render.
 	 */
-	private function render_with_form( array $attributes, string $content ): string {
+	private function render_with_form( array $attributes, string $content ) : string {
 		wp_enqueue_script( 'sensei-stop-double-submission' );
 		$nonce     = wp_nonce_field( 'woothemes_sensei_complete_lesson_noonce', 'woothemes_sensei_complete_lesson_noonce', false, false );
 		$permalink = esc_url( get_permalink() );
