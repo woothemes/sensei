@@ -49,7 +49,7 @@ class Comments_Based_Grade_Repository implements Grade_Repository_Interface {
 		 * @param {string} $context    The context.
 		 * @return {int} The submission ID.
 		 */
-		$submission_id = apply_filters( 'sensei_quiz_grade_creat_submission_id', $submission->get_id(), 'comments' );
+		$submission_id = apply_filters( 'sensei_quiz_grade_create_submission_id', $submission->get_id(), 'comments' );
 
 		/**
 		 * Filters the question ID when quiz grade is created.

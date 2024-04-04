@@ -31,8 +31,8 @@ class Language_Details {
 		add_action( 'sensei_quiz_create', array( $this, 'set_language_details_when_quiz_created' ), 10, 2 );
 		add_action( 'sensei_quiz_create', array( $this, 'set_language_details_when_quiz_created' ), 10, 2 );
 		add_action( 'sensei_quiz_create', array( $this, 'set_language_details_when_quiz_created' ), 10, 2 );
-		add_action( 'sensei_rest_api_question_saved', array( $this, 'set_language_details_when_question_created' ), 10, 1 );
-		add_action( 'sensei_rest_api_category_question_saved', array( $this, 'set_language_details_when_multiple_question_created' ), 10, 1 );
+		add_action( 'sensei_rest_api_question_saved', array( $this, 'set_language_details_when_question_created' ) );
+		add_action( 'sensei_rest_api_category_question_saved', array( $this, 'set_language_details_when_multiple_question_created' ) );
 	}
 
 	/**

@@ -27,9 +27,9 @@ class Quiz_Submission {
 	 * Init hooks.
 	 */
 	public function init() {
-		add_filter( 'sensei_quiz_submission_create_quiz_id', array( $this, 'translate_quiz_id' ), 10, 1 );
-		add_filter( 'sensei_quiz_submission_get_or_create_quiz_id', array( $this, 'translate_quiz_id' ), 10, 1 );
-		add_filter( 'sensei_quiz_submission_get_quiz_id', array( $this, 'translate_quiz_id' ), 10, 1 );
+		add_filter( 'sensei_quiz_submission_create_quiz_id', array( $this, 'translate_quiz_id' ) );
+		add_filter( 'sensei_quiz_submission_get_or_create_quiz_id', array( $this, 'translate_quiz_id' ) );
+		add_filter( 'sensei_quiz_submission_get_quiz_id', array( $this, 'translate_quiz_id' ) );
 	}
 
 	/**
