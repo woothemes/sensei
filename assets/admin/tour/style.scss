@@ -21,7 +21,7 @@
 }
 
 $shadow-width: 10px;
-$border-color: var(--wp--preset--color--primary, currentcolor);
+$border-color: var(--wp--preset--color--primary, var(--wp-admin-theme-color, currentcolor));
 
 .sensei-tour-highlight {
 	box-shadow: 0 0 $shadow-width $border-color !important;
