@@ -67,8 +67,8 @@ class Sensei_Home_Tasks_Provider {
 			new Sensei_Home_Task_Publish_First_Course(),
 		];
 
-		if ( Sensei_Home_Task_Sell_Course_With_WooCommerce::is_active() ) {
-			$core_tasks[] = new Sensei_Home_Task_Sell_Course_With_WooCommerce();
+		if ( Sensei_Home_Task_Pro_Upsell::is_active() ) {
+			$core_tasks[] = new Sensei_Home_Task_Pro_Upsell();
 		}
 
 		$tasks = [];
@@ -96,6 +96,8 @@ class Sensei_Home_Tasks_Provider {
 		 * @property {string} `$tasks[]['url']`      Optional. Destination URL for users when clicking on the task.
 		 * @property {string} `$tasks[]['image']`    Optional. Source url or path for the featured image when this task is the first pending one.
 		 * @property {bool}   `$tasks[]['done']`     Whether the task is considered done or not.
+		 * @property {bool}   `$tasks[]['disabled']` Whether the task is considered disabled or not.
+		 * @property {bool}   `$tasks[]['info']`     A text to describe something about the task in an `info` icon.
 		 * @return {array} Filtered tasks.
 		 */
 		return apply_filters( 'sensei_home_tasks', $tasks );
