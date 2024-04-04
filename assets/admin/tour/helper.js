@@ -120,3 +120,19 @@ export async function waitForElement( selector, maxChecks = 10, delay = 300 ) {
 		checkElement();
 	} );
 }
+
+/**
+ * Scrolls element to the center for better visibility.
+ *
+ * @param {string} selector
+ */
+export const scrollToCenter = ( selector ) => {
+	const element = document.querySelector( selector );
+	if ( element ) {
+		element.scrollIntoView( {
+			behavior: 'smooth',
+			block: 'center',
+			inline: 'center',
+		} );
+	}
+};
