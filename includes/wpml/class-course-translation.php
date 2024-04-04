@@ -31,7 +31,7 @@ class Course_Translation {
 	 */
 	public function init() {
 		// Create translations for lessons and update lesson properties on course translation created.
-		add_action( 'wpml_pro_translation_completed', array( $this, 'update_lesson_properties_on_course_translation_created' ), 10, 1 );
+		add_action( 'wpml_pro_translation_completed', array( $this, 'update_lesson_properties_on_course_translation_created' ) );
 	}
 
 	/**

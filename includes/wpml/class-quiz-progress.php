@@ -27,11 +27,11 @@ class Quiz_Progress {
 	 * Init hooks.
 	 */
 	public function init() {
-		add_filter( 'sensei_quiz_progress_create_quiz_id', array( $this, 'translate_quiz_id' ), 10, 1 );
-		add_filter( 'sensei_quiz_progress_get_quiz_id', array( $this, 'translate_quiz_id' ), 10, 1 );
-		add_filter( 'sensei_quiz_progress_has_quiz_id', array( $this, 'translate_quiz_id' ), 10, 1 );
-		add_filter( 'sensei_quiz_progress_delete_for_quiz_quiz_id', array( $this, 'translate_quiz_id' ), 10, 1 );
-		add_filter( 'sensei_quiz_progress_find_quiz_id', array( $this, 'translate_quiz_id' ), 10, 1 );
+		add_filter( 'sensei_quiz_progress_create_quiz_id', array( $this, 'translate_quiz_id' ) );
+		add_filter( 'sensei_quiz_progress_get_quiz_id', array( $this, 'translate_quiz_id' ) );
+		add_filter( 'sensei_quiz_progress_has_quiz_id', array( $this, 'translate_quiz_id' ) );
+		add_filter( 'sensei_quiz_progress_delete_for_quiz_quiz_id', array( $this, 'translate_quiz_id' ) );
+		add_filter( 'sensei_quiz_progress_find_quiz_id', array( $this, 'translate_quiz_id' ) );
 	}
 
 	/**

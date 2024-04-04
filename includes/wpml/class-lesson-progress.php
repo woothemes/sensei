@@ -27,16 +27,16 @@ class Lesson_Progress {
 	 * Init hooks.
 	 */
 	public function init() {
-		add_filter( 'sensei_utils_user_completed_lesson_lesson_id', array( $this, 'translate_lesson_id' ), 10, 1 );
-		add_filter( 'sensei_lesson_progress_create_lesson_id', array( $this, 'translate_lesson_id' ), 10, 1 );
-		add_filter( 'sensei_lesson_progress_get_lesson_id', array( $this, 'translate_lesson_id' ), 10, 1 );
-		add_filter( 'sensei_lesson_progress_has_lesson_id', array( $this, 'translate_lesson_id' ), 10, 1 );
-		add_filter( 'sensei_lesson_progress_delete_for_lesson_lesson_id', array( $this, 'translate_lesson_id' ), 10, 1 );
-		add_filter( 'sensei_lesson_progress_find_lesson_id', array( $this, 'translate_lesson_id' ), 10, 1 );
+		add_filter( 'sensei_utils_user_completed_lesson_lesson_id', array( $this, 'translate_lesson_id' ) );
+		add_filter( 'sensei_lesson_progress_create_lesson_id', array( $this, 'translate_lesson_id' ) );
+		add_filter( 'sensei_lesson_progress_get_lesson_id', array( $this, 'translate_lesson_id' ) );
+		add_filter( 'sensei_lesson_progress_has_lesson_id', array( $this, 'translate_lesson_id' ) );
+		add_filter( 'sensei_lesson_progress_delete_for_lesson_lesson_id', array( $this, 'translate_lesson_id' ) );
+		add_filter( 'sensei_lesson_progress_find_lesson_id', array( $this, 'translate_lesson_id' ) );
 	}
 
 	/**
-	 * Translate course ID.
+	 * Translate lesson ID.
 	 *
 	 * @since $$next-version$$
 	 *
