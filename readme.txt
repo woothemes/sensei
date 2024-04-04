@@ -140,6 +140,18 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 
 == Changelog ==
 
+### 4.23.0 - 2024-04-04
+#### Added
+- Sensei pro upsell task in Sensei Home [#7562](https://github.com/Automattic/sensei/pull/7562)
+
+#### Deprecated
+- Remove Sell your course with WooCommerce task from core [#7572](https://github.com/Automattic/sensei/pull/7572)
+
+#### Fixed
+- Ensure student can view the lesson content when rendering the Complete Lesson button [#7579](https://github.com/Automattic/sensei/pull/7579)
+- Remove opinionated CSS class from login form [#7542](https://github.com/Automattic/sensei/pull/7542)
+- Visibility improved for focus elements of Course tour [#7570](https://github.com/Automattic/sensei/pull/7570)
+
 ### 4.22.0 - 2024-03-20
 #### Added
 - Added Course onboarding tour [#7535](https://github.com/Automattic/sensei/pull/7535)
@@ -178,12 +190,3 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 #### Fixed
 - Fix course/lesson patterns not working on latest Gutenberg version [#7499](https://github.com/Automattic/sensei/pull/7499)
 - Fix Course Outline for a course translated with WPML. [#7453](https://github.com/Automattic/sensei/pull/7453)
-
-### 4.20.2 - 2024-02-07
-#### Changed
-- Auto-focus the course title field when creating a new course [#7434](https://github.com/Automattic/sensei/pull/7434)
-
-#### Fixed
-- Fixed Sensei Email template not available in site editor [#7463](https://github.com/Automattic/sensei/pull/7463)
-- Flush rewrite rules when the website language was changed or the translation was updated. [#7435](https://github.com/Automattic/sensei/pull/7435)
-- Memory issue on the student reports screen [#7468](https://github.com/Automattic/sensei/pull/7468)
