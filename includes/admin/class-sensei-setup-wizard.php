@@ -93,7 +93,7 @@ class Sensei_Setup_Wizard {
 			add_action( 'current_screen', [ $this, 'remove_notices_from_setup_wizard' ] );
 			add_action( 'admin_notices', [ $this, 'setup_wizard_notice' ] );
 			add_action( 'admin_init', [ $this, 'skip_setup_wizard' ] );
-			add_action( 'admin_init', [ $this, 'activation_redirect' ] );
+			add_action( 'current_screen', [ $this, 'activation_redirect' ] );
 			add_action( 'current_screen', [ $this, 'add_setup_wizard_help_tab' ] );
 
 			// Maybe prevent WooCommerce help tab.
@@ -189,17 +189,16 @@ class Sensei_Setup_Wizard {
 	public function activation_redirect() {
 		if (
 			// Check if activation redirect is needed.
-			! get_transient( 'sensei_activation_redirect' )
+			! get_option( 'sensei_activation_redirect', false )
 			// Test whether the context of execution comes from async action scheduler.
 			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Arguments used for comparison.
 			|| ( isset( $_REQUEST['action'] ) && 'as_async_request_queue_runner' === $_REQUEST['action'] )
 			// On these pages, or during these events, postpone the redirect.
 			|| wp_doing_ajax() || wp_doing_cron() || is_network_admin() || ! current_user_can( 'manage_sensei' )
+			|| ! $this->should_current_page_display_wizard()
 		) {
 			return;
 		}
-
-		delete_transient( 'sensei_activation_redirect' );
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Arguments used for comparison.
 		if ( isset( $_GET['activate-multi'] ) ) {
@@ -221,6 +220,8 @@ class Sensei_Setup_Wizard {
 	 * Render app container for setup wizard.
 	 */
 	public function render_wizard_page() {
+		// Delete option when the Setup Wizard is loaded, so it doesn't redirect anymore.
+		delete_option( 'sensei_activation_redirect' );
 
 		?>
 		<div id="sensei-setup-wizard-page" class="sensei-setup-wizard">
@@ -230,7 +231,8 @@ class Sensei_Setup_Wizard {
 	}
 
 	/**
-	 * Check if current screen is selected to display the wizard notice.
+	 * Check if current screen is selected to display the wizard notice and
+	 * automatically open the wizard.
 	 *
 	 * @return boolean
 	 */
@@ -446,7 +448,7 @@ class Sensei_Setup_Wizard {
 	 *
 	 * @return stdClass Extension with status.
 	 */
-	private function get_feature_with_status( $extension, $installing_plugins, $selected_plugins ) {
+	private function get_feature_with_status( $extension, $installing_plugins, $selected_plugins ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed -- Called by a public deprecated method.
 		_deprecated_function( __METHOD__, '4.8.0' );
 
 		$installing_key = array_search( $extension->product_slug, wp_list_pluck( $installing_plugins, 'product_slug' ), true );
@@ -496,7 +498,7 @@ class Sensei_Setup_Wizard {
 		}
 
 		$extensions = array_map(
-			function( $extension ) use ( $installing_plugins, $selected_plugins ) {
+			function ( $extension ) use ( $installing_plugins, $selected_plugins ) {
 				// Decode price.
 				if ( isset( $extension->price ) && 0 !== $extension->price ) {
 					$extension->price = html_entity_decode( $extension->price );
