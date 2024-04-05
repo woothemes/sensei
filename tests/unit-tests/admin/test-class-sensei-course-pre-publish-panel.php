@@ -103,4 +103,21 @@ class Sensei_Sensei_Course_Pre_Publish_Panel_Test extends WP_UnitTestCase {
 		/* Assert */
 		$this->assertEquals( 'publish', get_post_status( $this->lesson_id ) );
 	}
+
+	/**
+	 * Lessons aren't published if a published course is just being updated.
+	 *
+	 *  @covers Sensei_Course_Pre_Publish_Panel::maybe_publish_lessons
+	 */
+	public function testMaybePublishLessons_WhenPreviousStateAlreadyPublished_DoesNotPublishLessons() {
+		/* Arrange */
+		$this->login_as_admin();
+		update_post_meta( $this->course_id, 'sensei_course_publish_lessons', true );
+
+		/* Act */
+		Sensei_Course_Pre_Publish_Panel::instance()->maybe_publish_lessons( $this->course_id, null, 'publish' );
+
+		/* Assert */
+		$this->assertEquals( 'draft', get_post_status( $this->lesson_id ) );
+	}
 }
