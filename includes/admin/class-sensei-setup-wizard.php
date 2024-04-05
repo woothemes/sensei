@@ -249,6 +249,7 @@ class Sensei_Setup_Wizard {
 		$screens_without_sensei_prefix = [
 			'dashboard',
 			'plugins',
+			'toplevel_page_sensei',
 			'edit-sensei_message',
 			'edit-course',
 			'edit-course-category',
