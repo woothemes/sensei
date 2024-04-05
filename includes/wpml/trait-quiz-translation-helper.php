@@ -130,7 +130,7 @@ trait Quiz_Translation_Helper {
 		$args = array(
 			'element_id'           => $new_term['term_id'],
 			'element_type'         => 'tax_question-category',
-			'trid'                 => false,
+			'trid'                 => $trid,
 			'language_code'        => $translation_lang,
 			'source_language_code' => $details['language_code'],
 		);
