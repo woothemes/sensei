@@ -194,7 +194,10 @@ class Sensei_Setup_Wizard {
 			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Arguments used for comparison.
 			|| ( isset( $_REQUEST['action'] ) && 'as_async_request_queue_runner' === $_REQUEST['action'] )
 			// On these pages, or during these events, postpone the redirect.
-			|| wp_doing_ajax() || wp_doing_cron() || is_network_admin() || ! current_user_can( 'manage_sensei' )
+			|| wp_doing_ajax() || wp_doing_cron() || is_network_admin()
+			// Only redirects for admin users.
+			|| ! current_user_can( 'manage_sensei' )
+			// Check if it's an admin screen that should redirect.
 			|| ! $this->should_current_page_display_wizard()
 		) {
 			return;
