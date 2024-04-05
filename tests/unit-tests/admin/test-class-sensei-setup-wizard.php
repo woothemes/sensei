@@ -214,8 +214,9 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 		// Create and login as administrator.
 		$admin_id = $this->factory->user->create( array( 'role' => 'administrator' ) );
 		wp_set_current_user( $admin_id );
+		set_current_screen( 'dashboard' );
 
-		set_transient( 'sensei_activation_redirect', 1, 30 );
+		update_option( 'sensei_activation_redirect', 1 );
 
 		$setup_wizard_mock = $this->getMockBuilder( 'Sensei_Setup_Wizard' )
 			->setMethods( [ 'redirect_to_setup_wizard' ] )
@@ -225,8 +226,27 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 			->method( 'redirect_to_setup_wizard' );
 
 		$setup_wizard_mock->activation_redirect();
+	}
 
-		$this->assertFalse( get_transient( 'sensei_activation_redirect' ), 'Transient should be removed' );
+	/*
+	 * Testing if activation doesn't redirect for no Sensei screens.
+	 */
+	public function testActivationRedirectNoSenseiScreen() {
+		// Create and login as administrator.
+		$admin_id = $this->factory->user->create( array( 'role' => 'administrator' ) );
+		wp_set_current_user( $admin_id );
+		set_current_screen( 'any_other' );
+
+		update_option( 'sensei_activation_redirect', 1 );
+
+		$setup_wizard_mock = $this->getMockBuilder( 'Sensei_Setup_Wizard' )
+			->setMethods( [ 'redirect_to_setup_wizard' ] )
+			->getMock();
+
+		$setup_wizard_mock->expects( $this->never() )
+			->method( 'redirect_to_setup_wizard' );
+
+		$setup_wizard_mock->activation_redirect();
 	}
 
 	/**
@@ -237,7 +257,7 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 		$subscriber_id = $this->factory->user->create( array( 'role' => 'subscriber' ) );
 		wp_set_current_user( $subscriber_id );
 
-		set_transient( 'sensei_activation_redirect', 1, 30 );
+		update_option( 'sensei_activation_redirect', 1 );
 
 		$setup_wizard_mock = $this->getMockBuilder( 'Sensei_Setup_Wizard' )
 			->setMethods( [ 'redirect_to_setup_wizard' ] )
@@ -247,8 +267,6 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 			->method( 'redirect_to_setup_wizard' );
 
 		$setup_wizard_mock->activation_redirect();
-
-		$this->assertNotFalse( get_transient( 'sensei_activation_redirect' ), 'Transient should not be removed' );
 	}
 
 	/**
@@ -267,6 +285,17 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 			->method( 'redirect_to_setup_wizard' );
 
 		$setup_wizard_mock->activation_redirect();
+	}
+
+	/**
+	 * Testing if redirect option is cleared on setup wizard rendering.
+	 */
+	public function testRenderWizardPageClearsRedirectOption() {
+		update_option( 'sensei_activation_redirect', 1 );
+
+		Sensei()->setup_wizard->render_wizard_page();
+
+		$this->assertFalse( get_option( 'sensei_activation_redirect', false ) );
 	}
 
 	/**
