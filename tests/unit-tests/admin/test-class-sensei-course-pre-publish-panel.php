@@ -49,7 +49,6 @@ class Sensei_Sensei_Course_Pre_Publish_Panel_Test extends WP_UnitTestCase {
 
 	public function tearDown(): void {
 		parent::tearDown();
-
 		$this->factory->tearDown();
 	}
 
@@ -135,5 +134,22 @@ class Sensei_Sensei_Course_Pre_Publish_Panel_Test extends WP_UnitTestCase {
 
 		/* Assert */
 		$this->assertEquals( 'draft', get_post_status( $this->lesson_id ) );
+	}
+
+	/**
+	 * When Course is switched to publish state, the flag is set.
+	 *
+	 *  @covers Sensei_Course_Pre_Publish_Panel::maybe_publish_lessons
+	 */
+	public function testMaybePublishLessons_WhenFirstPublished_SetsThePublishContinuationFlag() {
+		/* Arrange */
+		$this->login_as_admin();
+		update_post_meta( $this->course_id, 'sensei_course_publish_lessons', true );
+
+		/* Act */
+		Sensei_Course_Pre_Publish_Panel::instance()->maybe_publish_lessons( $this->course_id, null, 'draft' );
+
+		/* Assert */
+		$this->assertEquals( 1, get_post_meta( $this->course_id, '_sensei_course_publishing_started', true ) );
 	}
 }
