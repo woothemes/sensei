@@ -545,7 +545,7 @@ class Sensei_Setup_Wizard {
 
 		if (
 			isset( $_SERVER['HTTP_REFERER'] ) &&
-			0 === strpos( $_SERVER['HTTP_REFERER'], 'https://woocommerce.com/checkout' ) && // phpcs:ignore sanitization ok.
+			0 === strpos( $_SERVER['HTTP_REFERER'], 'https://woocommerce.com/checkout' ) && // phpcs:ignore -- sanitization ok.
 			false !== get_transient( $wccom_installing_transient )
 		) {
 			delete_transient( $wccom_installing_transient );
