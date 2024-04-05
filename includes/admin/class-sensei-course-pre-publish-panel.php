@@ -45,7 +45,7 @@ class Sensei_Course_Pre_Publish_Panel {
 	 */
 	public function init() {
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_pre_publish_panel_assets' ) );
-		add_action( 'publish_course', array( $this, 'maybe_publish_lessons' ) );
+		add_action( 'publish_course', array( $this, 'maybe_publish_lessons' ), 10, 3 );
 	}
 
 	/**
@@ -64,9 +64,11 @@ class Sensei_Course_Pre_Publish_Panel {
 	 *
 	 * @internal
 	 *
-	 * @param int $course_id Course ID.
+	 * @param int     $course_id  Course ID.
+	 * @param WP_Post $post       Post object.
+	 * @param string  $old_status Old post status.
 	 */
-	public function maybe_publish_lessons( $course_id ) {
+	public function maybe_publish_lessons( $course_id, $post, $old_status ) {
 		if ( ! current_user_can( 'publish_post', $course_id ) ) {
 			return;
 		}
@@ -75,6 +77,29 @@ class Sensei_Course_Pre_Publish_Panel {
 
 		if ( ! $publish_lessons ) {
 			return;
+		}
+
+		$publishing_meta_key = '_sensei_course_publishing_started';
+
+		// Even if the course is already published, each subsequent updates also triggers this hook anyway
+		// which caused the bug https://github.com/Automattic/sensei/issues/7555.
+		// So we need to check if it's an actual publish call.
+		$is_main_publish_call = 'publish' !== $old_status;
+
+		if ( $is_main_publish_call ) {
+			// This is the first call made, it's not the structure saving call, so the added/updated lessons are not yet saved at this point.
+			// So we set the flag to publish lessons on the next call, which is made after the structure is saved.
+			update_post_meta( $course_id, $publishing_meta_key, true );
+		}
+
+		$is_publishing_started = get_post_meta( $course_id, $publishing_meta_key, true );
+
+		if ( ! $is_main_publish_call && ! $is_publishing_started ) {
+			return;
+		}
+
+		if ( ! $is_main_publish_call ) {
+			delete_post_meta( $course_id, $publishing_meta_key );
 		}
 
 		// Publish all draft lessons for this course.
