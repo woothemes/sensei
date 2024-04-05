@@ -721,6 +721,8 @@ class Sensei_Main {
 
 		Sensei_Temporary_User::init();
 
+		Sensei_Course_Pre_Publish_Panel::instance()->init();
+
 		// Differentiate between administration and frontend logic.
 		if ( is_admin() ) {
 			// Load Admin Class.
@@ -732,7 +734,6 @@ class Sensei_Main {
 
 			Sensei_No_Users_Table_Relationship::instance()->init();
 			SenseiLMS_Plugin_Updater::init();
-			Sensei_Course_Pre_Publish_Panel::instance()->init();
 		} else {
 
 			// Load Frontend Class.
