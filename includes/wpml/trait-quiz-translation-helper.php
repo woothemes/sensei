@@ -65,12 +65,13 @@ trait Quiz_Translation_Helper {
 						$category = (int) get_post_meta( $question->ID, 'category', true );
 						$number   = (int) get_post_meta( $question->ID, 'number', true );
 
+						$this->create_translation_for_question_category( $category, $translation_lang );
 						$translated_category_id = $this->get_object_id( $category, 'question-category', false, $translation_lang );
 
 						update_post_meta( $translated_question_id, 'category', $translated_category_id );
 						update_post_meta( $translated_question_id, 'number', $number );
 
-						$this->create_translations_for_question_category( $category );
+						$this->create_translations_for_question_category_questions( $category );
 					}
 
 					update_post_meta( $translated_question_id, '_quiz_id', $translated_quiz_id );
@@ -83,11 +84,65 @@ trait Quiz_Translation_Helper {
 	}
 
 	/**
+	 * Create translation for the question category.
+	 *
+	 * Normally, we don't need to create translations for the question category.
+	 *
+	 * @param int    $original_category_id Original category ID.
+	 * @param string $translation_lang     Translation language.
+	 */
+	private function create_translation_for_question_category( $original_category_id, $translation_lang ) {
+		$category_translations = $this->get_element_translations( $original_category_id, 'tax_question-category' );
+		if ( isset( $category_translations[ $translation_lang ] ) ) {
+			return;
+		}
+
+		$details = $this->get_element_language_details( $original_category_id, 'question-category' );
+
+		$trid = $this->get_element_trid( $original_category_id, 'tax_question-category' );
+		if ( ! $trid ) {
+			$args = array(
+				'element_id'           => $original_category_id,
+				'element_type'         => 'tax_question-category',
+				'trid'                 => false,
+				'language_code'        => $details['language_code'],
+				'source_language_code' => null,
+			);
+			$this->set_element_language_details( $args );
+		}
+
+		$trid = $this->get_element_trid( $original_category_id, 'tax_question-category' );
+		if ( ! $trid ) {
+			return;
+		}
+
+		$existing_term = get_term( $original_category_id, 'question-category' );
+		$args          = array(
+			'slug'        => $existing_term->slug . '-' . $translation_lang,
+			'description' => $existing_term->description,
+		);
+
+		$new_term = wp_insert_term( $existing_term->name, 'question-category', $args );
+		if ( is_wp_error( $new_term ) ) {
+			return;
+		}
+
+		$args = array(
+			'element_id'           => $new_term['term_id'],
+			'element_type'         => 'tax_question-category',
+			'trid'                 => false,
+			'language_code'        => $translation_lang,
+			'source_language_code' => $details['language_code'],
+		);
+		$this->set_element_language_details( $args );
+	}
+
+	/**
 	 * Create translations for questions in the category.
 	 *
 	 * @param int $question_category_id Question category ID.
 	 */
-	private function create_translations_for_question_category( $question_category_id ) {
+	private function create_translations_for_question_category_questions( $question_category_id ) {
 		$args = array(
 			'post_type'        => 'question',
 			'posts_per_page'   => -1,
