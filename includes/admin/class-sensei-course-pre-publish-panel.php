@@ -101,6 +101,8 @@ class Sensei_Course_Pre_Publish_Panel {
 		}
 
 		if ( ! $is_main_publish_call ) {
+			// If it's not the main publish call, then it's the structure saving call that comes immediately after the main publish call.
+			// So we can remove the flag now, because after this iteraction, the whole publishing cycle is complete.
 			delete_post_meta( $course_id, $publishing_meta_key );
 		}
 
