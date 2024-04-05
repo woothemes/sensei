@@ -152,4 +152,38 @@ class Sensei_Sensei_Course_Pre_Publish_Panel_Test extends WP_UnitTestCase {
 		/* Assert */
 		$this->assertEquals( 1, get_post_meta( $this->course_id, '_sensei_course_publishing_started', true ) );
 	}
+
+	/**
+	 * When Course is switched to publish state, the flag is set.
+	 *
+	 *  @covers Sensei_Course_Pre_Publish_Panel::maybe_publish_lessons
+	 */
+	public function testMaybePublishLessons_WhenFirstPublished_OnlyTheSubsequentCallPublishesTheLessons() {
+		/* Arrange */
+		$this->login_as_admin();
+		update_post_meta( $this->course_id, 'sensei_course_publish_lessons', true );
+
+		// This call mimics the first publish call made by Gutenberg. The call to save the Course structure is not yet made. It's done after this call.
+		Sensei_Course_Pre_Publish_Panel::instance()->maybe_publish_lessons( $this->course_id, null, 'draft' );
+
+		// This mimics a new unsaved lesson that just became a saved one in draft state via the Course structure save call. This needs to get published in the next call.
+		$unsaved_to_draft_lesson_id = $this->factory->lesson->create(
+			[
+				'post_status' => 'publish',
+				'meta_input'  => [
+					'_lesson_course' => $this->course_id,
+				],
+			]
+		);
+
+		/* Act */
+		// Notice how the 'old_status' is 'publish' here. Because after publishing the post and the structure is saved, the old status is 'publish' for that Course,
+		// because the Course already got published in the previous call.
+		// Our Course publishing sequence from Gutenberg is like this:
+		// GB sends Publish Course call -> Then we send the structure saving call -> Then we send a Course update call.
+		Sensei_Course_Pre_Publish_Panel::instance()->maybe_publish_lessons( $this->course_id, null, 'publish' );
+
+		/* Assert */
+		$this->assertEquals( 'publish', get_post_status( $unsaved_to_draft_lesson_id ) );
+	}
 }
