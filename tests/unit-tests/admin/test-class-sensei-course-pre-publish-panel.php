@@ -64,7 +64,7 @@ class Sensei_Sensei_Course_Pre_Publish_Panel_Test extends WP_UnitTestCase {
 		update_post_meta( $this->course_id, 'sensei_course_publish_lessons', true );
 
 		/* Act */
-		Sensei_Course_Pre_Publish_Panel::instance()->maybe_publish_lessons( $this->course_id );
+		Sensei_Course_Pre_Publish_Panel::instance()->maybe_publish_lessons( $this->course_id, null, 'draft' );
 
 		/* Assert */
 		$this->assertEquals( 'draft', get_post_status( $this->lesson_id ) );
@@ -81,7 +81,7 @@ class Sensei_Sensei_Course_Pre_Publish_Panel_Test extends WP_UnitTestCase {
 		update_post_meta( $this->course_id, 'sensei_course_publish_lessons', false );
 
 		/* Act */
-		Sensei_Course_Pre_Publish_Panel::instance()->maybe_publish_lessons( $this->course_id );
+		Sensei_Course_Pre_Publish_Panel::instance()->maybe_publish_lessons( $this->course_id, null, 'draft' );
 
 		/* Assert */
 		$this->assertEquals( 'draft', get_post_status( $this->lesson_id ) );
@@ -98,7 +98,7 @@ class Sensei_Sensei_Course_Pre_Publish_Panel_Test extends WP_UnitTestCase {
 		update_post_meta( $this->course_id, 'sensei_course_publish_lessons', true );
 
 		/* Act */
-		Sensei_Course_Pre_Publish_Panel::instance()->maybe_publish_lessons( $this->course_id );
+		Sensei_Course_Pre_Publish_Panel::instance()->maybe_publish_lessons( $this->course_id, null, 'draft' );
 
 		/* Assert */
 		$this->assertEquals( 'publish', get_post_status( $this->lesson_id ) );
