@@ -95,6 +95,8 @@ class Sensei_Course_Pre_Publish_Panel {
 		$is_publishing_started = get_post_meta( $course_id, $publishing_meta_key, true );
 
 		if ( ! $is_main_publish_call && ! $is_publishing_started ) {
+			// If its not the "Publish" call and the flag is not set, then we don't need to publish lessons.
+			// Because it that case it's just a normal "Update" call.
 			return;
 		}
 
