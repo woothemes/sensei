@@ -198,7 +198,7 @@ class Sensei_Setup_Wizard {
 			// Only redirects for admin users.
 			|| ! current_user_can( 'manage_sensei' )
 			// Check if it's an admin screen that should redirect.
-			|| ! $this->should_current_page_display_wizard()
+			|| ! $this->should_current_page_redirect_to_wizard()
 		) {
 			return;
 		}
@@ -234,18 +234,39 @@ class Sensei_Setup_Wizard {
 	}
 
 	/**
-	 * Check if current screen is selected to display the wizard notice and
-	 * automatically open the wizard.
+	 * Check if current screen is selected to display the wizard notice.
 	 *
 	 * @return boolean
 	 */
-	private function should_current_page_display_wizard() {
-		$screen = get_current_screen();
+	private function should_current_page_display_wizard_notice() {
+		// Dashboard, plugins, and Sensei pages, except Sensei Home.
+		$screens_without_sensei_prefix = [
+			'dashboard',
+			'plugins',
+			'edit-sensei_message',
+			'edit-course',
+			'edit-course-category',
+			'admin_page_course-order',
+			'edit-module',
+			'admin_page_module-order',
+			'edit-lesson',
+			'edit-lesson-tag',
+			'admin_page_lesson-order',
+			'edit-question',
+			'question',
+			'edit-question-category',
+		];
 
-		if ( false !== strpos( $screen->id, 'sensei-lms_page_sensei' ) ) {
-			return true;
-		}
+		return $this->check_sensei_screen( $screens_without_sensei_prefix );
+	}
 
+	/**
+	 * Check if current screen is selected to redirect to the wizard.
+	 *
+	 * @return boolean
+	 */
+	private function should_current_page_redirect_to_wizard() {
+		// Dashboard, plugins, and Sensei pages.
 		$screens_without_sensei_prefix = [
 			'dashboard',
 			'plugins',
@@ -264,7 +285,26 @@ class Sensei_Setup_Wizard {
 			'edit-question-category',
 		];
 
-		return in_array( $screen->id, $screens_without_sensei_prefix, true );
+		return $this->check_sensei_screen( $screens_without_sensei_prefix );
+	}
+
+	/**
+	 * Check if current screen is a Sensei screen.
+	 * The default check verifies if the screen ID contains 'sensei-lms_page_sensei'.
+	 * For more screens to be checked, pass the IDs as an array.
+	 *
+	 * @param array $other_screens Other screens to check.
+	 *
+	 * @return boolean
+	 */
+	private function check_sensei_screen( $other_screens = [] ) {
+		$screen = get_current_screen();
+
+		if ( false !== strpos( $screen->id, 'sensei-lms_page_sensei' ) ) {
+			return true;
+		}
+
+		return in_array( $screen->id, $other_screens, true );
 	}
 
 	/**
@@ -274,7 +314,7 @@ class Sensei_Setup_Wizard {
 	 */
 	public function setup_wizard_notice() {
 		if (
-			! $this->should_current_page_display_wizard()
+			! $this->should_current_page_display_wizard_notice()
 			|| ! get_option( self::SUGGEST_SETUP_WIZARD_OPTION, 0 )
 			|| ! current_user_can( 'manage_sensei' )
 		) {
