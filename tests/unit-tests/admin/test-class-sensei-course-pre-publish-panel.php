@@ -154,7 +154,7 @@ class Sensei_Sensei_Course_Pre_Publish_Panel_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * When Course is switched to publish state, the flag is set.
+	 * In the first subsequent call, the lessons are published.
 	 *
 	 *  @covers Sensei_Course_Pre_Publish_Panel::maybe_publish_lessons
 	 */
@@ -169,7 +169,7 @@ class Sensei_Sensei_Course_Pre_Publish_Panel_Test extends WP_UnitTestCase {
 		// This mimics a new unsaved lesson that just became a saved one in draft state via the Course structure save call. This needs to get published in the next call.
 		$unsaved_to_draft_lesson_id = $this->factory->lesson->create(
 			[
-				'post_status' => 'publish',
+				'post_status' => 'draft',
 				'meta_input'  => [
 					'_lesson_course' => $this->course_id,
 				],
@@ -185,5 +185,58 @@ class Sensei_Sensei_Course_Pre_Publish_Panel_Test extends WP_UnitTestCase {
 
 		/* Assert */
 		$this->assertEquals( 'publish', get_post_status( $unsaved_to_draft_lesson_id ) );
+	}
+
+	/**
+	 * In the first subsequent call, the lessons are published, but not in the second or more subsequent calls.
+	 *
+	 *  @covers Sensei_Course_Pre_Publish_Panel::maybe_publish_lessons
+	 */
+	public function testMaybePublishLessons_AfterFirstPublishSequence_FartherSubsequentCallsDoNotPublishLessons() {
+		/* Arrange */
+		// Check the comments in the previous test for the explanation of the testing.
+		$this->login_as_admin();
+		update_post_meta( $this->course_id, 'sensei_course_publish_lessons', true );
+
+		Sensei_Course_Pre_Publish_Panel::instance()->maybe_publish_lessons( $this->course_id, null, 'draft' );
+
+		$unsaved_to_draft_lesson_id = $this->factory->lesson->create(
+			[
+				'post_status' => 'draft',
+				'meta_input'  => [
+					'_lesson_course' => $this->course_id,
+				],
+			]
+		);
+		Sensei_Course_Pre_Publish_Panel::instance()->maybe_publish_lessons( $this->course_id, null, 'publish' );
+
+		$unsaved_to_draft_lesson_id_2 = $this->factory->lesson->create(
+			[
+				'post_status' => 'draft',
+				'meta_input'  => [
+					'_lesson_course' => $this->course_id,
+				],
+			]
+		);
+		Sensei_Course_Pre_Publish_Panel::instance()->maybe_publish_lessons( $this->course_id, null, 'publish' );
+
+		$unsaved_to_draft_lesson_id_3 = $this->factory->lesson->create(
+			[
+				'post_status' => 'draft',
+				'meta_input'  => [
+					'_lesson_course' => $this->course_id,
+				],
+			]
+		);
+
+		/* Act */
+		// See comments in the previous test for the explanation of the 'old_status'.
+		Sensei_Course_Pre_Publish_Panel::instance()->maybe_publish_lessons( $this->course_id, null, 'publish' );
+
+		/* Assert */
+		$this->assertEquals( 'publish', get_post_status( $this->lesson_id ) );
+		$this->assertEquals( 'publish', get_post_status( $unsaved_to_draft_lesson_id ) );
+		$this->assertEquals( 'draft', get_post_status( $unsaved_to_draft_lesson_id_2 ) );
+		$this->assertEquals( 'draft', get_post_status( $unsaved_to_draft_lesson_id_3 ) );
 	}
 }
