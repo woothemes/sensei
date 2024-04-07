@@ -86,6 +86,8 @@ class Sensei_Settings extends Sensei_Settings_API {
 		/**
 		 * Filters the My Courses page ID.
 		 *
+		 * @hook sensei_settings_my_course_page_id
+		 *
 		 * @since $$next-version$$
 		 *
 		 * @param {int} $page_id The My Courses page ID.
