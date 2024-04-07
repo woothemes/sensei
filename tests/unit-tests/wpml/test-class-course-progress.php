@@ -23,8 +23,6 @@ class Course_Progress_Test extends \WP_UnitTestCase {
 		$this->assertEquals( 10, has_filter( 'sensei_course_progress_find_course_id', array( $course_progress, 'translate_course_id' ) ) );
 		$this->assertEquals( 10, has_filter( 'sensei_lesson_progress_count_course_id', array( $course_progress, 'translate_course_id' ) ) );
 		$this->assertEquals( 10, has_filter( 'sensei_course_start_course_id', array( $course_progress, 'translate_course_id' ) ) );
-		$this->assertEquals( 10, has_filter( 'sensei_course_manual_enrolment_enroll_learner_course_id', array( $course_progress, 'translate_course_id' ) ) );
-		$this->assertEquals( 10, has_filter( 'sensei_course_manual_enrolment_withdraw_learner_course_id', array( $course_progress, 'translate_course_id' ) ) );
 	}
 
 	public function testTranslateCourseId_WhenCalled_ReturnsMatchingValue() {

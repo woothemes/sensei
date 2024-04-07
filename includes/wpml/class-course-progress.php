@@ -60,10 +60,12 @@ class Course_Progress {
 
 		$enrolment_manager         = Sensei_Course_Enrolment_Manager::instance();
 		$manual_enrolment_provider = $enrolment_manager->get_manual_enrolment_provider();
-		$course_translations       = $this->get_element_translations( $course_id, 'post_course' );
-		foreach ( $course_translations as $course_translation ) {
-			$course_id = $course_translation->element_id;
-			$manual_enrolment_provider->enrol_learner( $user_id, $course_id );
+		if ( $manual_enrolment_provider ) {
+			$course_translations = $this->get_element_translations( $course_id, 'post_course' );
+			foreach ( $course_translations as $course_translation ) {
+				$course_id = $course_translation->element_id;
+				$manual_enrolment_provider->enrol_learner( $user_id, $course_id );
+			}
 		}
 
 		add_action( 'sensei_manual_enrolment_learner_enrolled', array( $this, 'enrol_learner' ), 10, 2 );
@@ -81,15 +83,17 @@ class Course_Progress {
 	 * @param int $course_id Course ID.
 	 */
 	public function withdraw_learner( $user_id, $course_id ) {
-		remove_action( 'sensei_manual_enrolment_learner_withdrawn', array( $this, 'withdraw_learner' ), 10, 2 );
+		remove_action( 'sensei_manual_enrolment_learner_withdrawn', array( $this, 'withdraw_learner' ) );
 		remove_filter( 'sensei_course_is_user_enrolled_course_id', array( $this, 'translate_course_id' ) );
 
 		$enrolment_manager         = Sensei_Course_Enrolment_Manager::instance();
 		$manual_enrolment_provider = $enrolment_manager->get_manual_enrolment_provider();
-		$course_translations       = $this->get_element_translations( $course_id, 'post_course' );
-		foreach ( $course_translations as $course_translation ) {
-			$course_id = $course_translation->element_id;
-			$manual_enrolment_provider->withdraw_learner( $user_id, $course_id );
+		if ( $manual_enrolment_provider ) {
+			$course_translations = $this->get_element_translations( $course_id, 'post_course' );
+			foreach ( $course_translations as $course_translation ) {
+				$course_id = $course_translation->element_id;
+				$manual_enrolment_provider->withdraw_learner( $user_id, $course_id );
+			}
 		}
 
 		add_action( 'sensei_manual_enrolment_learner_withdrawn', array( $this, 'withdraw_learner' ), 10, 2 );

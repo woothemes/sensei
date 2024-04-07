@@ -116,7 +116,11 @@ trait Quiz_Translation_Helper {
 		}
 
 		$existing_term = get_term( $original_category_id, 'question-category' );
-		$args          = array(
+		if ( ! $existing_term ) {
+			return;
+		}
+
+		$args = array(
 			'slug'        => $existing_term->slug . '-' . $translation_lang,
 			'description' => $existing_term->description,
 		);
