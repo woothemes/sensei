@@ -76,6 +76,27 @@ class Sensei_Settings extends Sensei_Settings_API {
 	}
 
 	/**
+	 * Get my courses page ID.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @return int
+	 */
+	public function get_my_courses_page_id() {
+		/**
+		 * Filters the My Courses page ID.
+		 *
+		 * @since $$next-version$$
+		 *
+		 * @param {int} $page_id The My Courses page ID.
+		 * @return {int} Filtered My Courses page ID.
+		 */
+		$page_id = apply_filters( 'sensei_settings_my_course_page_id', $this->get( 'my_course_page' ) );
+
+		return absint( $page_id );
+	}
+
+	/**
 	 * @since 1.9.0
 	 *
 	 * @param $setting

@@ -25,7 +25,7 @@ function is_sensei() {
 		$is_sensei = true;
 	} elseif ( is_object( $post ) && ! is_wp_error( $post ) ) {
 		$course_page_id           = intval( Sensei()->settings->settings['course_page'] );
-		$my_courses_page_id       = intval( Sensei()->settings->settings['my_course_page'] );
+		$my_courses_page_id       = Sensei()->settings->get_my_courses_page_id();
 		$course_completed_page_id = intval( Sensei()->settings->settings['course_completed_page'] );
 
 		if ( ! empty( $post->ID ) && in_array( $post->ID, [ $course_page_id, $my_courses_page_id, $course_completed_page_id ], true ) ) {
@@ -353,18 +353,18 @@ function sensei_user_registration_url( bool $return_wp_registration_url = true, 
 	 * @param {bool} $wp_register_link Whether to use the default WordPress registration link, default: false.
 	 * @return {bool} Filtered value.
 	 */
-	$wp_register_link = apply_filters( 'sensei_use_wp_register_link', false );
-	$registration_url = '';
-	$settings         = Sensei()->settings->get_settings();
+	$wp_register_link   = apply_filters( 'sensei_use_wp_register_link', false );
+	$registration_url   = '';
+	$my_courses_page_id = Sensei()->settings->get_my_courses_page_id();
 
-	if ( empty( $settings['my_course_page'] ) || $wp_register_link ) {
+	if ( empty( $my_courses_page_id) || $wp_register_link ) {
 		if ( ! $return_wp_registration_url ) {
 			return null;
 		}
 
 		$registration_url = wp_registration_url();
 	} else {
-		$registration_url = get_permalink( intval( $settings['my_course_page'] ) );
+		$registration_url = get_permalink( $my_courses_page_id );
 	}
 
 	if ( ! empty( $redirect ) ) {
@@ -401,7 +401,7 @@ function sensei_user_registration_url( bool $return_wp_registration_url = true, 
  */
 function sensei_user_login_url( string $redirect = '' ) {
 	$login_url          = '';
-	$my_courses_page_id = intval( Sensei()->settings->get( 'my_course_page' ) );
+	$my_courses_page_id = Sensei()->settings->get_my_courses_page_id();
 	$page               = get_post( $my_courses_page_id );
 
 	if ( $my_courses_page_id && isset( $page->ID ) && 'page' == get_post_type( $page->ID ) ) {

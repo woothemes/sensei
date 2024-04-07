@@ -393,6 +393,18 @@ class Sensei_Learner {
 			$course_ids = [ -1 ];
 		}
 
+		/**
+		 * Filters the course IDs for a learner's enrolled courses query by progress status.
+		 *
+		 * @hook sensei_learner_enrolled_courses_query_by_progress_status_course_ids
+		 *
+		 * @param {int[]}  $course_ids Course IDs.
+		 * @param {int}    $user_id    User ID.
+		 * @param {string} $type       Progress status type.
+		 * @return {int[]} Course IDs.
+		 */
+		$course_ids = apply_filters( 'sensei_learner_enrolled_courses_query_by_progress_status_course_ids', $course_ids, $user_id, $type );
+
 		$query_args['post__in'] = $course_ids;
 
 		return new WP_Query( $query_args );
@@ -429,10 +441,12 @@ class Sensei_Learner {
 		$query_args   = array_merge( $default_args, $base_query_args );
 		$learner_term = self::get_learner_term( $user_id );
 
+		$term_id = apply_filters( 'wpml_object_id', $learner_term->term_id, Sensei_PostTypes::LEARNER_TAXONOMY_NAME, true );
+
 		$query_args['post_type']   = 'course';
 		$query_args['tax_query'][] = [
 			'taxonomy'         => Sensei_PostTypes::LEARNER_TAXONOMY_NAME,
-			'terms'            => $learner_term->term_id,
+			'terms'            => $term_id,
 			'include_children' => false,
 		];
 
@@ -477,7 +491,8 @@ class Sensei_Learner {
 	 * @return int[]
 	 */
 	private function get_course_ids_by_progress_status( $user_id, $status ) {
-		$course_ids      = [];
+		$course_ids = array();
+
 		$course_statuses = Sensei_Utils::sensei_check_for_activity(
 			[
 				'user_id' => $user_id,

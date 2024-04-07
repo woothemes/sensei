@@ -333,7 +333,7 @@ class Sensei_Course_Component_Widget extends WP_Widget {
 			}
 
 			if ( 'activecourses' == esc_attr( $this->instance['component'] ) || 'completedcourses' == esc_attr( $this->instance['component'] ) ) {
-				$my_account_page_id = intval( Sensei()->settings->settings['my_course_page'] );
+				$my_account_page_id = Sensei()->settings->get_my_courses_page_id();
 				echo '<li class="my-account fix"><a href="' . esc_url( get_permalink( $my_account_page_id ) ) . '">'
 					 . esc_html__( 'My Courses', 'sensei-lms' )
 					 . '<span class="meta-nav"></span></a></li>';

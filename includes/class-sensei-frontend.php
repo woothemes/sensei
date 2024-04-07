@@ -323,7 +323,7 @@ class Sensei_Frontend {
 
 		if ( 'nav-menus.php' != $pagenow && ! defined( 'DOING_AJAX' ) && isset( $item->url ) && 'custom' == $item->type ) {
 			// Set up Sensei menu links.
-			$my_account_page_id = intval( Sensei()->settings->settings['my_course_page'] );
+			$my_account_page_id = Sensei()->settings->get_my_courses_page_id();
 			$course_page_url    = Sensei_Course::get_courses_page_url();
 			$lesson_archive_url = get_post_type_archive_link( 'lesson' );
 			$my_courses_url     = get_permalink( $my_account_page_id );

@@ -2925,7 +2925,7 @@ class Sensei_Course {
 			}
 		}
 		// for the my courses page
-		elseif ( isset( $post ) && is_page() && Sensei()->settings->get( 'my_course_page' ) == $post->ID ) {
+		elseif ( isset( $post ) && is_page() && Sensei()->settings->get_my_courses_page_id() == $post->ID ) {
 			/**
 			 * Filters number of courses per page on the my courses page as set in the settings.
 			 *
@@ -4587,18 +4587,15 @@ class Sensei_Course {
 			return;
 		}
 
-		$settings = Sensei()->settings->get_settings();
-
-		$completed_page_id = intval( $settings['course_completed_page'] ?? 0 );
-
+		$completed_page_id = intval( Sensei()->settings->get( 'course_completed_page' ) );
 		if ( $completed_page_id < 1 || get_the_ID() !== $completed_page_id ) {
 			return;
 		}
 
-		$my_courses_url = null;
-
-		if ( isset( $settings['my_course_page'] ) && 0 < intval( $settings['my_course_page'] ) ) {
-			$my_courses_url = get_permalink( $settings['my_course_page'] );
+		$my_courses_url     = null;
+		$my_courses_page_id = Sensei()->settings->get_my_courses_page_id();
+		if ( 0 < $my_courses_page_id ) {
+			$my_courses_url = get_permalink( $my_courses_page_id );
 		}
 
 		$redirect_to_url = $my_courses_url ?? home_url( '/wp-login.php' );

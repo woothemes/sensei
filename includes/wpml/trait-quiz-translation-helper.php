@@ -92,8 +92,7 @@ trait Quiz_Translation_Helper {
 	 * @param string $translation_lang     Translation language.
 	 */
 	private function create_translation_for_question_category( $original_category_id, $translation_lang ) {
-		$category_translations = $this->get_element_translations( $original_category_id, 'tax_question-category' );
-		if ( isset( $category_translations[ $translation_lang ] ) ) {
+		if ( $this->has_translation_in_language( $original_category_id, 'tax_question-category', $translation_lang ) ) {
 			return;
 		}
 
