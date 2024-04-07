@@ -357,7 +357,7 @@ function sensei_user_registration_url( bool $return_wp_registration_url = true, 
 	$registration_url   = '';
 	$my_courses_page_id = Sensei()->settings->get_my_courses_page_id();
 
-	if ( empty( $my_courses_page_id) || $wp_register_link ) {
+	if ( empty( $my_courses_page_id ) || $wp_register_link ) {
 		if ( ! $return_wp_registration_url ) {
 			return null;
 		}

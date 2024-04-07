@@ -584,7 +584,7 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 		return apply_filters( 'sensei_user_courses_filter_options', $filter_options );
 	}
 
-	/*
+	/**
 	 * Load the javascript for the toggle functionality
 	 *
 	 * @since 1.9.0

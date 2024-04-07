@@ -441,6 +441,7 @@ class Sensei_Learner {
 		$query_args   = array_merge( $default_args, $base_query_args );
 		$learner_term = self::get_learner_term( $user_id );
 
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 		$term_id = apply_filters( 'wpml_object_id', $learner_term->term_id, Sensei_PostTypes::LEARNER_TAXONOMY_NAME, true );
 
 		$query_args['post_type']   = 'course';
