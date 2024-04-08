@@ -172,8 +172,8 @@ class Sensei_Sensei_Course_Pre_Publish_Panel_Test extends WP_UnitTestCase {
 
 		/* Assert */
 		$meta_save_call_flag = get_post_meta( $this->course_id, '_sensei_course_publishing_started', true );
-		$this->assertEquals( 1, $meta_save_call_flag );
-		$this->assertEquals( 1, $publish_call_flag );
+		$this->assertEquals( 1, $meta_save_call_flag, 'The flag should not be removed when a meta save call is made.' );
+		$this->assertEquals( 1, $publish_call_flag, 'The flag should be set when the first publish call is made.' );
 
 		$_SERVER['REQUEST_URI'] = '';
 	}
@@ -259,9 +259,9 @@ class Sensei_Sensei_Course_Pre_Publish_Panel_Test extends WP_UnitTestCase {
 		Sensei_Course_Pre_Publish_Panel::instance()->maybe_publish_lessons( $this->course_id, null, 'publish' );
 
 		/* Assert */
-		$this->assertEquals( 'publish', get_post_status( $this->lesson_id ) );
-		$this->assertEquals( 'publish', get_post_status( $unsaved_to_draft_lesson_id ) );
-		$this->assertEquals( 'draft', get_post_status( $unsaved_to_draft_lesson_id_2 ) );
-		$this->assertEquals( 'draft', get_post_status( $unsaved_to_draft_lesson_id_3 ) );
+		$this->assertEquals( 'publish', get_post_status( $this->lesson_id ), 'The first lesson should be published, because it was already part of the Course before publishing.' );
+		$this->assertEquals( 'publish', get_post_status( $unsaved_to_draft_lesson_id ), 'The second lesson should be published, because it was added to the Course structure before second update call.' );
+		$this->assertEquals( 'draft', get_post_status( $unsaved_to_draft_lesson_id_2 ), 'The third lesson should not be published, because it was added to the Course structure after the second update call.' );
+		$this->assertEquals( 'draft', get_post_status( $unsaved_to_draft_lesson_id_3 ), 'The fourth lesson should not be published, because it was added to the Course structure after the second update call.' );
 	}
 }
