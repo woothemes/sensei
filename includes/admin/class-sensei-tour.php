@@ -187,7 +187,7 @@ class Sensei_Tour {
 	/**
 	 * Get the callback to enqueue the course or lesson tour.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.23.0
 	 *
 	 * @param string $post_type The post type.
 	 * @param string $handle    The script handle.

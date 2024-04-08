@@ -191,9 +191,9 @@ class Lesson_Actions_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test lesson actions block for a lesson with a pre-requisite lesson.
+	 * Test lesson actions block for a lesson with an unmet prerequisite.
 	 */
-	public function testHasPreRequisite() {
+	public function testHasPrerequisite() {
 		list( $lesson1, $course ) = $this->create_enrolled_lesson_with_quiz();
 		$lesson2                  = $this->factory->lesson->create_and_get(
 			[
@@ -212,9 +212,7 @@ class Lesson_Actions_Test extends WP_UnitTestCase {
 		$GLOBALS['post'] = $lesson2;
 		$block           = new Lesson_Actions();
 
-		// Check for disabled button.
-		$this->assertStringContainsString( ' disabled', $block->render(), 'Should render disabled button if lesson has a pre-requisite.' );
-		$this->assertStringContainsString( 'aria-disabled="true"', $block->render(), 'Should render disabled button if lesson has a pre-requisite.' );
+		$this->assertStringNotContainsString( 'Complete Lesson', $block->render(), 'Should not render button if lesson has an unmet prerequisite.' );
 	}
 
 	/**
