@@ -100,7 +100,10 @@ class Sensei_Course_Pre_Publish_Panel {
 			return;
 		}
 
-		if ( ! $is_main_publish_call ) {
+		$uri                  = isset( $_SERVER['REQUEST_URI'] ) ? esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
+		$is_metabox_save_call = strpos( $uri, 'meta-box-loader=1' ) > 0;
+
+		if ( ! $is_main_publish_call && ! $is_metabox_save_call ) {
 			// If it's not the main publish call, then it's the structure saving call that comes immediately after the main publish call.
 			// So we can remove the flag now, because after this iteraction, the whole publishing cycle is complete.
 			delete_post_meta( $course_id, $publishing_meta_key );
