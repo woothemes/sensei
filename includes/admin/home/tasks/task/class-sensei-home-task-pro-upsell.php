@@ -3,7 +3,7 @@
  * File containing the Sensei_Home_Task_Pro_Upsell class.
  *
  * @package sensei-lms
- * @since $$next-version$$
+ * @since 4.23.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Sensei_Home_Task_Pro_Upsell.
  *
- * @since $$next-version$$
+ * @since 4.23.0
  */
 class Sensei_Home_Task_Pro_Upsell implements Sensei_Home_Task {
 
