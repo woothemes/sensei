@@ -154,6 +154,31 @@ class Sensei_Sensei_Course_Pre_Publish_Panel_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * When request comes from metabox save call, the flag is not removed.
+	 *
+	 *  @covers Sensei_Course_Pre_Publish_Panel::maybe_publish_lessons
+	 */
+	public function testMaybePublishLessons_WhenCallIsFromMetaboxSave_DoesNotRemoveContinuationFlag() {
+		/* Arrange */
+		$this->login_as_admin();
+		update_post_meta( $this->course_id, 'sensei_course_publish_lessons', true );
+
+		Sensei_Course_Pre_Publish_Panel::instance()->maybe_publish_lessons( $this->course_id, null, 'draft' );
+		$publish_call_flag      = get_post_meta( $this->course_id, '_sensei_course_publishing_started', true );
+		$_SERVER['REQUEST_URI'] = 'example.com/test=1&meta-box-loader=1';
+
+		/* Act */
+		Sensei_Course_Pre_Publish_Panel::instance()->maybe_publish_lessons( $this->course_id, null, 'publish' );
+
+		/* Assert */
+		$meta_save_call_flag = get_post_meta( $this->course_id, '_sensei_course_publishing_started', true );
+		$this->assertEquals( 1, $meta_save_call_flag );
+		$this->assertEquals( 1, $publish_call_flag );
+
+		$_SERVER['REQUEST_URI'] = '';
+	}
+
+	/**
 	 * In the first subsequent call, the lessons are published.
 	 *
 	 *  @covers Sensei_Course_Pre_Publish_Panel::maybe_publish_lessons
