@@ -61,10 +61,7 @@ export default class PostType {
 	}
 
 	async goToPreview(): Promise< Page > {
-		await this.page
-			.getByRole( 'button', { name: 'Preview' } )
-			.first()
-			.click();
+		await this.page.locator( '.editor-preview-dropdown__toggle' ).click();
 
 		const [ previewPage ] = await Promise.all( [
 			this.page.waitForEvent( 'popup' ),
