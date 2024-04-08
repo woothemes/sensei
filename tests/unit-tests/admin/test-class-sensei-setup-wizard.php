@@ -12,6 +12,8 @@
  * @covers Sensei_Setup_Wizard
  */
 class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
+	use Sensei_Test_Redirect_Helpers;
+
 	/**
 	 * Set up before the class.
 	 */
@@ -238,22 +240,24 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 	public function testActivationRedirect_WhenRedirectOptionIsOne_CallsRedirect() {
 		// Arrange.
 		// Create and login as administrator.
-		$admin_id = $this->factory->user->create( array( 'role' => 'administrator' ) );
+		$expected_redirect = admin_url( 'admin.php?page=sensei_setup_wizard' );
+		$admin_id          = $this->factory->user->create( array( 'role' => 'administrator' ) );
+		$this->prevent_wp_redirect();
 		wp_set_current_user( $admin_id );
 		set_current_screen( 'dashboard' );
 
 		update_option( 'sensei_activation_redirect', 1 );
 
-		$setup_wizard_mock = $this->getMockBuilder( 'Sensei_Setup_Wizard' )
-			->setMethods( [ 'redirect_to_setup_wizard' ] )
-			->getMock();
+		// Act.
+		$redirect_location = '';
+		try {
+			Sensei()->setup_wizard->activation_redirect();
+		} catch ( Sensei_WP_Redirect_Exception $e ) {
+			$redirect_location = $e->getMessage();
+		}
 
 		// Assert.
-		$setup_wizard_mock->expects( $this->once() )
-			->method( 'redirect_to_setup_wizard' );
-
-		// Act.
-		$setup_wizard_mock->activation_redirect();
+		$this->assertSame( $expected_redirect, $redirect_location );
 	}
 
 	/*
@@ -263,21 +267,22 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 		// Arrange.
 		// Create and login as administrator.
 		$admin_id = $this->factory->user->create( array( 'role' => 'administrator' ) );
+		$this->prevent_wp_redirect();
 		wp_set_current_user( $admin_id );
 		set_current_screen( 'any_other' );
 
 		update_option( 'sensei_activation_redirect', 1 );
 
-		$setup_wizard_mock = $this->getMockBuilder( 'Sensei_Setup_Wizard' )
-			->setMethods( [ 'redirect_to_setup_wizard' ] )
-			->getMock();
+		// Act.
+		$redirect_location = '';
+		try {
+			Sensei()->setup_wizard->activation_redirect();
+		} catch ( Sensei_WP_Redirect_Exception $e ) {
+			$redirect_location = $e->getMessage();
+		}
 
 		// Assert.
-		$setup_wizard_mock->expects( $this->never() )
-			->method( 'redirect_to_setup_wizard' );
-
-		// Act.
-		$setup_wizard_mock->activation_redirect();
+		$this->assertEmpty( $redirect_location );
 	}
 
 	/**
@@ -287,20 +292,21 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 		// Arrange.
 		// Create and login as subscriber.
 		$subscriber_id = $this->factory->user->create( array( 'role' => 'subscriber' ) );
+		$this->prevent_wp_redirect();
 		wp_set_current_user( $subscriber_id );
 
 		update_option( 'sensei_activation_redirect', 1 );
 
-		$setup_wizard_mock = $this->getMockBuilder( 'Sensei_Setup_Wizard' )
-			->setMethods( [ 'redirect_to_setup_wizard' ] )
-			->getMock();
+		// Act.
+		$redirect_location = '';
+		try {
+			Sensei()->setup_wizard->activation_redirect();
+		} catch ( Sensei_WP_Redirect_Exception $e ) {
+			$redirect_location = $e->getMessage();
+		}
 
 		// Assert.
-		$setup_wizard_mock->expects( $this->never() )
-			->method( 'redirect_to_setup_wizard' );
-
-		// Act.
-		$setup_wizard_mock->activation_redirect();
+		$this->assertEmpty( $redirect_location );
 	}
 
 	/**
@@ -310,18 +316,19 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 		// Arrange.
 		// Create and login as administrator.
 		$admin_id = $this->factory->user->create( array( 'role' => 'administrator' ) );
+		$this->prevent_wp_redirect();
 		wp_set_current_user( $admin_id );
 
-		$setup_wizard_mock = $this->getMockBuilder( 'Sensei_Setup_Wizard' )
-			->setMethods( [ 'redirect_to_setup_wizard' ] )
-			->getMock();
+		// Act.
+		$redirect_location = '';
+		try {
+			Sensei()->setup_wizard->activation_redirect();
+		} catch ( Sensei_WP_Redirect_Exception $e ) {
+			$redirect_location = $e->getMessage();
+		}
 
 		// Assert.
-		$setup_wizard_mock->expects( $this->never() )
-			->method( 'redirect_to_setup_wizard' );
-
-		// Act.
-		$setup_wizard_mock->activation_redirect();
+		$this->assertEmpty( $redirect_location );
 	}
 
 	/**
