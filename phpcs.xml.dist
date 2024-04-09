@@ -81,4 +81,13 @@
 		<exclude-pattern>**/views/*</exclude-pattern>
 		<exclude-pattern>tests/bootstrap.php</exclude-pattern>
 	</rule>
+
+	<rule ref="WordPress.WP.Capabilities">
+		<properties>
+			<property name="custom_capabilities" type="array">
+				<element value="manage_sensei"/>
+			</property>
+		</properties>
+	</rule>
+
 </ruleset>

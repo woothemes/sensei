@@ -99,6 +99,7 @@ class Sensei_Data_Cleaner {
 		'sensei_home_tasks_dismissed',
 		'sensei_home_tasks_list_is_completed',
 		'sensei-home-task-pro-upsell',
+		'sensei_activation_redirect',
 	);
 
 	/**
@@ -233,7 +234,7 @@ class Sensei_Data_Cleaner {
 		'sensei_answers_feedback_[0-9]+_[0-9]+',
 		'quiz_grades_[0-9]+_[0-9]+',
 		'sensei_comment_counts_[0-9]+',
-		'sensei_activation_redirect',
+		'sensei_activation_redirect', // @deprecated $$next-version$$ Changed to an option.
 		'sensei_woocommerce_plugin_information',
 		'sensei_extensions_.*',
 		'sensei_background_job_.*',
