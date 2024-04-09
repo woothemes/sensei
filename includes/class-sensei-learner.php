@@ -393,18 +393,6 @@ class Sensei_Learner {
 			$course_ids = [ -1 ];
 		}
 
-		/**
-		 * Filters the course IDs for a learner's enrolled courses query by progress status.
-		 *
-		 * @hook sensei_learner_enrolled_courses_query_by_progress_status_course_ids
-		 *
-		 * @param {int[]}  $course_ids Course IDs.
-		 * @param {int}    $user_id    User ID.
-		 * @param {string} $type       Progress status type.
-		 * @return {int[]} Course IDs.
-		 */
-		$course_ids = apply_filters( 'sensei_learner_enrolled_courses_query_by_progress_status_course_ids', $course_ids, $user_id, $type );
-
 		$query_args['post__in'] = $course_ids;
 
 		return new WP_Query( $query_args );
@@ -441,8 +429,17 @@ class Sensei_Learner {
 		$query_args   = array_merge( $default_args, $base_query_args );
 		$learner_term = self::get_learner_term( $user_id );
 
-		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
-		$term_id = apply_filters( 'wpml_object_id', $learner_term->term_id, Sensei_PostTypes::LEARNER_TAXONOMY_NAME, true );
+		/**
+		 * Filters the term ID used in the query to fetch a learner's enrolled courses.
+		 *
+		 * @hook sensei_learner_get_enrolled_courses_query_args_term_id
+		 *
+		 * @since $$next-version$$
+		 *
+		 * @param {int} $term_id The term ID.
+		 * @return {int} The term ID.
+		 */
+		$term_id = apply_filters( 'sensei_learner_get_enrolled_courses_query_args_term_id', $learner_term->term_id );
 
 		$query_args['post_type']   = 'course';
 		$query_args['tax_query'][] = [
@@ -511,6 +508,18 @@ class Sensei_Learner {
 		foreach ( $course_statuses as $status ) {
 			$course_ids[] = intval( $status->comment_post_ID );
 		}
+
+		/**
+		 * Filters the course IDs when getting them for a user by progress status.
+		 *
+		 * @hook sensei_learner_get_course_ids_by_progress_status_course_ids
+		 *
+		 * @param {int[]}  $course_ids Course IDs.
+		 * @param {int}    $user_id    User ID.
+		 * @param {string} $status     Progress status.
+		 * @return {int[]} Course IDs.
+		 */
+		$course_ids = apply_filters( 'sensei_learner_get_course_ids_by_progress_status_course_ids', $course_ids, $user_id, $status );
 
 		return $course_ids;
 	}

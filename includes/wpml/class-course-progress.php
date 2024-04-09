@@ -8,6 +8,7 @@
 namespace Sensei\WPML;
 
 use Sensei_Course_Enrolment_Manager;
+use Sensei_PostTypes;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -38,7 +39,8 @@ class Course_Progress {
 		add_filter( 'sensei_course_progress_find_course_id', array( $this, 'translate_course_id' ) );
 		add_filter( 'sensei_lesson_progress_count_course_id', array( $this, 'translate_course_id' ) );
 		add_filter( 'sensei_course_start_course_id', array( $this, 'translate_course_id' ) );
-		add_filter( 'sensei_learner_enrolled_courses_query_by_progress_status_course_ids', array( $this, 'translate_course_ids' ) );
+		add_filter( 'sensei_learner_get_course_ids_by_progress_status_course_ids', array( $this, 'translate_course_ids' ) );
+		add_filter( 'sensei_learner_get_enrolled_courses_query_args_term_id', array( $this, 'translate_term_id' ) );
 
 		add_action( 'sensei_manual_enrolment_learner_enrolled', array( $this, 'enrol_learner' ), 10, 2 );
 		add_action( 'sensei_manual_enrolment_learner_withdrawn', array( $this, 'withdraw_learner' ), 10, 2 );
@@ -135,5 +137,20 @@ class Course_Progress {
 		}
 
 		return $course_ids;
+	}
+
+	/**
+	 * Translate term ID.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @internal
+	 *
+	 * @param int $term_id Term ID.
+	 * @return int
+	 */
+	public function translate_term_id( $term_id ): int {
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+		return (int) apply_filters( 'wpml_object_id', $term_id, Sensei_PostTypes::LEARNER_TAXONOMY_NAME, true );
 	}
 }
