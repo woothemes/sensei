@@ -98,14 +98,14 @@ class Sensei_Course_Manual_Enrolment_Provider extends Sensei_Course_Enrolment_St
 	public function enrol_learner( $user_id, $course_id ) {
 
 		// Check if they are already manually enrolled.
-		if ( $this->is_enrolled( $user_id, $filtered_course_id ) ) {
+		if ( $this->is_enrolled( $user_id, $course_id ) ) {
 			return true;
 		}
 
-		$this->set_enrolment_status( $user_id, $filtered_course_id, true );
-		Sensei_Course_Enrolment_Manager::trigger_course_enrolment_check( $user_id, $filtered_course_id );
+		$this->set_enrolment_status( $user_id, $course_id, true );
+		Sensei_Course_Enrolment_Manager::trigger_course_enrolment_check( $user_id, $course_id );
 
-		if ( ! $this->is_enrolled( $user_id, $filtered_course_id ) ) {
+		if ( ! $this->is_enrolled( $user_id, $course_id ) ) {
 			return false;
 		}
 
@@ -133,14 +133,14 @@ class Sensei_Course_Manual_Enrolment_Provider extends Sensei_Course_Enrolment_St
 	public function withdraw_learner( $user_id, $course_id ) {
 
 		// Check if they aren't manually enrolled.
-		if ( ! $this->is_enrolled( $user_id, $filtered_course_id ) ) {
+		if ( ! $this->is_enrolled( $user_id, $course_id ) ) {
 			return true;
 		}
 
-		$this->set_enrolment_status( $user_id, $filtered_course_id, false );
-		Sensei_Course_Enrolment_Manager::trigger_course_enrolment_check( $user_id, $filtered_course_id );
+		$this->set_enrolment_status( $user_id, $course_id, false );
+		Sensei_Course_Enrolment_Manager::trigger_course_enrolment_check( $user_id, $course_id );
 
-		if ( $this->is_enrolled( $user_id, $filtered_course_id ) ) {
+		if ( $this->is_enrolled( $user_id, $course_id ) ) {
 			return false;
 		}
 
