@@ -460,15 +460,15 @@
       <code>isset( $this-&gt;local_plugin_updates )</code>
     </RedundantPropertyInitializationCheck>
   </file>
-  <file src="includes/admin/home/tasks/task/class-sensei-home-task-sell-course-with-woocommerce.php">
+  <file src="includes/admin/home/tasks/task/class-sensei-home-task-pro-upsell.php">
     <MissingFile occurrences="1">
       <code>require_once ABSPATH . 'wp-admin/includes/plugin.php'</code>
     </MissingFile>
   </file>
-  <file src="includes/admin/home/tasks/task/class-sensei-home-task-pro-upsell.php">
-	<MissingFile occurrences="1">
-	  <code>require_once ABSPATH . 'wp-admin/includes/plugin.php'</code>
-	</MissingFile>
+  <file src="includes/admin/home/tasks/task/class-sensei-home-task-sell-course-with-woocommerce.php">
+    <MissingFile occurrences="1">
+      <code>require_once ABSPATH . 'wp-admin/includes/plugin.php'</code>
+    </MissingFile>
   </file>
   <file src="includes/admin/tools/class-sensei-tool-enrolment-debug.php">
     <FalsableReturnStatement occurrences="1">
@@ -5830,6 +5830,24 @@
     <PossiblyInvalidPropertyFetch occurrences="1">
       <code>$question-&gt;ID</code>
     </PossiblyInvalidPropertyFetch>
+    <InvalidArgument occurrences="2">
+      <code>$args</code>
+      <code>$args</code>
+    </InvalidArgument>
+    <PossiblyInvalidPropertyFetch occurrences="4">
+      <code>$existing_term-&gt;description</code>
+      <code>$existing_term-&gt;name</code>
+      <code>$existing_term-&gt;slug</code>
+      <code>$question-&gt;ID</code>
+    </PossiblyInvalidPropertyFetch>
+    <UndefinedMethod occurrences="1">
+      <code>$new_term</code>
+    </UndefinedMethod>
+    <UndefinedPropertyFetch occurrences="3">
+      <code>$existing_term-&gt;description</code>
+      <code>$existing_term-&gt;name</code>
+      <code>$existing_term-&gt;slug</code>
+    </UndefinedPropertyFetch>
   </file>
   <file src="includes/wpml/trait-wpml-api.php">
     <MissingFile occurrences="1">

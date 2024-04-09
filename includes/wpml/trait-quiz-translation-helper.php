@@ -66,6 +66,7 @@ trait Quiz_Translation_Helper {
 						$number   = (int) get_post_meta( $question->ID, 'number', true );
 
 						$this->create_translation_for_question_category( $category, $translation_lang );
+
 						$translated_category_id = $this->get_object_id( $category, 'question-category', false, $translation_lang );
 
 						update_post_meta( $translated_question_id, 'category', $translated_category_id );
@@ -117,7 +118,11 @@ trait Quiz_Translation_Helper {
 		}
 
 		$existing_term = get_term( $original_category_id, 'question-category' );
-		$args          = array(
+		if ( ! $existing_term ) {
+			return;
+		}
+
+		$args = array(
 			'slug'        => $existing_term->slug . '-' . $translation_lang,
 			'description' => $existing_term->description,
 		);

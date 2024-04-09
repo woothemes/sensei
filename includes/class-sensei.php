@@ -1166,7 +1166,7 @@ class Sensei_Main {
 			// Do not enable the wizard for sites that are created with the onboarding flow.
 			if ( 'sensei' !== get_option( 'site_intent' ) ) {
 
-				set_transient( 'sensei_activation_redirect', 1, 30 );
+				update_option( 'sensei_activation_redirect', 1 );
 				update_option( Sensei_Setup_Wizard::SUGGEST_SETUP_WIZARD_OPTION, 1 );
 
 			} else {

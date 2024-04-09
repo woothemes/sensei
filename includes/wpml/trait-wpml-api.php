@@ -29,6 +29,7 @@ trait WPML_API {
 
 		return is_plugin_active( 'sitepress-multilingual-cms/sitepress.php' );
 	}
+
 	/**
 	 * Get element translation ID.
 	 *
