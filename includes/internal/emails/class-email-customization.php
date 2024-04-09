@@ -108,6 +108,12 @@ class Email_Customization {
 	 */
 	public $repository;
 
+	/**
+	 * Email_User_Settings instance.
+	 *
+	 * @var Email_User_Settings
+	 */
+	public $profile_settings;
 
 	/**
 	 * Email_Repository instance.
@@ -140,6 +146,7 @@ class Email_Customization {
 		$seeder                     = new Email_Seeder( new Email_Seeder_Data(), $this->repository, $template_repository );
 		$this->recreate_emails_tool = new Recreate_Emails_Tool( $seeder, \Sensei_Tools::instance() );
 		$this->page_template        = new Email_Page_Template( $template_repository );
+		$this->profile_settings     = new Email_User_Settings( $this->repository );
 	}
 
 	/**
@@ -186,6 +193,7 @@ class Email_Customization {
 		$this->patterns->init();
 		$this->preview->init();
 		$this->page_template->init();
+		$this->profile_settings->init();
 
 		add_action( 'init', [ $this, 'disable_legacy_emails' ] );
 	}
