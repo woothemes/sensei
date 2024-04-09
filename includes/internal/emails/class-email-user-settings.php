@@ -7,7 +7,6 @@
 
 namespace Sensei\Internal\Emails;
 
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -55,7 +54,7 @@ class Email_User_Settings {
 	 * @internal
 	 */
 	public function add_opt_in_out_setting_fields_in_user_profile_page() {
-		$show_teacher_emails = current_user_can( 'manage_options' ) || \Sensei_Teacher::is_a_teacher( get_current_user_id() );
+		$show_teacher_emails = current_user_can( 'manage_sensei_grades' ) || \Sensei_Teacher::is_a_teacher( get_current_user_id() );
 		$all_emails          = $this->repository->get_all( $show_teacher_emails ? null : 'student', -1 );
 		$list_table_instance = new Email_List_Table( $this->repository );
 		$available_emails    = array_filter(
