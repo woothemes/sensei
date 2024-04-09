@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>Filter: sensei_count_statuses_args - Sensei LMS Hook Docs</title>
+	<title>Filter: sensei_course_completed_page_id - Sensei LMS Hook Docs</title>
 
 	<script src="scripts/prettify/prettify.js"> </script>
 	<script src="scripts/prettify/lang-css.js"> </script>
@@ -21,7 +21,7 @@
 <div id="main">
 
 	
-	<h1 class="page-title">Filter: sensei_count_statuses_args</h1>
+	<h1 class="page-title">Filter: sensei_course_completed_page_id</h1>
 	
 
 	
@@ -43,15 +43,14 @@
 
     
 
-    <h4 class="name" id="sensei_count_statuses_args">apply_filters( 'sensei_count_statuses_args', <span class="signature">$args )</span><span class="type-signature"> &rarr; {array}</span></h4>
+    <h4 class="name" id="sensei_course_completed_page_id">apply_filters( 'sensei_course_completed_page_id', <span class="signature">$page_id )</span><span class="type-signature"> &rarr; {int}</span></h4>
 
     
 
 
 
 <div class="description">
-    <p>Filter fires inside Sensei_Grading::count_statuses</p>
-<p>Alter the post_in array to determine which posts the comment query should be limited to.</p>
+    <p>Filter the course completed page ID.</p>
 </div>
 
 
@@ -85,13 +84,13 @@
 
         <tr>
             
-                <td class="name"><code>$args</code></td>
+                <td class="name"><code>$page_id</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">array</span>
+<span class="param-type">int</span>
 
 
             
@@ -101,7 +100,7 @@
 
             
 
-            <td class="description last"><p>Array of arguments for the query.</p></td>
+            <td class="description last"><p>Course completed page ID.</p></td>
         </tr>
 
     
@@ -119,7 +118,7 @@
 
     
     <dt class="tag-since">Since:</dt>
-    <dd class="tag-since"><ul class="dummy"><li>1.8.0</li></ul></dd>
+    <dd class="tag-since"><ul class="dummy"><li>$$next-version$$</li></ul></dd>
     
 
     
@@ -145,7 +144,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="includes_class-sensei-grading.php.html">includes/class-sensei-grading.php</a>, <a href="includes_class-sensei-grading.php.html#line450">line 450</a>
+        <a href="includes_class-sensei-course.php.html">includes/class-sensei-course.php</a>, <a href="includes_class-sensei-course.php.html#line3345">line 3345</a>
     </li></ul></dd>
     
 
@@ -172,7 +171,7 @@
 
         
 <div class="param-desc">
-    <p>Filtered arguments.</p>
+    <p>Course completed page ID.</p>
 </div>
 
 
@@ -183,7 +182,7 @@
     </dt>
     <dd>
         
-<span class="param-type">array</span>
+<span class="param-type">int</span>
 
 
     </dd>
