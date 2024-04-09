@@ -1,0 +1,4 @@
+Significance: minor
+Type: changed
+
+Open Setup Wizard when navigating through relevant pages on admin if it didn't open yet
