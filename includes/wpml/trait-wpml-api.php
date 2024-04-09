@@ -17,6 +17,18 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @package Sensei\WPML
  */
 trait WPML_API {
+	/**
+	 * Check if WPML is active.
+	 *
+	 * @return bool
+	 */
+	public function is_wpml_active() {
+		if ( ! function_exists( 'is_plugin_active' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/plugin.php';
+		}
+
+		return is_plugin_active( 'sitepress-multilingual-cms/sitepress.php' );
+	}
 
 	/**
 	 * Get element translation ID.

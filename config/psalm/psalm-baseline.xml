@@ -5824,6 +5824,12 @@
     </DocblockTypeContradiction>
   </file>
   <file src="includes/wpml/trait-quiz-translation-helper.php">
+    <InvalidArgument occurrences="1">
+      <code>$args</code>
+    </InvalidArgument>
+    <PossiblyInvalidPropertyFetch occurrences="1">
+      <code>$question-&gt;ID</code>
+    </PossiblyInvalidPropertyFetch>
     <InvalidArgument occurrences="2">
       <code>$args</code>
       <code>$args</code>
@@ -5842,6 +5848,11 @@
       <code>$existing_term-&gt;name</code>
       <code>$existing_term-&gt;slug</code>
     </UndefinedPropertyFetch>
+  </file>
+  <file src="includes/wpml/trait-wpml-api.php">
+    <MissingFile occurrences="1">
+      <code>require_once ABSPATH . 'wp-admin/includes/plugin.php'</code>
+    </MissingFile>
   </file>
   <file src="sensei-lms.php">
     <InvalidGlobal occurrences="1">
