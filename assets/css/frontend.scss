@@ -260,15 +260,6 @@ a.sensei-certificate-link {
 }
 
 .lesson {
-	.wp-block-sensei-lms-lesson-properties {
-		font-size: .9em;
-		font-style: italic;
-
-		&__separator {
-			margin: 0 0.5em 0;
-		}
-	}
-
 	.lesson-meta {
 		margin: 0 0 1.618em;
 	}
@@ -1139,6 +1130,7 @@ section.entry span.course-lesson-progress {
 	}
 }
 
+/* Buttons */
 .course-container, .course, .lesson, .quiz:not(.quiz-blocks):not(.sensei-course-theme) {
 	a.button, a.button:visited,
 	a.comment-reply-link,
