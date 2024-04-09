@@ -66,10 +66,12 @@ trait Quiz_Translation_Helper {
 						$number   = (int) get_post_meta( $question->ID, 'number', true );
 
 						$this->create_translation_for_question_category( $category, $translation_lang );
+
 						$translated_category_id = $this->get_object_id( $category, 'question-category', false, $translation_lang );
 
 						update_post_meta( $translated_question_id, 'category', $translated_category_id );
 						update_post_meta( $translated_question_id, 'number', $number );
+
 
 						$this->create_translations_for_question_category_questions( $category );
 					}

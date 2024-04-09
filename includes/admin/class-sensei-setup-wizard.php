@@ -93,7 +93,7 @@ class Sensei_Setup_Wizard {
 			add_action( 'current_screen', [ $this, 'remove_notices_from_setup_wizard' ] );
 			add_action( 'admin_notices', [ $this, 'setup_wizard_notice' ] );
 			add_action( 'admin_init', [ $this, 'skip_setup_wizard' ] );
-			add_action( 'admin_init', [ $this, 'activation_redirect' ] );
+			add_action( 'current_screen', [ $this, 'activation_redirect' ] );
 			add_action( 'current_screen', [ $this, 'add_setup_wizard_help_tab' ] );
 
 			// Maybe prevent WooCommerce help tab.
@@ -189,17 +189,19 @@ class Sensei_Setup_Wizard {
 	public function activation_redirect() {
 		if (
 			// Check if activation redirect is needed.
-			! get_transient( 'sensei_activation_redirect' )
+			! get_option( 'sensei_activation_redirect', false )
 			// Test whether the context of execution comes from async action scheduler.
 			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Arguments used for comparison.
 			|| ( isset( $_REQUEST['action'] ) && 'as_async_request_queue_runner' === $_REQUEST['action'] )
 			// On these pages, or during these events, postpone the redirect.
-			|| wp_doing_ajax() || wp_doing_cron() || is_network_admin() || ! current_user_can( 'manage_sensei' )
+			|| wp_doing_ajax() || wp_doing_cron() || is_network_admin()
+			// Only redirects for admin users.
+			|| ! current_user_can( 'manage_sensei' )
+			// Check if it's an admin screen that should redirect.
+			|| ! $this->should_current_page_redirect_to_wizard()
 		) {
 			return;
 		}
-
-		delete_transient( 'sensei_activation_redirect' );
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Arguments used for comparison.
 		if ( isset( $_GET['activate-multi'] ) ) {
@@ -221,6 +223,8 @@ class Sensei_Setup_Wizard {
 	 * Render app container for setup wizard.
 	 */
 	public function render_wizard_page() {
+		// Delete option when the Setup Wizard is loaded, so it doesn't redirect anymore.
+		delete_option( 'sensei_activation_redirect' );
 
 		?>
 		<div id="sensei-setup-wizard-page" class="sensei-setup-wizard">
@@ -234,13 +238,8 @@ class Sensei_Setup_Wizard {
 	 *
 	 * @return boolean
 	 */
-	private function should_current_page_display_wizard() {
-		$screen = get_current_screen();
-
-		if ( false !== strpos( $screen->id, 'sensei-lms_page_sensei' ) ) {
-			return true;
-		}
-
+	private function should_current_page_display_wizard_notice() {
+		// Dashboard, plugins, and Sensei pages, except Sensei Home.
 		$screens_without_sensei_prefix = [
 			'dashboard',
 			'plugins',
@@ -258,7 +257,54 @@ class Sensei_Setup_Wizard {
 			'edit-question-category',
 		];
 
-		return in_array( $screen->id, $screens_without_sensei_prefix, true );
+		return $this->check_sensei_screen( $screens_without_sensei_prefix );
+	}
+
+	/**
+	 * Check if current screen is selected to redirect to the wizard.
+	 *
+	 * @return boolean
+	 */
+	private function should_current_page_redirect_to_wizard() {
+		// Dashboard, plugins, and Sensei pages.
+		$screens_without_sensei_prefix = [
+			'dashboard',
+			'plugins',
+			'toplevel_page_sensei',
+			'edit-sensei_message',
+			'edit-course',
+			'edit-course-category',
+			'admin_page_course-order',
+			'edit-module',
+			'admin_page_module-order',
+			'edit-lesson',
+			'edit-lesson-tag',
+			'admin_page_lesson-order',
+			'edit-question',
+			'question',
+			'edit-question-category',
+		];
+
+		return $this->check_sensei_screen( $screens_without_sensei_prefix );
+	}
+
+	/**
+	 * Check if current screen is a Sensei screen.
+	 * The default check verifies if the screen ID contains 'sensei-lms_page_sensei'.
+	 * For more screens to be checked, pass the IDs as an array.
+	 *
+	 * @param array $other_screens Other screens to check.
+	 *
+	 * @return boolean
+	 */
+	private function check_sensei_screen( $other_screens = [] ) {
+		$screen = get_current_screen();
+
+		if ( false !== strpos( $screen->id, 'sensei-lms_page_sensei' ) ) {
+			return true;
+		}
+
+		return in_array( $screen->id, $other_screens, true );
 	}
 
 	/**
@@ -268,7 +314,7 @@ class Sensei_Setup_Wizard {
 	 */
 	public function setup_wizard_notice() {
 		if (
-			! $this->should_current_page_display_wizard()
+			! $this->should_current_page_display_wizard_notice()
 			|| ! get_option( self::SUGGEST_SETUP_WIZARD_OPTION, 0 )
 			|| ! current_user_can( 'manage_sensei' )
 		) {
@@ -446,7 +492,7 @@ class Sensei_Setup_Wizard {
 	 *
 	 * @return stdClass Extension with status.
 	 */
-	private function get_feature_with_status( $extension, $installing_plugins, $selected_plugins ) {
+	private function get_feature_with_status( $extension, $installing_plugins, $selected_plugins ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed -- Called by a public deprecated method.
 		_deprecated_function( __METHOD__, '4.8.0' );
 
 		$installing_key = array_search( $extension->product_slug, wp_list_pluck( $installing_plugins, 'product_slug' ), true );
@@ -496,7 +542,7 @@ class Sensei_Setup_Wizard {
 		}
 
 		$extensions = array_map(
-			function( $extension ) use ( $installing_plugins, $selected_plugins ) {
+			function ( $extension ) use ( $installing_plugins, $selected_plugins ) {
 				// Decode price.
 				if ( isset( $extension->price ) && 0 !== $extension->price ) {
 					$extension->price = html_entity_decode( $extension->price );
@@ -545,7 +591,7 @@ class Sensei_Setup_Wizard {
 
 		if (
 			isset( $_SERVER['HTTP_REFERER'] ) &&
-			0 === strpos( $_SERVER['HTTP_REFERER'], 'https://woocommerce.com/checkout' ) && // phpcs:ignore sanitization ok.
+			0 === strpos( $_SERVER['HTTP_REFERER'], 'https://woocommerce.com/checkout' ) && // phpcs:ignore -- sanitization ok.
 			false !== get_transient( $wccom_installing_transient )
 		) {
 			delete_transient( $wccom_installing_transient );

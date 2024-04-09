@@ -12,6 +12,8 @@
  * @covers Sensei_Setup_Wizard
  */
 class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
+	use Sensei_Test_Redirect_Helpers;
+
 	/**
 	 * Set up before the class.
 	 */
@@ -58,14 +60,16 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 	/**
 	 * Testing the setup wizard class to make sure it is loaded.
 	 */
-	public function testClassInstance() {
+	public function testClassInstance_Always_Exists() {
+		// Assert.
 		$this->assertTrue( class_exists( 'Sensei_Setup_Wizard' ), 'Sensei Setup Wizard class does not exist' );
 	}
 
 	/**
 	 * Test setup wizard notice in dashboard.
 	 */
-	public function testSetupWizardNoticeInDashboard() {
+	public function testSetupWizardNotice_WhenSuggestSetupWizardOptionIsOneAndScreenIsDashboard_DisplaysNotice() {
+		// Arrange.
 		// Create and login as admin.
 		$admin_id = $this->factory->user->create( array( 'role' => 'administrator' ) );
 		wp_set_current_user( $admin_id );
@@ -73,19 +77,22 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 		set_current_screen( 'dashboard' );
 		update_option( \Sensei_Setup_Wizard::SUGGEST_SETUP_WIZARD_OPTION, 1 );
 
+		// Act.
 		ob_start();
 		Sensei()->setup_wizard->setup_wizard_notice();
 		$html = ob_get_clean();
 
 		$pos_setup_button = strpos( $html, 'Run the Setup Wizard' );
 
+		// Assert.
 		$this->assertNotFalse( $pos_setup_button, 'Should return the notice HTML' );
 	}
 
 	/**
 	 * Test setup wizard notice in screen with Sensei prefix.
 	 */
-	public function testSetupWizardNoticeInSenseiScreen() {
+	public function testSetupWizardNotice_WhenSuggestSetupWizardOptionIsOneAndScreenIsSenseiPage_DisplaysNotice() {
+		// Arrange.
 		// Create and login as admin.
 		$admin_id = $this->factory->user->create( array( 'role' => 'administrator' ) );
 		wp_set_current_user( $admin_id );
@@ -93,19 +100,22 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 		set_current_screen( 'sensei-lms_page_sensei_test' );
 		update_option( \Sensei_Setup_Wizard::SUGGEST_SETUP_WIZARD_OPTION, 1 );
 
+		// Act.
 		ob_start();
 		Sensei()->setup_wizard->setup_wizard_notice();
 		$html = ob_get_clean();
 
 		$pos_setup_button = strpos( $html, 'Run the Setup Wizard' );
 
+		// Assert.
 		$this->assertNotFalse( $pos_setup_button, 'Should return the notice HTML' );
 	}
 
 	/**
 	 * Test setup wizard notice in no Sensei screen.
 	 */
-	public function testSetupWizardNoticeInOtherScreen() {
+	public function testSetupWizardNotice_WhenInOtherScreen_DoesNotDisplayNotice() {
+		// Arrange.
 		// Create and login as admin.
 		$admin_id = $this->factory->user->create( array( 'role' => 'administrator' ) );
 		wp_set_current_user( $admin_id );
@@ -113,17 +123,20 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 		set_current_screen( 'other' );
 		update_option( \Sensei_Setup_Wizard::SUGGEST_SETUP_WIZARD_OPTION, 1 );
 
+		// Act.
 		ob_start();
 		Sensei()->setup_wizard->setup_wizard_notice();
 		$html = ob_get_clean();
 
+		// Assert.
 		$this->assertEmpty( $html, 'Should return empty string' );
 	}
 
 	/**
 	 * Test setup wizard notice with suggest option as 0.
 	 */
-	public function testSetupWizardNoticeSuggestOptionAsZero() {
+	public function testSetupWizardNotice_WhenSuggestOptionIsZero_DoesNotDisplayNotice() {
+		// Arrange.
 		// Create and login as admin.
 		$admin_id = $this->factory->user->create( array( 'role' => 'administrator' ) );
 		wp_set_current_user( $admin_id );
@@ -131,52 +144,61 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 		set_current_screen( 'dashboard' );
 		update_option( \Sensei_Setup_Wizard::SUGGEST_SETUP_WIZARD_OPTION, 0 );
 
+		// Act.
 		ob_start();
 		Sensei()->setup_wizard->setup_wizard_notice();
 		$html = ob_get_clean();
 
+		// Assert.
 		$this->assertEmpty( $html, 'Should return empty string' );
 	}
 
 	/**
 	 * Test setup wizard notice with suggest option empty.
 	 */
-	public function testSetupWizardNoticeSuggestOptionEmpty() {
+	public function testSetupWizardNotice_WhenSuggestOptionIsEmpty_DoesNotDisplayNotice() {
+		// Arrange.
 		// Create and login as admin.
 		$admin_id = $this->factory->user->create( array( 'role' => 'administrator' ) );
 		wp_set_current_user( $admin_id );
 
 		set_current_screen( 'dashboard' );
 
+		// Act.
 		ob_start();
 		Sensei()->setup_wizard->setup_wizard_notice();
 		$html = ob_get_clean();
 
+		// Assert.
 		$this->assertEmpty( $html, 'Should return empty string' );
 	}
 
 	/**
 	 * Test setup wizard notice for no admin user.
 	 */
-	public function testSetupWizardNoticeNoAdmin() {
+	public function testSetupWizardNotice_WhenUserIsNoAdmin_DoesNotDisplayNotice() {
+		// Arrange.
 		// Create and login as teacher.
 		$teacher_id = $this->factory->user->create( array( 'role' => 'teacher' ) );
 		wp_set_current_user( $teacher_id );
 
 		set_current_screen( 'dashboard' );
-		update_option( \Sensei_Setup_Wizard::SUGGEST_SETUP_WIZARD_OPTION, 0 );
+		update_option( \Sensei_Setup_Wizard::SUGGEST_SETUP_WIZARD_OPTION, 1 );
 
+		// Act.
 		ob_start();
 		Sensei()->setup_wizard->setup_wizard_notice();
 		$html = ob_get_clean();
 
+		// Assert.
 		$this->assertEmpty( $html, 'Should return empty string' );
 	}
 
 	/**
 	 * Test skip setup wizard.
 	 */
-	public function testSkipSetupWizard() {
+	public function testSkipSetupWizard_WhenArgumentsAreSet_UpdatesOptionToZero() {
+		// Arrange.
 		// Create and login as admin.
 		$admin_id = $this->factory->user->create( array( 'role' => 'administrator' ) );
 		wp_set_current_user( $admin_id );
@@ -184,16 +206,19 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 		$_GET['sensei_skip_setup_wizard'] = '1';
 		$_GET['_wpnonce']                 = wp_create_nonce( 'sensei_skip_setup_wizard' );
 
+		// Act.
 		Sensei()->setup_wizard->skip_setup_wizard();
 		$option_value = get_option( \Sensei_Setup_Wizard::SUGGEST_SETUP_WIZARD_OPTION, false );
 
+		// Assert.
 		$this->assertEquals( '0', $option_value, 'Should update option to 0' );
 	}
 
 	/**
 	 * Test skip setup wizard.
 	 */
-	public function testSkipSetupWizardNoAdmin() {
+	public function testSkipSetupWizard_WhenUserIsNoAdmin_DoesNotUpdateOption() {
+		// Arrange.
 		// Create and login as teacher.
 		$teacher_id = $this->factory->user->create( array( 'role' => 'teacher' ) );
 		wp_set_current_user( $teacher_id );
@@ -201,80 +226,133 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 		$_GET['sensei_skip_setup_wizard'] = '1';
 		$_GET['_wpnonce']                 = wp_create_nonce( 'sensei_skip_setup_wizard' );
 
+		// Act.
 		Sensei()->setup_wizard->skip_setup_wizard();
 		$option_value = get_option( \Sensei_Setup_Wizard::SUGGEST_SETUP_WIZARD_OPTION, false );
 
+		// Assert.
 		$this->assertFalse( $option_value, 'Should not update option' );
 	}
 
 	/*
 	 * Testing if activation redirect works properly.
 	 */
-	public function testActivationRedirect() {
+	public function testActivationRedirect_WhenRedirectOptionIsOne_CallsRedirect() {
+		// Arrange.
+		// Create and login as administrator.
+		$expected_redirect = admin_url( 'admin.php?page=sensei_setup_wizard' );
+		$admin_id          = $this->factory->user->create( array( 'role' => 'administrator' ) );
+		$this->prevent_wp_redirect();
+		wp_set_current_user( $admin_id );
+		set_current_screen( 'dashboard' );
+
+		update_option( 'sensei_activation_redirect', 1 );
+
+		// Act.
+		$redirect_location = '';
+		try {
+			Sensei()->setup_wizard->activation_redirect();
+		} catch ( Sensei_WP_Redirect_Exception $e ) {
+			$redirect_location = $e->getMessage();
+		}
+
+		// Assert.
+		$this->assertSame( $expected_redirect, $redirect_location );
+	}
+
+	/*
+	 * Testing if activation doesn't redirect for no Sensei screens.
+	 */
+	public function testActivationRedirect_WhenInAPageNotRelatedToSensei_DoesNotCallRedirect() {
+		// Arrange.
 		// Create and login as administrator.
 		$admin_id = $this->factory->user->create( array( 'role' => 'administrator' ) );
+		$this->prevent_wp_redirect();
 		wp_set_current_user( $admin_id );
+		set_current_screen( 'any_other' );
 
-		set_transient( 'sensei_activation_redirect', 1, 30 );
+		update_option( 'sensei_activation_redirect', 1 );
 
-		$setup_wizard_mock = $this->getMockBuilder( 'Sensei_Setup_Wizard' )
-			->setMethods( [ 'redirect_to_setup_wizard' ] )
-			->getMock();
+		// Act.
+		$redirect_location = '';
+		try {
+			Sensei()->setup_wizard->activation_redirect();
+		} catch ( Sensei_WP_Redirect_Exception $e ) {
+			$redirect_location = $e->getMessage();
+		}
 
-		$setup_wizard_mock->expects( $this->once() )
-			->method( 'redirect_to_setup_wizard' );
-
-		$setup_wizard_mock->activation_redirect();
-
-		$this->assertFalse( get_transient( 'sensei_activation_redirect' ), 'Transient should be removed' );
+		// Assert.
+		$this->assertEmpty( $redirect_location );
 	}
 
 	/**
 	 * Testing if activation doesn't redirect for no admin user.
 	 */
-	public function testActivationRedirectNoAdmin() {
+	public function testActivationRedirect_WhenUserIsNoAdmin_DoesNotCallRedirect() {
+		// Arrange.
 		// Create and login as subscriber.
 		$subscriber_id = $this->factory->user->create( array( 'role' => 'subscriber' ) );
+		$this->prevent_wp_redirect();
 		wp_set_current_user( $subscriber_id );
 
-		set_transient( 'sensei_activation_redirect', 1, 30 );
+		update_option( 'sensei_activation_redirect', 1 );
 
-		$setup_wizard_mock = $this->getMockBuilder( 'Sensei_Setup_Wizard' )
-			->setMethods( [ 'redirect_to_setup_wizard' ] )
-			->getMock();
+		// Act.
+		$redirect_location = '';
+		try {
+			Sensei()->setup_wizard->activation_redirect();
+		} catch ( Sensei_WP_Redirect_Exception $e ) {
+			$redirect_location = $e->getMessage();
+		}
 
-		$setup_wizard_mock->expects( $this->never() )
-			->method( 'redirect_to_setup_wizard' );
-
-		$setup_wizard_mock->activation_redirect();
-
-		$this->assertNotFalse( get_transient( 'sensei_activation_redirect' ), 'Transient should not be removed' );
+		// Assert.
+		$this->assertEmpty( $redirect_location );
 	}
 
 	/**
-	 * Testing if activation doesn't redirect when transient is not defined.
+	 * Testing if activation doesn't redirect when option does not exist.
 	 */
-	public function testActivationRedirectWithoutTransient() {
+	public function testActivationRedirect_WhenRedirectOptionDoesNotExist_DoesNotCallRedirect() {
+		// Arrange.
 		// Create and login as administrator.
 		$admin_id = $this->factory->user->create( array( 'role' => 'administrator' ) );
+		$this->prevent_wp_redirect();
 		wp_set_current_user( $admin_id );
 
-		$setup_wizard_mock = $this->getMockBuilder( 'Sensei_Setup_Wizard' )
-			->setMethods( [ 'redirect_to_setup_wizard' ] )
-			->getMock();
+		// Act.
+		$redirect_location = '';
+		try {
+			Sensei()->setup_wizard->activation_redirect();
+		} catch ( Sensei_WP_Redirect_Exception $e ) {
+			$redirect_location = $e->getMessage();
+		}
 
-		$setup_wizard_mock->expects( $this->never() )
-			->method( 'redirect_to_setup_wizard' );
+		// Assert.
+		$this->assertEmpty( $redirect_location );
+	}
 
-		$setup_wizard_mock->activation_redirect();
+	/**
+	 * Testing if redirect option is cleared on setup wizard rendering.
+	 */
+	public function testRenderWizardPage_WhenRendered_ClearsRedirectOption() {
+		// Arrange.
+		update_option( 'sensei_activation_redirect', 1 );
+
+		// Act.
+		Sensei()->setup_wizard->render_wizard_page();
+
+		// Assert.
+		$this->assertFalse( get_option( 'sensei_activation_redirect', false ) );
 	}
 
 	/**
 	 * Test if WooCommerce help tab is being prevented in the Sensei pages.
 	 */
-	public function testShouldEnableWooCommerceHelpTab() {
+	public function testWooCommerceHelpTab_WhenOnCoursePage_ShouldNotPreventTab() {
+		// Arrange.
 		$_GET['post_type'] = 'course';
 
+		// Act & Assert.
 		$this->assertFalse(
 			Sensei()->setup_wizard->should_enable_woocommerce_help_tab( true ),
 			'Should not allow WooCommerce help tab for course post type'
@@ -284,9 +362,11 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 	/**
 	 * Test if WooCommerce help tab is being untouched in no Sensei pages.
 	 */
-	public function testShouldEnableWooCommerceHelpTabNoSenseiPage() {
+	public function testWooCommerceHelpTab_WhenOnNoSenseiPage_ShouldNotChangeValue() {
+		// Arrange.
 		$_GET['post_type'] = 'woocommerce';
 
+		// Act & Assert.
 		$this->assertTrue(
 			Sensei()->setup_wizard->should_enable_woocommerce_help_tab( true ),
 			'Should not touch WooCommerce help tab for no Sensei pages'
@@ -296,7 +376,8 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 	/**
 	 * Test add setup wizard help tab to edit course screen.
 	 */
-	public function testAddSetupWizardHelpTab() {
+	public function testAddSetupWizardHelpTab_WhenInEditCourse_ShouldAddTab() {
+		// Arrange.
 		// Create and login as administrator.
 		$admin_id = $this->factory->user->create( array( 'role' => 'administrator' ) );
 		wp_set_current_user( $admin_id );
@@ -305,16 +386,20 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 		$screen = get_current_screen();
 
 		$screen->remove_help_tab( 'sensei_lms_setup_wizard_tab' );
+
+		// Act.
 		Sensei()->setup_wizard->add_setup_wizard_help_tab( $screen );
 		$created_tab = $screen->get_help_tab( 'sensei_lms_setup_wizard_tab' );
 
+		// Assert.
 		$this->assertNotNull( $created_tab, 'Should create the setup wizard tab to edit course screens.' );
 	}
 
 	/**
 	 * Test add setup wizard help tab in non edit course screens.
 	 */
-	public function testAddSetupWizardHelpTabNonEditCourseScreen() {
+	public function testAddSetupWizardHelpTab_WhenNotInEditCourse_ShouldNotAddTab() {
+		// Arrange.
 		// Create and login as administrator.
 		$admin_id = $this->factory->user->create( array( 'role' => 'administrator' ) );
 		wp_set_current_user( $admin_id );
@@ -323,16 +408,20 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 		$screen = get_current_screen();
 
 		$screen->remove_help_tab( 'sensei_lms_setup_wizard_tab' );
+
+		// Act.
 		Sensei()->setup_wizard->add_setup_wizard_help_tab( $screen );
 		$created_tab = $screen->get_help_tab( 'sensei_lms_setup_wizard_tab' );
 
+		// Assert.
 		$this->assertNull( $created_tab, 'Should not create the setup wizard tab to non edit course screens.' );
 	}
 
 	/**
 	 * Test add setup wizard help tab for no admin user.
 	 */
-	public function testAddSetupWizardHelpTabNoAdmin() {
+	public function testAddSetupWizardHelpTab_WhenUserIsNoAdmin_ShouldNotAddTab() {
+		// Arrange.
 		// Create and login as teacher.
 		$teacher_id = $this->factory->user->create( array( 'role' => 'teacher' ) );
 		wp_set_current_user( $teacher_id );
@@ -341,9 +430,12 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 		$screen = get_current_screen();
 
 		$screen->remove_help_tab( 'sensei_lms_setup_wizard_tab' );
+
+		// Act.
 		Sensei()->setup_wizard->add_setup_wizard_help_tab( $screen );
 		$created_tab = $screen->get_help_tab( 'sensei_lms_setup_wizard_tab' );
 
+		// Assert.
 		$this->assertNull( $created_tab, 'Should not create the setup wizard tab to no admin user.' );
 	}
 
