@@ -29,14 +29,27 @@ class Lesson_Translation_Test extends \WP_UnitTestCase {
 
 	public function testUpdateLessonTranslationsOnLessonTranslationCreated_WhenCalled_CreatesLessonTranslations() {
 		/* Arrange. */
+		$question_category   = $this->factory->question_category->create_and_get();
 		$course_with_lessons = $this->factory->get_course_with_lessons(
 			array(
-				'lesson_count'   => 1,
-				'question_count' => 3,
+				'lesson_count'            => 1,
+				'question_count'          => 3,
+				'multiple_question_count' => 1,
+				'multiple_question_args'  => array(
+					'question_category_id' => $question_category->term_id,
+				),
 			)
 		);
-		$new_course_id       = $this->factory->course->create();
-		$new_lesson_id       = $this->factory->lesson->create();
+		$this->factory->question->create_many(
+			3,
+			array(
+				'quiz_id'           => $course_with_lessons['quiz_ids'][0],
+				'question_category' => $question_category->term_id,
+			)
+		);
+
+		$new_course_id = $this->factory->course->create();
+		$new_lesson_id = $this->factory->lesson->create();
 
 		$lesson_translation = new Lesson_Translation();
 
@@ -95,6 +108,7 @@ class Lesson_Translation_Test extends \WP_UnitTestCase {
 		remove_action( 'wpml_admin_make_post_duplicates', $admin_make_post_duplicates_acton );
 		remove_filter( 'wpml_post_duplicates', $post_duplicates_filter );
 
-		$this->assertSame( 4, $created_duplicates );
+		// 1 lesson, 3 questions, 1 multiple question, 3 questions inside the multiple question.
+		$this->assertSame( 8, $created_duplicates );
 	}
 }
