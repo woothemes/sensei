@@ -257,6 +257,21 @@ class Email_User_Settings_Test extends \WP_UnitTestCase {
 		$this->assertFalse( $should_send_email );
 		delete_user_meta( $user->ID, 'sensei_email_unsubscribed_test_email' );
 	}
+
+	public function testShouldSendEmailToUser_WhenUserMetaIsNotSet_ReturnsSameValueAsCalledWith() {
+		/* Arrange. */
+		$this->login_as_admin();
+		$user = wp_get_current_user();
+
+		/* Act. */
+		$should_send_email_called_true  = $this->instance->should_send_email_to_user( true, $user->user_email, '', '', 'test_email' );
+		$should_send_email_called_false = $this->instance->should_send_email_to_user( false, $user->user_email, '', '', 'test_email' );
+
+		/* Assert. */
+		$this->assertTrue( $should_send_email_called_true, 'Should return true when called with true' );
+		$this->assertFalse( $should_send_email_called_false, 'Should return false when called with false' );
+	}
+
 	private function get_email_setting_output( $user ) {
 		ob_start();
 		$this->instance->maybe_add_email_settings( $user );
