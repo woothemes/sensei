@@ -429,10 +429,22 @@ class Sensei_Learner {
 		$query_args   = array_merge( $default_args, $base_query_args );
 		$learner_term = self::get_learner_term( $user_id );
 
+		/**
+		 * Filters the term ID used in the query to fetch a learner's enrolled courses.
+		 *
+		 * @hook sensei_learner_get_enrolled_courses_query_args_term_id
+		 *
+		 * @since $$next-version$$
+		 *
+		 * @param {int} $term_id The term ID.
+		 * @return {int} The term ID.
+		 */
+		$term_id = apply_filters( 'sensei_learner_get_enrolled_courses_query_args_term_id', $learner_term->term_id );
+
 		$query_args['post_type']   = 'course';
 		$query_args['tax_query'][] = [
 			'taxonomy'         => Sensei_PostTypes::LEARNER_TAXONOMY_NAME,
-			'terms'            => $learner_term->term_id,
+			'terms'            => $term_id,
 			'include_children' => false,
 		];
 
@@ -477,7 +489,8 @@ class Sensei_Learner {
 	 * @return int[]
 	 */
 	private function get_course_ids_by_progress_status( $user_id, $status ) {
-		$course_ids      = [];
+		$course_ids = array();
+
 		$course_statuses = Sensei_Utils::sensei_check_for_activity(
 			[
 				'user_id' => $user_id,
@@ -495,6 +508,18 @@ class Sensei_Learner {
 		foreach ( $course_statuses as $status ) {
 			$course_ids[] = intval( $status->comment_post_ID );
 		}
+
+		/**
+		 * Filters the course IDs when getting them for a user by progress status.
+		 *
+		 * @hook sensei_learner_get_course_ids_by_progress_status_course_ids
+		 *
+		 * @param {int[]}  $course_ids Course IDs.
+		 * @param {int}    $user_id    User ID.
+		 * @param {string} $status     Progress status.
+		 * @return {int[]} Course IDs.
+		 */
+		$course_ids = apply_filters( 'sensei_learner_get_course_ids_by_progress_status_course_ids', $course_ids, $user_id, $status );
 
 		return $course_ids;
 	}
