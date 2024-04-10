@@ -69,7 +69,30 @@ class Sensei_Course_Pre_Publish_Panel {
 	 * @param string  $old_status Old post status.
 	 */
 	public function maybe_publish_lessons( $course_id, $post, $old_status ) {
+		/**
+		 * When Saving/Publishing a Course from the Course editor, usually three primary network calls are made from the Gutenberg editor serially -
+		 *
+		 * 1. The first call is initiated automatically by GB the moment we click the Publish/Update button, it saves the whole block `markup` of the course, but doesn't save the structure of the course, so no lessons or modules.
+		 * 2. After first call is successful, Sensei explicitly makes a second call to save the structure of the course, i.e. the lessons and modules.
+		 * 3. After the second call is successful, Sensei triggers the Post save call again, similar to the first call.
+		 *
+		 * When we click on the Publish button for a new Course containing new unsaved lessons, the first call (1) publishes the Draft course, new lessons are not saved yet.
+		 * So if we try to find lessons under this Course at this point with this `publish_course` hook, we'll only get existing lessons, not the new ones.
+		 *
+		 * The second call (2) saves the new lessons and modules of the course. This is not a Post save/publish call, so it doesn't trigger the `publish_course` hook.
+		 *
+		 * When the second call is successful, Sensei triggers the Post save call again, which invokes this `publish_course`. By this time, the new lessons are saved and we can find and publish them.
+		 * An important point is `publish_course` hook is invoked even when 'Update' is clicked on an already published course. So before publishing the lessons using this hook, we need to check if the course is being published or just being updated.
+		 */
 		if ( ! current_user_can( 'publish_post', $course_id ) ) {
+			return;
+		}
+
+		// In parallel to the 3 calls mentioned above, GB also initiates some calls to save metabox data, they also trigger this hook. But we don't want to process anything for them.
+		$uri                  = isset( $_SERVER['REQUEST_URI'] ) ? esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
+		$is_metabox_save_call = strpos( $uri, 'meta-box-loader=1' ) > 0;
+
+		if ( $is_metabox_save_call ) {
 			return;
 		}
 
@@ -81,31 +104,24 @@ class Sensei_Course_Pre_Publish_Panel {
 
 		$publishing_meta_key = '_sensei_course_publishing_started';
 
-		// Even if the course is already published, each subsequent updates also triggers this hook anyway
-		// which caused the bug https://github.com/Automattic/sensei/issues/7555.
-		// So we need to check if it's an actual publish call.
+		// This is how we can determine if the current call is the main publish call or not. This should be true when call (1) is made to publish the course.
 		$is_main_publish_call = 'publish' !== $old_status;
 
 		if ( $is_main_publish_call ) {
-			// This is the first call made, it's not the structure saving call, so the added/updated lessons are not yet saved at this point.
-			// So we set the flag to publish lessons on the next call, which is made after the structure is saved.
+			// If it's the main publish call, we set this flag to use in the call (3) which will come later to determine if the call is made as part of the publishing sequence or just a normal update sequence.
 			update_post_meta( $course_id, $publishing_meta_key, true );
+			// We don't return early here, because we still need to publish the lessons, in case we are publishing a course with existing draft lessons.
 		}
 
 		$is_publishing_started = get_post_meta( $course_id, $publishing_meta_key, true );
 
 		if ( ! $is_main_publish_call && ! $is_publishing_started ) {
-			// If its not the "Publish" call and the flag is not set, then we don't need to publish lessons.
-			// Because it that case it's just a normal "Update" call.
+			// If it's not the main publish call and the flag is not set, then it's just an update call sequence, We don't publish anything in normal update sequence, so we return early.
 			return;
 		}
 
-		$uri                  = isset( $_SERVER['REQUEST_URI'] ) ? esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
-		$is_metabox_save_call = strpos( $uri, 'meta-box-loader=1' ) > 0;
-
-		if ( ! $is_main_publish_call && ! $is_metabox_save_call ) {
-			// If it's not the main publish call, then it's the structure saving call that comes immediately after the main publish call.
-			// So we can remove the flag now, because after this iteraction, the whole publishing cycle is complete.
+		if ( ! $is_main_publish_call ) {
+			// If it has reached here, this means it is call (3), end of the sequence has been reached by the Publishing cycle. So we just delete the flag.
 			delete_post_meta( $course_id, $publishing_meta_key );
 		}
 
