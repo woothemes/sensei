@@ -44,10 +44,16 @@ class Email_User_Settings {
 	 * @internal
 	 */
 	public function init() {
+		// Show the opt-in/out email settings in the user profile page.
 		add_action( 'show_user_profile', [ $this, 'add_opt_in_out_email_setting_fields_in_user_profile_page' ] );
 		add_action( 'edit_user_profile', [ $this, 'add_opt_in_out_email_setting_fields_in_user_profile_page' ] );
+
+		// Save the user email opt-in/out settings.
 		add_action( 'personal_options_update', [ $this, 'save_user_email_opt_in_out_settings' ] );
 		add_action( 'edit_user_profile_update', [ $this, 'save_user_email_opt_in_out_settings' ] );
+
+		// Filter to determine if an email should be sent to a user.
+		add_filter( 'sensei_send_emails', [ $this, 'should_send_email_to_user' ], 10, 5 );
 	}
 
 	/**
@@ -147,5 +153,25 @@ class Email_User_Settings {
 
 		return $available_emails;
 	}
-}
 
+	/**
+	 * Check if an email should be sent to a user.
+	 *
+	 * @param bool   $should_send Whether the email should be sent.
+	 * @param string $user_email  The user email.
+	 * @param string $subject     The email subject.
+	 * @param string $message      The email message.
+	 * @param string $identifier   The email identifier.
+	 *
+	 * @return bool
+	 */
+	public function should_send_email_to_user( $should_send, $user_email, $subject, $message, $identifier ) {
+		$user_id = email_exists( $user_email );
+
+		if ( false === $user_id ) {
+			return $should_send;
+		}
+
+		return ! ( 'yes' === get_user_meta( $user_id, 'sensei_email_unsubscribed_' . $identifier, true ) );
+	}
+}
