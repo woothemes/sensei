@@ -157,6 +157,34 @@ class Email_User_Settings_Test extends \WP_UnitTestCase {
 		}
 	}
 
+	public function testMaybeAddEmailSettings_WhenEmailIsUnsubsribed_RendersCheckboxAsUnchecked() {
+		/* Arrange. */
+		$this->login_as_student();
+		$student_emails = $this->repository->get_all( 'student', -1 );
+		$user           = wp_get_current_user();
+
+		$available_email_identifiers = [];
+
+		foreach ( $student_emails->items as $email ) {
+			if ( ! $this->list_table->is_email_available( $email ) ) {
+				continue;
+			}
+
+			$identifier                    = get_post_meta( $email->ID, '_sensei_email_identifier', true );
+			$available_email_identifiers[] = $identifier;
+		}
+
+		update_user_meta( $user->ID, 'sensei_email_unsubscribed_' . $available_email_identifiers[0], 'yes' );
+
+		/* Act. */
+		$output = $this->get_email_setting_output( $user );
+
+		/* Assert. */
+		$this->assertStringContainsString( '<input name="sensei-email-subscriptions[]" type="checkbox" value="' . $available_email_identifiers[0] . '" >', $output );
+		$this->assertStringContainsString( '<input name="sensei-email-subscriptions[]" type="checkbox" value="' . $available_email_identifiers[1] . '"  checked=\'checked\'>', $output );
+		delete_user_meta( $user->ID, 'sensei_email_unsubscribed_' . $available_email_identifiers[0] );
+	}
+
 	private function get_email_setting_output( $user ) {
 		ob_start();
 		$this->instance->maybe_add_email_settings( $user );
