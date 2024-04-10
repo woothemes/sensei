@@ -243,6 +243,20 @@ class Email_User_Settings_Test extends \WP_UnitTestCase {
 		unset( $_POST['sensei-email-subscriptions'] );
 	}
 
+	public function testShouldSendEmailToUser_WhenUserMetaIsSet_ReturnsFalse() {
+		/* Arrange. */
+		$this->login_as_admin();
+		$user = wp_get_current_user();
+
+		update_user_meta( $user->ID, 'sensei_email_unsubscribed_test_email', 'yes' );
+
+		/* Act. */
+		$should_send_email = $this->instance->should_send_email_to_user( true, $user->user_email, '', '', 'test_email' );
+
+		/* Assert. */
+		$this->assertFalse( $should_send_email );
+		delete_user_meta( $user->ID, 'sensei_email_unsubscribed_test_email' );
+	}
 	private function get_email_setting_output( $user ) {
 		ob_start();
 		$this->instance->maybe_add_email_settings( $user );
