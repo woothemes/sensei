@@ -101,6 +101,10 @@ class Email_User_Settings {
 	public function add_opt_in_out_email_setting_fields_in_user_profile_page( $profile_user ) {
 		$user_emails = $this->get_emails_for_user( $profile_user->ID );
 
+		if ( empty( $user_emails ) ) {
+			return;
+		}
+
 		?>
 			<h3><?php esc_html_e( 'Sensei Email Subscriptions', 'sensei-lms' ); ?></h3>
 
