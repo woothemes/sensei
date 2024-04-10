@@ -21,17 +21,17 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @internal
  */
 class Lesson_Translation {
-
 	use Lesson_Translation_Helper;
 	use Quiz_Translation_Helper;
 	use Question_Translation_Helper;
+	use WPML_API;
 
 	/**
 	 * Init hooks.
 	 */
 	public function init() {
 		// Update lesson properties on lesson translation created in UI.
-		add_action( 'wpml_pro_translation_completed', array( $this, 'update_lesson_translations_on_lesson_translation_created' ), 10, 1 );
+		add_action( 'wpml_pro_translation_completed', array( $this, 'update_lesson_translations_on_lesson_translation_created' ) );
 	}
 
 	/**
@@ -48,16 +48,7 @@ class Lesson_Translation {
 			return;
 		}
 
-		$details = (array) apply_filters(
-			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
-			'wpml_element_language_details',
-			null,
-			array(
-				'element_id'   => $new_lesson_id,
-				'element_type' => 'lesson',
-			)
-		);
-
+		$details = $this->get_element_language_details( $new_lesson_id, 'lesson' );
 		if ( empty( $details ) ) {
 			return;
 		}
@@ -66,8 +57,7 @@ class Lesson_Translation {
 			return;
 		}
 
-		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
-		$master_lesson_id = (int) apply_filters( 'wpml_object_id', $new_lesson_id, 'lesson', false, $details['source_language_code'] );
+		$master_lesson_id = $this->get_object_id( $new_lesson_id, 'lesson', false, $details['source_language_code'] );
 		if ( empty( $master_lesson_id ) || $master_lesson_id === $new_lesson_id ) {
 			return;
 		}

@@ -652,14 +652,9 @@ class Sensei_Messages {
 			return;
 		}
 
-		$settings = Sensei()->settings->get_settings();
-		if ( isset( $settings['my_course_page'] )
-			&& 0 < intval( $settings['my_course_page'] ) ) {
-
-			$my_courses_page_id = $settings['my_course_page'];
-
+		$my_courses_page_id = Sensei()->settings->get_my_courses_page_id();
+		if ( 0 < $my_courses_page_id ) {
 			$my_courses_url = get_permalink( $my_courses_page_id );
-
 		}
 
 		if ( is_single() && is_singular( $this->post_type )

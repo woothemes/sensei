@@ -1,0 +1,4 @@
+Significance: patch
+Type: added
+
+Add a setting to disable Sensei slugs translation for better compatibility with WPML.

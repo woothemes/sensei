@@ -82,10 +82,11 @@
 		<exclude-pattern>tests/bootstrap.php</exclude-pattern>
 	</rule>
 	<rule ref="WordPress.WP.Capabilities">
-    		<properties>
-    			<property name="custom_capabilities" type="array">
-    				<element value="manage_sensei_grades"/>
-    			</property>
-    		</properties>
-    	</rule>
+		<properties>
+			<property name="custom_capabilities" type="array">
+				<element value="manage_sensei"/>
+        <element value="manage_sensei_grades"/>
+			</property>
+		</properties>
+	</rule>
 </ruleset>

@@ -21,6 +21,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @internal
  */
 class Language_Details {
+	use WPML_API;
+
 	/**
 	 * Init hooks.
 	 */
@@ -29,7 +31,8 @@ class Language_Details {
 		add_action( 'sensei_quiz_create', array( $this, 'set_language_details_when_quiz_created' ), 10, 2 );
 		add_action( 'sensei_quiz_create', array( $this, 'set_language_details_when_quiz_created' ), 10, 2 );
 		add_action( 'sensei_quiz_create', array( $this, 'set_language_details_when_quiz_created' ), 10, 2 );
-		add_action( 'sensei_rest_api_question_saved', array( $this, 'set_language_details_when_question_created' ), 10, 1 );
+		add_action( 'sensei_rest_api_question_saved', array( $this, 'set_language_details_when_question_created' ) );
+		add_action( 'sensei_rest_api_category_question_saved', array( $this, 'set_language_details_when_multiple_question_created' ) );
 	}
 
 	/**
@@ -44,20 +47,10 @@ class Language_Details {
 	 */
 	public function set_language_details_when_lesson_created( $lesson_id, $course_id ) {
 		// Get course language_code.
-		$language_code = apply_filters(
-			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
-			'wpml_element_language_code',
-			null,
-			array(
-				'element_id'   => $course_id,
-				'element_type' => 'course',
-			)
-		);
-
+		$language_code = $this->get_element_language_code( $course_id, 'course' );
 		if ( ! $language_code ) {
 			// Use current language if course language is not set.
-			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
-			$language_code = apply_filters( 'wpml_current_language', null );
+			$language_code = $this->get_current_language();
 		}
 
 		$args = array(
@@ -66,10 +59,7 @@ class Language_Details {
 			'trid'          => false,
 			'language_code' => $language_code,
 		);
-
-		// Set language details for the lesson.
-		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
-		do_action( 'wpml_set_element_language_details', $args );
+		$this->set_element_language_details( $args );
 	}
 
 	/**
@@ -84,19 +74,10 @@ class Language_Details {
 	 */
 	public function set_language_details_when_quiz_created( $quiz_id, $lesson_id ) {
 		// Get lesson language_code.
-		$language_code = apply_filters(
-			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
-			'wpml_element_language_code',
-			null,
-			array(
-				'element_id'   => $lesson_id,
-				'element_type' => 'lesson',
-			)
-		);
+		$language_code = $this->get_element_language_code( $lesson_id, 'lesson' );
 		if ( ! $language_code ) {
 			// Use current language if lesson language is not set.
-			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
-			$language_code = apply_filters( 'wpml_current_language', null );
+			$language_code = $this->get_current_language();
 		}
 
 		$args = array(
@@ -105,10 +86,7 @@ class Language_Details {
 			'trid'          => false,
 			'language_code' => $language_code,
 		);
-
-		// Set language details for the quiz.
-		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
-		do_action( 'wpml_set_element_language_details', $args );
+		$this->set_element_language_details( $args );
 	}
 
 	/**
@@ -125,11 +103,8 @@ class Language_Details {
 			return;
 		}
 
-		$question_id = (int) $question_id;
-
-		// Get lesson language_code.
-		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
-		$language_code = apply_filters( 'wpml_current_language', null );
+		$question_id   = (int) $question_id;
+		$language_code = $this->get_current_language();
 
 		$args = array(
 			'element_id'    => $question_id,
@@ -137,9 +112,34 @@ class Language_Details {
 			'trid'          => false,
 			'language_code' => $language_code,
 		);
+		$this->set_element_language_details( $args );
+	}
 
-		// Set language details for the question.
-		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
-		do_action( 'wpml_set_element_language_details', $args );
+	/**
+	 * Set language details for the multiple question when it is created.
+	 *
+	 * We use Multiple question CPT to store category question, fox example.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @internal
+	 *
+	 * @param int $question_id Multiple question ID.
+	 */
+	public function set_language_details_when_multiple_question_created( $question_id ) {
+		if ( is_wp_error( $question_id ) ) {
+			return;
+		}
+
+		$question_id   = (int) $question_id;
+		$language_code = $this->get_current_language();
+
+		$args = array(
+			'element_id'    => $question_id,
+			'element_type'  => 'post_multiple_question',
+			'trid'          => false,
+			'language_code' => $language_code,
+		);
+		$this->set_element_language_details( $args );
 	}
 }
