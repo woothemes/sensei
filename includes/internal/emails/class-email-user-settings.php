@@ -172,7 +172,7 @@ class Email_User_Settings {
 	public function should_send_email_to_user( $should_send, $user_email, $subject, $message, $identifier ) {
 		$user_id = email_exists( $user_email );
 
-		if ( false === $user_id ) {
+		if ( false === $user_id || ! $should_send ) {
 			return $should_send;
 		}
 
