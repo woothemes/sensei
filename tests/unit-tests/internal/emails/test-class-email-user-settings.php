@@ -86,16 +86,37 @@ class Email_User_Settings_Test extends \WP_UnitTestCase {
 		$output = $this->get_email_setting_output( $user );
 
 		/* Assert. */
-		$this->assertStringContainsString( 'name="sensei-email-subscriptions[]"', $output );
 		foreach ( $teacher_emails->items as $email ) {
 			$identifier = get_post_meta( $email->ID, '_sensei_email_identifier', true );
 			$this->assertStringNotContainsString( 'value="' . $identifier . '"', $output, 'Student should not see email with ID - ' . $identifier );
 		}
 	}
 
-	public function testMaybeAddEmailSettings_WhenUserIsTeacher_ShowsAllEmails() {
+	public function testMaybeAddEmailSettings_WhenUserIsStudent_SeesAllAvailableStudentEmails() {
 		/* Arrange. */
 		$this->login_as_student();
+		$student_emails = $this->repository->get_all( 'student', -1 );
+		$user           = wp_get_current_user();
+
+		/* Act. */
+		$output = $this->get_email_setting_output( $user );
+
+		/* Assert. */
+		$this->assertStringContainsString( 'name="sensei-email-subscriptions[]"', $output );
+		foreach ( $student_emails->items as $email ) {
+			$identifier = get_post_meta( $email->ID, '_sensei_email_identifier', true );
+
+			if ( $this->list_table->is_email_available( $email ) ) {
+				$this->assertStringContainsString( 'value="' . $identifier . '"', $output, 'Student should see email with ID - ' . $identifier );
+			} else {
+				$this->assertStringNotContainsString( 'value="' . $identifier . '"', $output, 'Student should not see unavailable email with ID - ' . $identifier );
+			}
+		}
+	}
+
+	public function testMaybeAddEmailSettings_WhenUserIsTeacher_ShowsAllAvailableEmails() {
+		/* Arrange. */
+		$this->login_as_teacher();
 		$teacher_emails = $this->repository->get_all( null, -1 );
 		$user           = wp_get_current_user();
 
@@ -106,7 +127,12 @@ class Email_User_Settings_Test extends \WP_UnitTestCase {
 		$this->assertStringContainsString( 'name="sensei-email-subscriptions[]"', $output );
 		foreach ( $teacher_emails->items as $email ) {
 			$identifier = get_post_meta( $email->ID, '_sensei_email_identifier', true );
-			$this->assertStringNotContainsString( 'value="' . $identifier . '"', $output, 'Teacher should see email with ID - ' . $identifier );
+
+			if ( $this->list_table->is_email_available( $email ) ) {
+				$this->assertStringContainsString( 'value="' . $identifier . '"', $output, 'Teacher should see email with ID - ' . $identifier );
+			} else {
+				$this->assertStringNotContainsString( 'value="' . $identifier . '"', $output, 'Teacher should not see email with ID - ' . $identifier );
+			}
 		}
 	}
 
