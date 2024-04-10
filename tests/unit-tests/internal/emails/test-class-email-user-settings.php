@@ -157,6 +157,24 @@ class Email_User_Settings_Test extends \WP_UnitTestCase {
 		}
 	}
 
+	public function testMaybeAddEmailSettings_WhenAllEmailsAreAvailable_ShowsAllEmails() {
+		/* Arrange. */
+		$this->login_as_admin();
+		$all_emails = $this->repository->get_all( null, -1 );
+		$user       = wp_get_current_user();
+		add_filter( 'sensei_email_is_available', '__return_true' );
+
+		/* Act. */
+		$output = $this->get_email_setting_output( $user );
+
+		/* Assert. */
+		foreach ( $all_emails->items as $email ) {
+			$identifier = get_post_meta( $email->ID, '_sensei_email_identifier', true );
+
+			$this->assertStringContainsString( 'value="' . $identifier . '"', $output, 'User should see email with ID - ' . $identifier );
+		}
+	}
+
 	public function testMaybeAddEmailSettings_WhenEmailIsUnsubscribed_RendersCheckboxAsUnchecked() {
 		/* Arrange. */
 		$this->login_as_student();
@@ -188,7 +206,7 @@ class Email_User_Settings_Test extends \WP_UnitTestCase {
 	public function testSaveUserEmailOptInOutSettings_WhenUserIsStudent_SavesEmailOptInOutSettings() {
 		/* Arrange. */
 		$this->login_as_admin();
-		$all_emails = $this->repository->get_all( 'student', -1 );
+		$all_emails = $this->repository->get_all( null, -1 );
 		$user       = wp_get_current_user();
 
 		$available_email_identifiers = [];
