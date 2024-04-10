@@ -44,36 +44,67 @@ class Email_User_Settings {
 	 * @internal
 	 */
 	public function init() {
-		add_action( 'show_user_profile', [ $this, 'add_opt_in_out_setting_fields_in_user_profile_page' ] );
-		add_action( 'edit_user_profile', [ $this, 'add_opt_in_out_setting_fields_in_user_profile_page' ] );
+		add_action( 'show_user_profile', [ $this, 'add_opt_in_out_email_setting_fields_in_user_profile_page' ] );
+		add_action( 'edit_user_profile', [ $this, 'add_opt_in_out_email_setting_fields_in_user_profile_page' ] );
+		add_action( 'personal_options_update', [ $this, 'save_user_email_opt_in_out_settings' ] );
+		add_action( 'edit_user_profile_update', [ $this, 'save_user_email_opt_in_out_settings' ] );
+	}
+
+	/**
+	 * Save user email opt-in/out settings.
+	 *
+	 * @internal
+	 *
+	 * @param int $user_id The user ID.
+	 */
+	public function save_user_email_opt_in_out_settings( $user_id ) {
+		if ( ! current_user_can( 'edit_user', $user_id ) ) {
+			return false;
+		}
+
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.NonceVerification.Missing -- Nonce verified before hook is called, Input is sanitized in the next lines.
+		$opt_in_out_emails = $_POST['sensei-email-subscriptions'] ?? [];
+
+		if ( ! is_array( $opt_in_out_emails ) ) {
+			return;
+		}
+
+		$opt_in_out_emails = array_map( 'wp_unslash', $opt_in_out_emails );
+		$opt_in_out_emails = array_map( 'sanitize_text_field', $opt_in_out_emails );
+
+		$user_emails = $this->get_emails_for_user( $user_id );
+
+		foreach ( $user_emails as $identifier => $email ) {
+			$should_subscribe = in_array( $identifier, $opt_in_out_emails, true );
+
+			if ( $should_subscribe ) {
+				delete_user_meta( $user_id, 'sensei_email_unsubscribed_' . $identifier );
+			} else {
+				update_user_meta( $user_id, 'sensei_email_unsubscribed_' . $identifier, 'yes' );
+			}
+		}
 	}
 
 	/**
 	 * Add opt-in/out setting fields in user profile page.
 	 *
+	 * @param \WP_User $profile_user The user object.
+	 *
 	 * @internal
 	 */
-	public function add_opt_in_out_setting_fields_in_user_profile_page() {
-		$show_teacher_emails = current_user_can( 'manage_sensei_grades' ) || \Sensei_Teacher::is_a_teacher( get_current_user_id() );
-		$all_emails          = $this->repository->get_all( $show_teacher_emails ? null : 'student', -1 );
-		$list_table_instance = new Email_List_Table( $this->repository );
-		$available_emails    = array_filter(
-			$all_emails->items,
-			function ( $email ) use ( $list_table_instance ) {
-				return 'publish' === $email->post_status
-					&& $list_table_instance->is_email_available( $email );
-			}
-		);
+	public function add_opt_in_out_email_setting_fields_in_user_profile_page( $profile_user ) {
+		$user_emails = $this->get_emails_for_user( $profile_user->ID );
 
 		?>
 			<h3><?php esc_html_e( 'Sensei Email Subscriptions', 'sensei-lms' ); ?></h3>
 
 			<table class="form-table">
 				<?php
-				foreach ( $available_emails as $email ) {
+				foreach ( $user_emails as $identifier => $email ) {
 					if ( 'publish' !== $email->post_status ) {
 						continue;
 					}
+					$is_unsubscribed = get_user_meta( $profile_user->ID, 'sensei_email_unsubscribed_' . $identifier, true );
 					?>
 						<tr>
 							<th scope="row">
@@ -81,7 +112,7 @@ class Email_User_Settings {
 							</th>
 							<td>
 								<label for="<?php esc_attr( $email->ID ); ?>">
-									<input name="<?php esc_attr( $email->ID ); ?>" type="checkbox" id="<?php esc_attr( $email->ID ); ?>" value="1" checked="checked">
+									<input name="sensei-email-subscriptions[]" type="checkbox" value="<?php echo esc_html( get_post_meta( $email->ID, '_sensei_email_identifier', true ) ); ?>" <?php checked( false, $is_unsubscribed ); ?>>
 									<?php echo esc_html( $email->post_title ); ?>
 								</label>
 							</td>
@@ -91,6 +122,30 @@ class Email_User_Settings {
 				?>
 			</table>
 		<?php
+	}
+
+	/**
+	 * Get emails for a user.
+	 *
+	 * @param int $user_id The user ID.
+	 *
+	 * @return array
+	 */
+	private function get_emails_for_user( $user_id ) {
+		$show_teacher_emails = user_can( $user_id, 'manage_sensei_grades' ) || \Sensei_Teacher::is_a_teacher( $user_id );
+		$all_emails          = $this->repository->get_all( $show_teacher_emails ? null : 'student', -1 );
+		$list_table_instance = new Email_List_Table( $this->repository );
+
+		$available_emails = [];
+
+		foreach ( $all_emails->items as $email ) {
+			if ( 'publish' === $email->post_status && $list_table_instance->is_email_available( $email ) ) {
+				$identifier                      = get_post_meta( $email->ID, '_sensei_email_identifier', true );
+				$available_emails[ $identifier ] = $email;
+			}
+		}
+
+		return $available_emails;
 	}
 }
 
