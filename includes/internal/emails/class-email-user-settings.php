@@ -45,8 +45,8 @@ class Email_User_Settings {
 	 */
 	public function init() {
 		// Show the opt-in/out email settings in the user profile page.
-		add_action( 'show_user_profile', [ $this, 'add_opt_in_out_email_setting_fields_in_user_profile_page' ] );
-		add_action( 'edit_user_profile', [ $this, 'add_opt_in_out_email_setting_fields_in_user_profile_page' ] );
+		add_action( 'show_user_profile', [ $this, 'maybe_add_email_settings' ] );
+		add_action( 'edit_user_profile', [ $this, 'maybe_add_email_settings' ] );
 
 		// Save the user email opt-in/out settings.
 		add_action( 'personal_options_update', [ $this, 'save_user_email_opt_in_out_settings' ] );
@@ -98,7 +98,7 @@ class Email_User_Settings {
 	 *
 	 * @internal
 	 */
-	public function add_opt_in_out_email_setting_fields_in_user_profile_page( $profile_user ) {
+	public function maybe_add_email_settings( $profile_user ) {
 		$user_emails = $this->get_emails_for_user( $profile_user->ID );
 
 		if ( empty( $user_emails ) ) {
@@ -122,7 +122,7 @@ class Email_User_Settings {
 							</th>
 							<td>
 								<label for="<?php esc_attr( $email->ID ); ?>">
-									<input name="sensei-email-subscriptions[]" type="checkbox" value="<?php echo esc_html( get_post_meta( $email->ID, '_sensei_email_identifier', true ) ); ?>" <?php checked( false, $is_unsubscribed ); ?>>
+									<input name="sensei-email-subscriptions[]" type="checkbox" value="<?php echo esc_attr( $identifier ); ?>" <?php checked( false, $is_unsubscribed ); ?>>
 									<?php echo esc_html( $email->post_title ); ?>
 								</label>
 							</td>
