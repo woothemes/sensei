@@ -157,7 +157,7 @@ class Email_User_Settings_Test extends \WP_UnitTestCase {
 		}
 	}
 
-	public function testMaybeAddEmailSettings_WhenEmailIsUnsubsribed_RendersCheckboxAsUnchecked() {
+	public function testMaybeAddEmailSettings_WhenEmailIsUnsubscribed_RendersCheckboxAsUnchecked() {
 		/* Arrange. */
 		$this->login_as_student();
 		$student_emails = $this->repository->get_all( 'student', -1 );
@@ -180,9 +180,49 @@ class Email_User_Settings_Test extends \WP_UnitTestCase {
 		$output = $this->get_email_setting_output( $user );
 
 		/* Assert. */
-		$this->assertStringContainsString( '<input name="sensei-email-subscriptions[]" type="checkbox" value="' . $available_email_identifiers[0] . '" >', $output );
-		$this->assertStringContainsString( '<input name="sensei-email-subscriptions[]" type="checkbox" value="' . $available_email_identifiers[1] . '"  checked=\'checked\'>', $output );
+		$this->assertStringContainsString( '<input name="sensei-email-subscriptions[]" type="checkbox" value="' . $available_email_identifiers[0] . '" >', $output, 'Unsubscribed email should be unchecked' );
+		$this->assertStringContainsString( '<input name="sensei-email-subscriptions[]" type="checkbox" value="' . $available_email_identifiers[1] . '"  checked=\'checked\'>', $output, 'Subscribed Email should be checked' );
 		delete_user_meta( $user->ID, 'sensei_email_unsubscribed_' . $available_email_identifiers[0] );
+	}
+
+	public function testSaveUserEmailOptInOutSettings_WhenUserIsStudent_SavesEmailOptInOutSettings() {
+		/* Arrange. */
+		$this->login_as_admin();
+		$all_emails = $this->repository->get_all( 'student', -1 );
+		$user       = wp_get_current_user();
+
+		$available_email_identifiers = [];
+
+		foreach ( $all_emails->items as $email ) {
+			if ( ! $this->list_table->is_email_available( $email ) ) {
+				continue;
+			}
+
+			$identifier                    = get_post_meta( $email->ID, '_sensei_email_identifier', true );
+			$available_email_identifiers[] = $identifier;
+		}
+
+		$_POST['sensei-email-subscriptions'] = [
+			$available_email_identifiers[1],
+			$available_email_identifiers[2],
+		];
+		$available_email_count               = count( $available_email_identifiers );
+
+		/* Act. */
+		$this->instance->save_user_email_opt_in_out_settings( $user->ID );
+
+		/* Assert. */
+		for ( $i = 0; $i < $available_email_count; $i++ ) {
+			$meta_key = 'sensei_email_unsubscribed_' . $available_email_identifiers[ $i ];
+
+			if ( in_array( $i, [ 1, 2 ], true ) ) {
+				$this->assertFalse( get_user_meta( $user->ID, $meta_key, true ) === 'yes', 'Email with ID - ' . $available_email_identifiers[ $i ] . ' should be subscribed' );
+			} else {
+				$this->assertTrue( get_user_meta( $user->ID, $meta_key, true ) === 'yes', 'Email with ID - ' . $available_email_identifiers[ $i ] . ' should be unsubscribed' );
+			}
+		}
+
+		unset( $_POST['sensei-email-subscriptions'] );
 	}
 
 	private function get_email_setting_output( $user ) {
