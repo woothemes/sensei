@@ -62,7 +62,7 @@ class Tables_Based_Grade_Repository implements Grade_Repository_Interface {
 		 *
 		 * @hook sensei_quiz_grade_create_question_id
 		 *
-		 * @since $$next-version$$
+		 * @since 4.23.1
 		 *
 		 * @param {int} $question_id The question ID.
 		 * @return {int} The question ID.
@@ -74,7 +74,7 @@ class Tables_Based_Grade_Repository implements Grade_Repository_Interface {
 		 *
 		 * @hook sensei_quiz_grade_create_answer_id
 		 *
-		 * @since $$next-version$$
+		 * @since 4.23.1
 		 *
 		 * @param {int} $answer_id The answer ID.
 		 * @param {string} $context The context.
@@ -131,7 +131,7 @@ class Tables_Based_Grade_Repository implements Grade_Repository_Interface {
 		 *
 		 * @hook sensei_quiz_grade_get_all_submission_id
 		 *
-		 * @since $$next-version$$
+		 * @since 4.23.1
 		 *
 		 * @param {int}    $submission_id The submission ID.
 		 * @param {string} $context       The context.
@@ -192,7 +192,7 @@ class Tables_Based_Grade_Repository implements Grade_Repository_Interface {
 		 *
 		 * @hook sensei_quiz_grade_delete_all_submission_id
 		 *
-		 * @since $$next-version$$
+		 * @since 4.23.1
 		 *
 		 * @param {int}    $submission_id The submission ID.
 		 * @param {string} $context       The context.

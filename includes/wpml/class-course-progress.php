@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * Compatibility code with WPML.
  *
- * @since $$next-version$$
+ * @since 4.23.1
  *
  * @internal
  */
@@ -49,7 +49,7 @@ class Course_Progress {
 	/**
 	 * Enroll learner.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.23.1
 	 *
 	 * @internal
 	 *
@@ -77,7 +77,7 @@ class Course_Progress {
 	/**
 	 * Withdraw learner.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.23.1
 	 *
 	 * @internal
 	 *
@@ -105,7 +105,7 @@ class Course_Progress {
 	/**
 	 * Translate course ID.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.23.1
 	 *
 	 * @internal
 	 *
@@ -124,7 +124,7 @@ class Course_Progress {
 	/**
 	 * Translate course IDs.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.23.1
 	 *
 	 * @internal
 	 *
@@ -142,7 +142,7 @@ class Course_Progress {
 	/**
 	 * Translate term ID.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.23.1
 	 *
 	 * @internal
 	 *

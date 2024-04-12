@@ -1215,7 +1215,7 @@ class Sensei_Frontend {
 		/**
 		 * Filter the course ID for the course being started.
 		 *
-		 * @since $$next-version$$
+		 * @since 4.23.1
 		 *
 		 * @hook sensei_course_start_course_id
 		 *
