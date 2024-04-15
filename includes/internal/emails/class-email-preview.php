@@ -230,6 +230,8 @@ class Email_Preview {
 	/**
 	 * Filter the preview link.
 	 *
+	 * @internal
+	 *
 	 * @param string  $link The preview link.
 	 * @param WP_Post $post The post object.
 	 *
