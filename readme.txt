@@ -5,7 +5,7 @@ Tags: lms, eLearning, teach, online courses, woocommerce
 Requires at least: 6.3
 Tested up to: 6.5
 Requires PHP: 7.4
-Stable tag: 4.23.0
+Stable tag: 4.23.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -140,6 +140,19 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 
 == Changelog ==
 
+### 4.23.1 - 2024-04-15
+#### Added
+- WPML: Setting to disable Sensei slugs translation for better compatibility [#7569](https://github.com/Automattic/sensei/pull/7569)
+- WPML: Share student progress and quiz submission across translations [#7492](https://github.com/Automattic/sensei/pull/7492)
+- WPML: Show user courses for different languages using `sensei_user_courses` shortcode [#7583](https://github.com/Automattic/sensei/pull/7583)
+
+#### Changed
+- Open setup wizard if necessary when navigating through relevant pages in WP admin [#7581](https://github.com/Automattic/sensei/pull/7581)
+
+#### Fixed
+- Usage of question categories in translated quizzes [#7559](https://github.com/Automattic/sensei/pull/7559)
+- Lessons being automatically published when course is updated [#7582](https://github.com/Automattic/sensei/pull/7582)
+
 ### 4.23.0 - 2024-04-04
 #### Added
 - Sensei pro upsell task in Sensei Home [#7562](https://github.com/Automattic/sensei/pull/7562)
@@ -176,17 +189,3 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 - Fix Sensei Pro question type not displaying in filter and table on Questions page [#7544](https://github.com/Automattic/sensei/pull/7544)
 - Ignore Passing Grade for answer feedback when Pass Required is turned off [#7525](https://github.com/Automattic/sensei/pull/7525)
 - WPML: Create quiz and question translations, update relations [#7480](https://github.com/Automattic/sensei/pull/7480)
-
-### 4.21.0 - 2024-02-26
-#### Added
-- Add existing lessons in Course Outline [#7368](https://github.com/Automattic/sensei/pull/7368)
-
-#### Changed
-- Add docs links to the page settings [#7488](https://github.com/Automattic/sensei/pull/7488)
-
-#### Removed
-- Remove "Customize Colors" link for classic themes [#7491](https://github.com/Automattic/sensei/pull/7491)
-
-#### Fixed
-- Fix course/lesson patterns not working on latest Gutenberg version [#7499](https://github.com/Automattic/sensei/pull/7499)
-- Fix Course Outline for a course translated with WPML. [#7453](https://github.com/Automattic/sensei/pull/7453)

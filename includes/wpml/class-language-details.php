@@ -120,7 +120,7 @@ class Language_Details {
 	 *
 	 * We use Multiple question CPT to store category question, fox example.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.23.1
 	 *
 	 * @internal
 	 *

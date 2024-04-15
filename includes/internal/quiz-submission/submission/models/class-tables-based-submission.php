@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @internal
  *
- * @since $$next_version$$
+ * @since 4.18.0
  */
 class Tables_Based_Submission extends Submission_Abstract {
 

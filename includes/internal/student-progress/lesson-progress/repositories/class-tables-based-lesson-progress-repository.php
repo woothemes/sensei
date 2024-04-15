@@ -60,7 +60,7 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 		 *
 		 * @hook sensei_lesson_progress_create_lesson_id
 		 *
-		 * @since $$next-version$$
+		 * @since 4.23.1
 		 *
 		 * @param {int} $lesson_id The lesson ID.
 		 * @return {int} Filtered lesson ID.
@@ -124,7 +124,7 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 		 *
 		 * @hook sensei_lesson_progress_get_lesson_id
 		 *
-		 * @since $$next-version$$
+		 * @since 4.23.1
 		 *
 		 * @param {int} $lesson_id The lesson ID.
 		 * @return {int} Filtered lesson ID.
@@ -175,7 +175,7 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 		 *
 		 * @hook sensei_lesson_progress_has_lesson_id
 		 *
-		 * @since $$next-version$$
+		 * @since 4.23.1
 		 *
 		 * @param {int} $lesson_id The lesson ID.
 		 * @return {int} Filtered lesson ID.
@@ -270,7 +270,7 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 		 *
 		 * @hook sensei_lesson_progress_delete_for_lesson_lesson_id
 		 *
-		 * @since $$next-version$$
+		 * @since 4.23.1
 		 *
 		 * @param {int} $lesson_id The lesson ID.
 		 * @return {int} Filtered lesson ID.
@@ -331,7 +331,7 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 		 *
 		 * @hook sensei_lesson_progress_count_course_id
 		 *
-		 * @since $$next-version$$
+		 * @since 4.23.1
 		 *
 		 * @param {int} $course_id The course ID.
 		 * @return {int} Filtered course ID.
@@ -399,7 +399,7 @@ class Tables_Based_Lesson_Progress_Repository implements Lesson_Progress_Reposit
 					 *
 					 * @hook sensei_lesson_progress_find_lesson_id
 					 *
-					 * @since $$next-version$$
+					 * @since 4.23.1
 					 *
 					 * @param {int} $lesson_id The lesson ID.
 					 * @return {int} Filtered lesson ID.

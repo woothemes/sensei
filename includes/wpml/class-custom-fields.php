@@ -138,7 +138,7 @@ class Custom_Fields {
 	/**
 	 * Update course WooCommerce product before copied.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.23.1
 	 *
 	 * @internal
 	 *

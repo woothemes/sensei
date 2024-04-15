@@ -434,7 +434,7 @@ class Sensei_Learner {
 		 *
 		 * @hook sensei_learner_get_enrolled_courses_query_args_term_id
 		 *
-		 * @since $$next-version$$
+		 * @since 4.23.1
 		 *
 		 * @param {int} $term_id The term ID.
 		 * @return {int} The term ID.
