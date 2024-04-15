@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @internal
  *
- * @since $$next_version$$
+ * @since 4.17.0
  */
 class Table_Reading_Aggregate_Course_Progress_Repository implements Course_Progress_Repository_Interface {
 	/**

@@ -721,6 +721,8 @@ class Sensei_Main {
 
 		Sensei_Temporary_User::init();
 
+		Sensei_Course_Pre_Publish_Panel::instance()->init();
+
 		// Differentiate between administration and frontend logic.
 		if ( is_admin() ) {
 			// Load Admin Class.
@@ -732,7 +734,6 @@ class Sensei_Main {
 
 			Sensei_No_Users_Table_Relationship::instance()->init();
 			SenseiLMS_Plugin_Updater::init();
-			Sensei_Course_Pre_Publish_Panel::instance()->init();
 		} else {
 
 			// Load Frontend Class.
@@ -780,7 +781,7 @@ class Sensei_Main {
 		/**
 		 * Filter whether to read student progress from tables.
 		 *
-		 * @since $$next_version$$
+		 * @since 4.17.0
 		 *
 		 * @hook  sensei_student_progress_read_from_tables
 		 *
@@ -1166,7 +1167,7 @@ class Sensei_Main {
 			// Do not enable the wizard for sites that are created with the onboarding flow.
 			if ( 'sensei' !== get_option( 'site_intent' ) ) {
 
-				set_transient( 'sensei_activation_redirect', 1, 30 );
+				update_option( 'sensei_activation_redirect', 1 );
 				update_option( Sensei_Setup_Wizard::SUGGEST_SETUP_WIZARD_OPTION, 1 );
 
 			} else {

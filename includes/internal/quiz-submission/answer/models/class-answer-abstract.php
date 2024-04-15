@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @internal
  *
- * @since $$next_version$$
+ * @since 4.18.0
  */
 class Answer_Abstract implements Answer_Interface {
 	/**

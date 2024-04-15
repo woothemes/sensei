@@ -14,9 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 3.0.0
  */
-class Sensei_Course_Manual_Enrolment_Provider
-	extends Sensei_Course_Enrolment_Stored_Status_Provider
-	implements Sensei_Course_Enrolment_Provider_Interface, Sensei_Course_Enrolment_Provider_Debug_Interface {
+class Sensei_Course_Manual_Enrolment_Provider extends Sensei_Course_Enrolment_Stored_Status_Provider implements Sensei_Course_Enrolment_Provider_Interface, Sensei_Course_Enrolment_Provider_Debug_Interface {
 	const DATA_KEY_LEGACY_MIGRATION = 'legacy_manual';
 
 	/**
@@ -98,6 +96,7 @@ class Sensei_Course_Manual_Enrolment_Provider
 	 * @return bool
 	 */
 	public function enrol_learner( $user_id, $course_id ) {
+
 		// Check if they are already manually enrolled.
 		if ( $this->is_enrolled( $user_id, $course_id ) ) {
 			return true;
@@ -132,6 +131,7 @@ class Sensei_Course_Manual_Enrolment_Provider
 	 * @return bool
 	 */
 	public function withdraw_learner( $user_id, $course_id ) {
+
 		// Check if they aren't manually enrolled.
 		if ( ! $this->is_enrolled( $user_id, $course_id ) ) {
 			return true;

@@ -21,6 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @internal
  */
 class Custom_Fields {
+	use WPML_API;
 
 	/**
 	 * Init hooks.
@@ -29,6 +30,7 @@ class Custom_Fields {
 		add_filter( 'wpml_sync_custom_field_copied_value', array( $this, 'update_lesson_course_before_copied' ), 10, 4 );
 		add_filter( 'wpml_sync_custom_field_copied_value', array( $this, 'update_course_prerequisite_before_copied' ), 10, 4 );
 		add_filter( 'wpml_sync_custom_field_copied_value', array( $this, 'update_quiz_id_before_copied' ), 10, 4 );
+		add_filter( 'wpml_sync_custom_field_copied_value', array( $this, 'update_course_woocommerce_product_before_copied' ), 10, 4 );
 	}
 
 	/**
@@ -55,23 +57,12 @@ class Custom_Fields {
 
 		$course_id = (int) $copied_value;
 
-		$target_language_code = apply_filters(
-			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
-			'wpml_element_language_code',
-			null,
-			array(
-				'element_id'   => $post_id_to,
-				'element_type' => 'course',
-			)
-		);
-
+		$target_language_code = $this->get_element_language_code( $post_id_to, 'course' );
 		if ( ! $target_language_code ) {
-			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
-			$target_language_code = apply_filters( 'wpml_current_language', null );
+			$target_language_code = $this->get_current_language();
 		}
 
-		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
-		return apply_filters( 'wpml_object_id', $course_id, 'course', false, $target_language_code );
+		return $this->get_object_id( $course_id, 'course', false, $target_language_code );
 	}
 
 	/**
@@ -98,23 +89,12 @@ class Custom_Fields {
 
 		$course_id = (int) $copied_value;
 
-		$target_language_code = apply_filters(
-			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
-			'wpml_element_language_code',
-			null,
-			array(
-				'element_id'   => $post_id_to,
-				'element_type' => 'lesson',
-			)
-		);
-
+		$target_language_code = $this->get_element_language_code( $post_id_to, 'lesson' );
 		if ( ! $target_language_code ) {
-			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
-			$target_language_code = apply_filters( 'wpml_current_language', null );
+			$target_language_code = $this->get_current_language();
 		}
 
-		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
-		return apply_filters( 'wpml_object_id', $course_id, 'course', false, $target_language_code );
+		return $this->get_object_id( $course_id, 'course', false, $target_language_code );
 	}
 
 	/**
@@ -147,22 +127,43 @@ class Custom_Fields {
 			return $copied_value;
 		}
 
-		$target_language_code = apply_filters(
-			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
-			'wpml_element_language_code',
-			null,
-			array(
-				'element_id'   => $post_id_to,
-				'element_type' => $post_type,
-			)
-		);
-
+		$target_language_code = $this->get_element_language_code( $post_id_to, $post_type );
 		if ( ! $target_language_code ) {
-			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
-			$target_language_code = apply_filters( 'wpml_current_language', null );
+			$target_language_code = $this->get_current_language();
 		}
 
-		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
-		return apply_filters( 'wpml_object_id', $quiz_id, 'quiz', false, $target_language_code );
+		return $this->get_object_id( $quiz_id, 'quiz', false, $target_language_code );
+	}
+
+	/**
+	 * Update course WooCommerce product before copied.
+	 *
+	 * @since 4.23.1
+	 *
+	 * @internal
+	 *
+	 * @param mixed  $copied_value Copied value.
+	 * @param int    $post_id_from Post ID from.
+	 * @param int    $post_id_to   Post ID to.
+	 * @param string $meta_key     Meta key.
+	 * @return mixed
+	 */
+	public function update_course_woocommerce_product_before_copied( $copied_value, $post_id_from, $post_id_to, $meta_key ) {
+		if ( '_course_woocommerce_product' !== $meta_key ) {
+			return $copied_value;
+		}
+
+		if ( empty( $copied_value ) ) {
+			return $copied_value;
+		}
+
+		$product_id = (int) $copied_value;
+
+		$target_language_code = $this->get_element_language_code( $post_id_to, 'course' );
+		if ( ! $target_language_code ) {
+			$target_language_code = $this->get_current_language();
+		}
+
+		return $this->get_object_id( $product_id, 'product', false, $target_language_code );
 	}
 }

@@ -169,7 +169,7 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 	private function is_my_courses() {
 		global $wp_query;
 
-		return $wp_query->is_page() && $wp_query->get_queried_object_id() === absint( Sensei()->settings->get( 'my_course_page' ) );
+		return $wp_query->is_page() && $wp_query->get_queried_object_id() === Sensei()->settings->get_my_courses_page_id();
 	}
 
 	private function should_filter_course_by_status( $course_status, $user_id ) {

@@ -22,10 +22,18 @@ class WPML {
 	 * Init compatibility classes.
 	 */
 	public function init() {
+		( new Course_Progress() )->init();
 		( new Course_Translation() )->init();
 		( new Custom_Fields() )->init();
 		( new Email() )->init();
 		( new Language_Details() )->init();
+		( new Lesson_Progress() )->init();
 		( new Lesson_Translation() )->init();
+		( new Quiz_Progress() )->init();
+		( new Quiz_Submission() )->init();
+		( new Page() )->init();
+		( new Settings() )->init();
+		( new Slug() )->init();
+		( new Utils() )->init();
 	}
 }

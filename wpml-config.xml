@@ -1,12 +1,19 @@
 <wpml-config>
 	<custom-fields>
+		<custom-field action="translate">_question_right_answer</custom-field>
+		<custom-field action="translate">_question_wrong_answers</custom-field>
+		<custom-field action="translate">_sensei_email_description</custom-field>
+		<custom-field action="ignore">_quiz_id</custom-field>
+		<custom-field action="ignore">category</custom-field>
+		<custom-field action="ignore">number</custom-field>
+		<custom-field action="ignore">_lesson_order</custom-field>
+		<custom-field action="ignore">_question_order</custom-field>
 		<custom-field action="copy">_lesson_complexity</custom-field>
 		<custom-field action="copy">_lesson_length</custom-field>
 		<custom-field action="copy">_lesson_prerequisite</custom-field>
 		<custom-field action="copy">_lesson_course</custom-field>
 		<custom-field action="copy">_quiz_lesson</custom-field>
 		<custom-field action="copy">_lesson_quiz</custom-field>
-		<custom-field action="ignore">_quiz_id</custom-field>
 		<custom-field action="copy">_course_prerequisite</custom-field>
 		<custom-field action="copy">_course_video_embed</custom-field>
 		<custom-field action="copy">_course_featured</custom-field>
@@ -16,6 +23,35 @@
 		<custom-field action="copy">_sensei_self_enrollment_not_allowed</custom-field>
 		<custom-field action="copy">_open_access</custom-field>
 		<custom-field action="copy">disable_notification</custom-field>
+		<custom-field action="copy">_pagination</custom-field>
+		<custom-field action="copy">_pass_required</custom-field>
+		<custom-field action="copy">_question_grade</custom-field>
+		<custom-field action="copy">_quiz_grade_type</custom-field>
+		<custom-field action="copy">_quiz_has_questions</custom-field>
+		<custom-field action="copy">_random_order</custom-field>
+		<custom-field action="copy">_right_answer_count</custom-field>
+		<custom-field action="copy">_show_questions</custom-field>
+		<custom-field action="copy">_wrong_answer_count</custom-field>
+		<custom-field action="copy">_lesson_preview</custom-field>
+		<custom-field action="copy">_enable_quiz_reset</custom-field>
+		<custom-field action="copy">_course_enrolment_version</custom-field>
+		<custom-field action="copy">_answer_order</custom-field>
+		<custom-field action="copy">_quiz_timer</custom-field>
+		<custom-field action="copy">_enable_quiz_timer</custom-field>
+		<custom-field action="copy">_course_woocommerce_product</custom-field>
+		<custom-field action="copy">sensei_course_audience</custom-field>
+		<custom-field action="copy">sensei_course_skill_level</custom-field>
+		<custom-field action="copy">_course_expiration_length</custom-field>
+		<custom-field action="copy">_course_expires_on_date</custom-field>
+		<custom-field action="copy">_course_starts_on_date</custom-field>
+		<custom-field action="copy">_sensei_email_identifier</custom-field>
+		<custom-field action="copy">_sensei_email_is_pro</custom-field>
+		<custom-field action="copy">_sensei_email_type</custom-field>
+		<custom-field action="copy">_random_question_order</custom-field>
+		<custom-field action="copy">_quiz_passmark</custom-field>
+		<custom-field action="copy">_sensei_content_drip_type</custom-field>
+		<custom-field action="copy">_sensei_already_published</custom-field>
+		<custom-field action="copy">sensei_course_publish_lessons</custom-field>
 	</custom-fields>
 	<custom-types>
 		<custom-type translate="1">course</custom-type>
