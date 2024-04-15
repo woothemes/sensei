@@ -781,7 +781,7 @@ class Sensei_Main {
 		/**
 		 * Filter whether to read student progress from tables.
 		 *
-		 * @since $$next_version$$
+		 * @since 4.17.0
 		 *
 		 * @hook  sensei_student_progress_read_from_tables
 		 *
