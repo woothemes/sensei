@@ -186,10 +186,11 @@ class Email_Repository {
 	 * @param string|null $type Email type.
 	 * @param int         $per_page Posts per page. Default 10.
 	 * @param int         $offset Offset. Default 0.
-	 * @return object Object with results.
-	 *                `items` is an array of `WP_Post` objects.
-	 *                `total_items` is the total number of results.
-	 *                `total_pages` is the total number of pages.
+	 * @return object{
+	 *     items: \WP_Post[],
+	 *     total_items: int,
+	 *     total_pages: int,
+	 * }
 	 */
 	public function get_all( string $type = null, $per_page = 10, $offset = 0 ) {
 		$query_args = [
