@@ -85,7 +85,7 @@
 		<properties>
 			<property name="custom_capabilities" type="array">
 				<element value="manage_sensei"/>
-        		<element value="manage_sensei_grades"/>
+				<element value="manage_sensei_grades"/>
 			</property>
 		</properties>
 	</rule>
