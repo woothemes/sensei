@@ -28,8 +28,8 @@ class Sensei_Lesson_Blocks extends Sensei_Blocks_Initializer {
 	 * @access private
 	 */
 	public function enqueue_block_assets() {
-
 		Sensei()->assets->enqueue( 'sensei-shared-blocks-style', 'blocks/shared-style.css' );
+		Sensei()->assets->enqueue( 'sensei-single-lesson-style', 'blocks/single-lesson-style.css' );
 
 		if ( ! is_admin() ) {
 			Sensei()->assets->enqueue_script( 'sensei-blocks-frontend' );
@@ -72,7 +72,6 @@ class Sensei_Lesson_Blocks extends Sensei_Blocks_Initializer {
 			'blocks/single-lesson-style-editor.css',
 			[ 'sensei-shared-blocks-editor-style', 'sensei-editor-components-style' ]
 		);
-
 	}
 
 	/**
@@ -131,6 +130,5 @@ class Sensei_Lesson_Blocks extends Sensei_Blocks_Initializer {
 		if ( Sensei()->lesson->has_sensei_blocks() ) {
 			remove_action( 'sensei_single_lesson_content_inside_before', [ Sensei()->post_types->messages, 'send_message_link' ], 30 );
 		}
-
 	}
 }
