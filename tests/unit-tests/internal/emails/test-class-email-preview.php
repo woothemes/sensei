@@ -258,13 +258,18 @@ class Email_Preview_Test extends \WP_UnitTestCase {
 		/* Arrange. */
 		$email_preview = new Email_Preview( $this->email_sender, $this->assets );
 		$link          = 'http://example.com/?p=1';
-		$post          = new WP_Post((object) array('ID' => 1, 'post_type' => 'sensei_email'));
+		$post          = new WP_Post(
+			(object) array(
+				'ID'        => 1,
+				'post_type' => 'sensei_email',
+			)
+		);
 
 		/* Act. */
 		$filtered_link = $email_preview->filter_preview_link( $link, $post );
 
 		/* Assert. */
-		$nonce = wp_create_nonce( 'preview-email-post_1');
+		$nonce = wp_create_nonce( 'preview-email-post_1' );
 		$this->assertSame(
 			get_home_url() . '?sensei_email_preview_id=1&_wpnonce=' . $nonce,
 			$filtered_link
