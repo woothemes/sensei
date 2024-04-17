@@ -78,7 +78,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 	/**
 	 * Get my courses page ID.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.23.1
 	 *
 	 * @return int
 	 */
@@ -88,7 +88,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 		 *
 		 * @hook sensei_settings_my_course_page_id
 		 *
-		 * @since $$next-version$$
+		 * @since 4.23.1
 		 *
 		 * @param {int} $page_id The My Courses page ID.
 		 * @return {int} Filtered My Courses page ID.

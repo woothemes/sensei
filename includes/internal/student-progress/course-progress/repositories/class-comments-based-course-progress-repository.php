@@ -42,7 +42,7 @@ class Comments_Based_Course_Progress_Repository implements Course_Progress_Repos
 		 *
 		 * @hook sensei_course_progress_create_course_id
 		 *
-		 * @since $$next-version$$
+		 * @since 4.23.1
 		 *
 		 * @param {int} $course_id The course ID.
 		 * @return {int} Filtered course ID.
@@ -87,7 +87,7 @@ class Comments_Based_Course_Progress_Repository implements Course_Progress_Repos
 		 *
 		 * @hook sensei_course_progress_get_course_id
 		 *
-		 * @since $$next-version$$
+		 * @since 4.23.1
 		 *
 		 * @param {int} $course_id The course ID.
 		 * @return {int} Filtered course ID.
@@ -184,7 +184,7 @@ class Comments_Based_Course_Progress_Repository implements Course_Progress_Repos
 		 *
 		 * @hook sensei_course_progress_has_course_id
 		 *
-		 * @since $$next-version$$
+		 * @since 4.23.1
 		 *
 		 * @param {int} $course_id The course ID.
 		 * @return {int} Filtered course ID.
@@ -246,7 +246,7 @@ class Comments_Based_Course_Progress_Repository implements Course_Progress_Repos
 		 *
 		 * @hook sensei_course_progress_delete_for_course_course_id
 		 *
-		 * @since $$next-version$$
+		 * @since 4.23.1
 		 *
 		 * @param {int} $course_id The course ID.
 		 * @return {int} Filtered course ID.
@@ -343,7 +343,7 @@ class Comments_Based_Course_Progress_Repository implements Course_Progress_Repos
 					 *
 					 * @hook sensei_course_progress_find_course_id
 					 *
-					 * @since $$next-version$$
+					 * @since 4.23.1
 					 *
 					 * @param {int} $course_id The course ID.
 					 * @return {int} Filtered course ID.

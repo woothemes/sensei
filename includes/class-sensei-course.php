@@ -534,7 +534,7 @@ class Sensei_Course {
 		 *
 		 * @hook sensei_block_course_progress_course_id
 		 *
-		 * @since $$next-version$$
+		 * @since 4.23.1
 		 *
 		 * @param {int} $course_id The course ID.
 		 * @return {int} The course ID.
@@ -3345,7 +3345,7 @@ class Sensei_Course {
 		/**
 		 * Filter the course completed page ID.
 		 *
-		 * @since $$next-version$$
+		 * @since 4.23.1
 		 *
 		 * @hook sensei_course_completed_page_id
 		 *

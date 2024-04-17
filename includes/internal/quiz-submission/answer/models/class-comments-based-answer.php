@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @internal
  *
- * @since $$next_version$$
+ * @since 4.18.0
  */
 class Comments_Based_Answer extends Answer_Abstract {
 	/**

@@ -234,7 +234,7 @@ class Sensei_Data_Cleaner {
 		'sensei_answers_feedback_[0-9]+_[0-9]+',
 		'quiz_grades_[0-9]+_[0-9]+',
 		'sensei_comment_counts_[0-9]+',
-		'sensei_activation_redirect', // @deprecated $$next-version$$ Changed to an option.
+		'sensei_activation_redirect', // @deprecated 4.23.1 Changed to an option.
 		'sensei_woocommerce_plugin_information',
 		'sensei_extensions_.*',
 		'sensei_background_job_.*',

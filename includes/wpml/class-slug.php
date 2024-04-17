@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * Compatibility code with WPML.
  *
- * @since $$next-version$$
+ * @since 4.23.1
  *
  * @internal
  */
@@ -40,7 +40,7 @@ class Slug {
 	/**
 	 * Get course slug.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.23.1
 	 *
 	 * @internal
 	 *
@@ -58,7 +58,7 @@ class Slug {
 	/**
 	 * Get lesson slug.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.23.1
 	 *
 	 * @internal
 	 *
@@ -76,7 +76,7 @@ class Slug {
 	/**
 	 * Get question slug.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.23.1
 	 *
 	 * @internal
 	 *
@@ -94,7 +94,7 @@ class Slug {
 	/**
 	 * Get quiz slug.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.23.1
 	 *
 	 * @internal
 	 *
