@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Fix custom styles for emails in preview and in sent messages
