@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * Compatibility code with WPML.
  *
- * @since $$next-version$$
+ * @since 4.23.1
  *
  * @internal
  */
@@ -38,7 +38,7 @@ class Settings {
 	/**
 	 * Add WPML tab.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.23.1
 	 *
 	 * @internal
 	 *
@@ -57,7 +57,7 @@ class Settings {
 	/**
 	 * Add WPML fields.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.23.1
 	 *
 	 * @internal
 	 *

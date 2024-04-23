@@ -45,7 +45,7 @@ class Comments_Based_Submission_Repository implements Submission_Repository_Inte
 		 *
 		 * @hook sensei_quiz_submission_create_quiz_id
 		 *
-		 * @since $$next-version$$
+		 * @since 4.23.1
 		 *
 		 * @param {int} $quiz_id The quiz ID.
 		 * @return {int} The quiz ID.
@@ -91,7 +91,7 @@ class Comments_Based_Submission_Repository implements Submission_Repository_Inte
 		 *
 		 * @hook sensei_quiz_submission_get_or_create_quiz_id
 		 *
-		 * @since $$next-version$$
+		 * @since 4.23.1
 		 *
 		 * @param {int} $quiz_id The quiz ID.
 		 * @return {int} The quiz ID.
@@ -123,7 +123,7 @@ class Comments_Based_Submission_Repository implements Submission_Repository_Inte
 		 *
 		 * @hook sensei_quiz_submission_get_quiz_id
 		 *
-		 * @since $$next-version$$
+		 * @since 4.23.1
 		 *
 		 * @param {int} $quiz_id The quiz ID.
 		 * @return {int} The quiz ID.
@@ -167,7 +167,7 @@ class Comments_Based_Submission_Repository implements Submission_Repository_Inte
 		 *
 		 * @hook sensei_quiz_submission_get_question_ids_submission_id
 		 *
-		 * @since $$next-version$$
+		 * @since 4.23.1
 		 *
 		 * @param {int}    $submission_id The quiz submission ID.
 		 * @param {string} $context       The context.

@@ -1,5 +1,18 @@
 *** Changelog ***
 
+## 4.23.1 - 2024-04-15
+### Added
+- WPML: Setting to disable Sensei slugs translation for better compatibility [#7569](https://github.com/Automattic/sensei/pull/7569)
+- WPML: Share student progress and quiz submission across translations [#7492](https://github.com/Automattic/sensei/pull/7492)
+- WPML: Show user courses for different languages using `sensei_user_courses` shortcode [#7583](https://github.com/Automattic/sensei/pull/7583)
+
+### Changed
+- Open setup wizard if necessary when navigating through relevant pages in WP admin [#7581](https://github.com/Automattic/sensei/pull/7581)
+
+### Fixed
+- Usage of question categories in translated quizzes [#7559](https://github.com/Automattic/sensei/pull/7559)
+- Lessons being automatically published when course is updated [#7582](https://github.com/Automattic/sensei/pull/7582)
+
 ## 4.23.0 - 2024-04-04
 ### Added
 - Sensei pro upsell task in Sensei Home [#7562](https://github.com/Automattic/sensei/pull/7562)

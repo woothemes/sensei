@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * Compatibility code with WPML.
  *
- * @since $$next-version$$
+ * @since 4.23.1
  *
  * @internal
  */
@@ -37,7 +37,7 @@ class Quiz_Progress {
 	/**
 	 * Translate quiz ID.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.23.1
 	 *
 	 * @internal
 	 *

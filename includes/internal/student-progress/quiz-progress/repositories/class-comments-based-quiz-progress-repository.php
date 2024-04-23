@@ -42,7 +42,7 @@ class Comments_Based_Quiz_Progress_Repository implements Quiz_Progress_Repositor
 		 *
 		 * @hook sensei_quiz_progress_create_quiz_id
 		 *
-		 * @since $$next-version$$
+		 * @since 4.23.1
 		 *
 		 * @param {int} $quiz_id Quiz ID.
 		 * @return {int} Filtered quiz ID.
@@ -80,7 +80,7 @@ class Comments_Based_Quiz_Progress_Repository implements Quiz_Progress_Repositor
 		 *
 		 * @hook sensei_quiz_progress_get_quiz_id
 		 *
-		 * @since $$next-version$$
+		 * @since 4.23.1
 		 *
 		 * @param {int} $quiz_id Quiz ID.
 		 * @return {int} Filtered quiz ID.
@@ -124,7 +124,7 @@ class Comments_Based_Quiz_Progress_Repository implements Quiz_Progress_Repositor
 		 *
 		 * @hook sensei_quiz_progress_has_quiz_id
 		 *
-		 * @since $$next-version$$
+		 * @since 4.23.1
 		 *
 		 * @param {int} $quiz_id Quiz ID.
 		 * @return {int} Filtered quiz ID.
@@ -195,7 +195,7 @@ class Comments_Based_Quiz_Progress_Repository implements Quiz_Progress_Repositor
 		 *
 		 * @hook sensei_quiz_progress_delete_for_quiz_quiz_id
 		 *
-		 * @since $$next-version$$
+		 * @since 4.23.1
 		 *
 		 * @param {int} $quiz_id Quiz ID.
 		 * @return {int} Filtered quiz ID.
@@ -290,7 +290,7 @@ class Comments_Based_Quiz_Progress_Repository implements Quiz_Progress_Repositor
 					 *
 					 * @hook sensei_quiz_progress_find_quiz_id
 					 *
-					 * @since $$next-version$$
+					 * @since 4.23.1
 					 *
 					 * @param {int} $quiz_id Quiz ID.
 					 * @return {int} Filtered quiz ID.
