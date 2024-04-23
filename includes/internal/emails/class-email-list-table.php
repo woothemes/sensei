@@ -289,9 +289,11 @@ class Email_List_Table extends Sensei_List_Table {
 	 *
 	 * @param \WP_Post $post The email post.
 	 *
+	 * @internal
+	 *
 	 * @return boolean True if the email is available, false otherwise.
 	 */
-	private function is_email_available( $post ) {
+	public function is_email_available( $post ) {
 		$available = ! get_post_meta( $post->ID, '_sensei_email_is_pro', true );
 
 		/**
