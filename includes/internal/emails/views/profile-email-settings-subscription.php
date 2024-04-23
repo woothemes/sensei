@@ -11,6 +11,7 @@
  *
  * phpcs:disable WordPress.WP.EnqueuedResources, VariableAnalysis.CodeAnalysis.VariableAnalysis.UndefinedVariable
  */
+
 ?>
 <fieldset>
 	<label for="<?php echo esc_attr( $this->get_field_id( $identifier ) ); ?>">
