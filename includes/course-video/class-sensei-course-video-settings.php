@@ -133,7 +133,7 @@ class Sensei_Course_Video_Settings {
 		wp_add_inline_script( 'sensei-course-video-blocks-extension', $script, 'before' );
 
 		$post = get_post();
-		if ( has_block( 'core/video', $post ) || has_block( 'core/embed', $post ) ) {
+		if ( has_block( 'core/video', $post ) || has_block( 'core/embed', $post ) || has_block( 'videopress/video', $post ) ) {
 			Sensei()->assets->enqueue_script( 'sensei-course-video-blocks-extension' );
 		}
 	}

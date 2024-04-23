@@ -162,8 +162,10 @@ const useEditorPlayer = ( videoBlock ) => {
 		const doc = editorCanvasIframe?.contentDocument || document;
 		const w = editorCanvasIframe?.contentWindow || window;
 
-		const isJetpackVideoPress = !! videoBlock.attributes
-			.videoPressClassNames;
+		const isJetpackVideoPress =
+			!! videoBlock.attributes.videoPressClassNames ||
+			// VideoPress block (previously VideoPress used the video block).
+			'videopress/video' === videoBlock.name;
 
 		// Video file block.
 		if ( 'core/video' === videoBlock.name && ! isJetpackVideoPress ) {

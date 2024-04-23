@@ -26,6 +26,8 @@ const initVideoPressPlayer = ( iframe ) => {
 
 export const initVideoPressExtension = () => {
 	document
-		.querySelectorAll( '.wp-block-embed-videopress iframe' )
+		.querySelectorAll(
+			'.wp-block-embed-videopress iframe, .wp-block-jetpack-videopress iframe'
+		)
 		.forEach( initVideoPressPlayer );
 };
