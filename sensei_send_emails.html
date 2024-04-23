@@ -43,7 +43,7 @@
 
     
 
-    <h4 class="name" id="sensei_send_emails">apply_filters( 'sensei_send_emails', <span class="signature">$send_email, $to, $subject, $message )</span><span class="type-signature"> &rarr; {bool}</span></h4>
+    <h4 class="name" id="sensei_send_emails">apply_filters( 'sensei_send_emails', <span class="signature">$send_email, $to, $subject, $message, $identifier )</span><span class="type-signature"> &rarr; {bool}</span></h4>
 
     
 
@@ -173,6 +173,29 @@
         </tr>
 
     
+
+        <tr>
+            
+                <td class="name"><code>$identifier</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Unique identifier of the email, not for legacy emails.</p></td>
+        </tr>
+
+    
     </tbody>
 </table>
 
@@ -187,7 +210,7 @@
 
     
     <dt class="tag-since">Since:</dt>
-    <dd class="tag-since"><ul class="dummy"><li>1.8.0</li></ul></dd>
+    <dd class="tag-since"><ul class="dummy"><li>$$next-version$$ The `$identifier` parameter was added.</li></ul></dd>
     
 
     

@@ -158,7 +158,7 @@ class Email_Sender {
 			/*
 			 * For documentation of the filter check class-sensei-emails.php file.
 			 */
-			if ( apply_filters( 'sensei_send_emails', true, $recipient, $subject, $message ) ) {
+			if ( apply_filters( 'sensei_send_emails', true, $recipient, $subject, $message, $email_name ) ) {
 				wp_mail(
 					$recipient,
 					$subject,

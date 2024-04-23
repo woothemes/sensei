@@ -212,6 +212,7 @@ class Sensei_Emails {
 		 * Filter Sensei's ability to send out emails.
 		 *
 		 * @since 1.8.0
+		 * @since $$next-version$$ The `$identifier` parameter was added.
 		 *
 		 * @hook sensei_send_emails
 		 *
@@ -219,9 +220,10 @@ class Sensei_Emails {
 		 * @param {mixed} $to The email address(es) to send the email to.
 		 * @param {mixed} $subject The subject of the email.
 		 * @param {mixed} $message The message of the email.
+		 * @param {string} $identifier Unique identifier of the email, not for legacy emails.
 		 * @return {bool} Whether to send the email or not.
 		 */
-		if ( apply_filters( 'sensei_send_emails', true, $to, $subject, $message ) ) {
+		if ( apply_filters( 'sensei_send_emails', true, $to, $subject, $message, 'legacy-email' ) ) {
 
 			wp_mail( $to, $subject, $message, $headers, $attachments );
 
