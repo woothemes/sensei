@@ -107,6 +107,9 @@ class Sensei_Teacher {
 		// update lesson owner to course teacher before insert
 		add_filter( 'wp_insert_post_data', array( $this, 'update_lesson_teacher' ), 99, 2 );
 
+		// Define a custom function to execute when postmeta is updated
+		add_action( 'updated_postmeta', array( $this, 'sync_lesson_teacher'), 10, 4 );
+
 		// If a Teacher logs in, redirect to /wp-admin/
 		add_filter( 'wp_login', array( $this, 'teacher_login_redirect' ), 10, 2 );
 
@@ -957,6 +960,40 @@ AND comments.comment_type = 'sensei_course_status'";
 		$args['post__in'] = $quiz_scope;
 
 		return $args;
+	}
+
+	/**
+	 * When the _lesson_course meta is updated, make sure the lesson author is the same as the course author
+	 * 
+	 * @param int $meta_id
+	 * @param int $object_id
+	 * @param string $meta_key
+	 * @param mixed $meta_value
+	 */
+	public function sync_lesson_teacher( $meta_id, $object_id, $meta_key, $meta_value ) {
+		if ('_lesson_course' !==  $meta_key ){
+			return;
+		}
+
+		// Check that the $object id is a Lesson ID
+		if ('lesson' !== get_post_type( $object_id )){
+			return;
+		}
+
+    // Check the $meta_value is a Course ID
+		if ('course' !== get_post_type( $meta_value )){
+			return;
+		}
+
+		$lesson_author_id = get_post_field( 'post_author', $object_id );
+		$course_author_id = get_post_field( 'post_author', $meta_value );
+
+		if($lesson_author_id !== $course_author_id){
+			wp_update_post(array(
+				'ID' => $object_id,
+				'post_author' => $course_author_id,
+			));
+		}
 	}
 
 	/**
