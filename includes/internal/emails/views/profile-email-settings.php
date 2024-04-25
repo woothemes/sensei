@@ -3,7 +3,7 @@
  * The template used to render the email settings in the user profile page.
  *
  * @package sensei
- * @since $$next-version$$
+ * @since 1.24.0
  *
  * @var array user_emails The user emails.
  *
