@@ -107,7 +107,7 @@ class Sensei_Teacher {
 		// update lesson owner to course teacher before insert
 		add_filter( 'wp_insert_post_data', array( $this, 'update_lesson_teacher' ), 99, 2 );
 
-		// Define a custom function to execute when postmeta is updated
+		// update lesson owner to course teacher when a lesson is updated
 		add_action( 'updated_postmeta', array( $this, 'sync_lesson_teacher'), 10, 4 );
 
 		// If a Teacher logs in, redirect to /wp-admin/
