@@ -1,5 +1,19 @@
 *** Changelog ***
 
+## 4.24.0 - 2024-04-25
+### Security
+- Prevent unauthenticated flushing of rewrite rules [#7596](https://github.com/Automattic/sensei/pull/7596)
+
+### Added
+- User profile settings for unsubscribing from emails [#7586](https://github.com/Automattic/sensei/pull/7586)
+
+### Changed
+- Let buttons get their styles from the theme [#7587](https://github.com/Automattic/sensei/pull/7587)
+
+### Fixed
+- Add VideoPress block compabitility for the video settings on courses [#7592](https://github.com/Automattic/sensei/pull/7592)
+- Fix preview email button and links [#7590](https://github.com/Automattic/sensei/pull/7590)
+
 ## 4.23.1 - 2024-04-15
 ### Added
 - WPML: Setting to disable Sensei slugs translation for better compatibility [#7569](https://github.com/Automattic/sensei/pull/7569)

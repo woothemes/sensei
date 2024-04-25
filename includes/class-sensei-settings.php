@@ -1013,10 +1013,10 @@ class Sensei_Settings extends Sensei_Settings_API {
 	 *
 	 * @since 1.9.0
 	 *
-	 * @deprecated $$next-version$$ Use flush_rewrite_rules_on_update instance method instead.
+	 * @deprecated 1.24.0 Use flush_rewrite_rules_on_update instance method instead.
 	 */
 	public static function flush_rewrite_rules() {
-		_deprecated_function( __METHOD__, '$$next-version$$', 'Use flush_rewrite_rules_on_update instance method instead' );
+		_deprecated_function( __METHOD__, '1.24.0', 'Use flush_rewrite_rules_on_update instance method instead' );
 
 		$settings = new self();
 		$settings->flush_rewrite_rules_on_update();
@@ -1028,7 +1028,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 1.24.0
 	 */
 	public function flush_rewrite_rules_on_update() {
 		$nonce_action = $this->token . '-options';
