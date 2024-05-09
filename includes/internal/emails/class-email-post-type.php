@@ -56,11 +56,34 @@ class Email_Post_Type {
 	 * @internal
 	 */
 	public function init(): void {
+		add_filter( 'block_editor_settings_all', array( $this, 'disable_unsupported_features' ), 10, 2 );
 		add_action( 'init', [ $this, 'register_post_type' ] );
 		add_action( 'load-edit.php', [ $this, 'maybe_redirect_to_listing' ] );
 		add_action( 'map_meta_cap', [ $this, 'remove_cap_of_deleting_email' ], 10, 4 );
 
 		add_filter( 'is_post_type_viewable', [ $this, 'enable_email_template_editor' ], 10, 2 );
+	}
+
+	/**
+	 * Disable the default color palette and gradients in the block editor for the Email post type.
+	 *
+	 * @internal
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param array  $editor_settings The editor settings.
+	 * @param object $editor_context  The editor context.
+	 * @return array
+	 */
+	public function disable_unsupported_features( $editor_settings, $editor_context ) {
+		if ( empty( $editor_context->post ) || self::POST_TYPE !== $editor_context->post->post_type ) {
+			return $editor_settings;
+		}
+
+		$editor_settings['__experimentalFeatures']['color']['defaultPalette']   = false;
+		$editor_settings['__experimentalFeatures']['color']['defaultGradients'] = false;
+
+		return $editor_settings;
 	}
 
 	/**
@@ -171,4 +194,3 @@ class Email_Post_Type {
 		exit;
 	}
 }
-
