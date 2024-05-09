@@ -5,7 +5,7 @@ Tags: lms, eLearning, teach, online courses, woocommerce
 Requires at least: 6.3
 Tested up to: 6.5
 Requires PHP: 7.4
-Stable tag: 4.23.1
+Stable tag: 4.24.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -140,6 +140,20 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 
 == Changelog ==
 
+### 4.24.0 - 2024-04-25
+#### Security
+- Prevent unauthenticated flushing of rewrite rules [#7596](https://github.com/Automattic/sensei/pull/7596)
+
+#### Added
+- User profile settings for unsubscribing from emails [#7586](https://github.com/Automattic/sensei/pull/7586)
+
+#### Changed
+- Let buttons get their styles from the theme [#7587](https://github.com/Automattic/sensei/pull/7587)
+
+#### Fixed
+- Add VideoPress block compabitility for the video settings on courses [#7592](https://github.com/Automattic/sensei/pull/7592)
+- Fix preview email button and links [#7590](https://github.com/Automattic/sensei/pull/7590)
+
 ### 4.23.1 - 2024-04-15
 #### Added
 - WPML: Setting to disable Sensei slugs translation for better compatibility [#7569](https://github.com/Automattic/sensei/pull/7569)
@@ -164,28 +178,3 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 - Ensure student can view the lesson content when rendering the Complete Lesson button [#7579](https://github.com/Automattic/sensei/pull/7579)
 - Remove opinionated CSS class from login form [#7542](https://github.com/Automattic/sensei/pull/7542)
 - Visibility improved for focus elements of Course tour [#7570](https://github.com/Automattic/sensei/pull/7570)
-
-### 4.22.0 - 2024-03-20
-#### Added
-- Added Course onboarding tour [#7535](https://github.com/Automattic/sensei/pull/7535)
-- Added Lesson Quiz onboarding tour [#7538](https://github.com/Automattic/sensei/pull/7538)
-- Add toggle to pre-publish panel to publish associated lessons when the course is published [#7536](https://github.com/Automattic/sensei/pull/7536)
-- Display warning when there are no layouts available. [#7530](https://github.com/Automattic/sensei/pull/7530)
-
-#### Changed
-- Tweak "Configure learning mode" task description [#7540](https://github.com/Automattic/sensei/pull/7540)
-- Updated styles for module title and lesson title in Course Outline block [#7068](https://github.com/Automattic/sensei/pull/7068)
-
-#### Removed
-- Remove "Customize your lesson template" from task list [#7539](https://github.com/Automattic/sensei/pull/7539)
-
-#### Fixed
-- Address the issue of patterns flickering in the editor wizard on WPCOM sites [#7511](https://github.com/Automattic/sensei/pull/7511)
-- Contact Teacher and Conditional Content block not appearing in Site Editor when Gutenberg is enabled [#7541](https://github.com/Automattic/sensei/pull/7541)
-- Email subject with special characters not being displayed correctly [#7546](https://github.com/Automattic/sensei/pull/7546)
-- Email Template showing up as default template in editor when GB is installed [#7517](https://github.com/Automattic/sensei/pull/7517)
-- Ensure that default passing grade will be "0" for any situation [#7524](https://github.com/Automattic/sensei/pull/7524)
-- Fix lesson bulk edit. [#7515](https://github.com/Automattic/sensei/pull/7515)
-- Fix Sensei Pro question type not displaying in filter and table on Questions page [#7544](https://github.com/Automattic/sensei/pull/7544)
-- Ignore Passing Grade for answer feedback when Pass Required is turned off [#7525](https://github.com/Automattic/sensei/pull/7525)
-- WPML: Create quiz and question translations, update relations [#7480](https://github.com/Automattic/sensei/pull/7480)

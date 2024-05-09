@@ -31,8 +31,6 @@ class Sensei_Settings extends Sensei_Settings_API {
 	public function __construct() {
 		parent::__construct(); // Required in extended classes.
 
-		add_action( 'init', array( __CLASS__, 'flush_rewrite_rules' ) );
-
 		// Setup Admin Settings data
 		if ( is_admin() ) {
 
@@ -45,6 +43,9 @@ class Sensei_Settings extends Sensei_Settings_API {
 
 		$this->register_hook_listener();
 		$this->get_settings();
+
+		// Flush rewrite rules on settings update.
+		add_action( 'init', array( $this, 'flush_rewrite_rules_on_update' ), 10, 0 );
 
 		// Log when settings are updated by the user.
 		add_action( 'update_option_sensei-settings', [ $this, 'log_settings_update' ], 10, 2 );
@@ -1011,21 +1012,40 @@ class Sensei_Settings extends Sensei_Settings_API {
 	 * This is to ensure that the proper permalinks are set up for archive pages.
 	 *
 	 * @since 1.9.0
+	 *
+	 * @deprecated 1.24.0 Use flush_rewrite_rules_on_update instance method instead.
 	 */
 	public static function flush_rewrite_rules() {
+		_deprecated_function( __METHOD__, '1.24.0', 'Use flush_rewrite_rules_on_update instance method instead' );
 
-		/*
-		 * Skipping nonce check because it is already done by WordPress for the Settings page.
-		 * phpcs:disable WordPress.Security.NonceVerification
-		 */
-		if ( isset( $_POST['option_page'] ) && 'sensei-settings' === $_POST['option_page']
-			&& isset( $_POST['action'] ) && 'update' === $_POST['action'] ) {
-			// phpcs:enable WordPress.Security.NonceVerification
+		$settings = new self();
+		$settings->flush_rewrite_rules_on_update();
+	}
 
-			Sensei()->initiate_rewrite_rules_flush();
-
+	/**
+	 * Flush the rewrite rules after the settings have been updated.
+	 * This is to ensure that the proper permalinks are set up for archive pages.
+	 *
+	 * @internal
+	 *
+	 * @since 1.24.0
+	 */
+	public function flush_rewrite_rules_on_update() {
+		$nonce_action = $this->token . '-options';
+		$nonce_value  = sanitize_text_field( wp_unslash( $_POST['_wpnonce'] ?? '' ) );
+		if ( ! wp_verify_nonce( $nonce_value, $nonce_action ) ) {
+			return;
 		}
 
+		if ( ! is_admin() || ! current_user_can( 'manage_sensei' ) ) {
+			return;
+		}
+
+		if ( isset( $_POST['option_page'] ) && 'sensei-settings' === $_POST['option_page']
+			&& isset( $_POST['action'] ) && 'update' === $_POST['action'] ) {
+
+			Sensei()->initiate_rewrite_rules_flush();
+		}
 	}
 
 	/**
