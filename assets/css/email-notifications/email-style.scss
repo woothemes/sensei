@@ -44,11 +44,73 @@ $MOBILE_HEADER_SIZE: 32px;
 }
 
 .has-border-color, .has-border {
- 	border-style: solid;
+	border-style: solid;
+}
+
+.has-text-align-center{
+	text-align:center;
+}
+
+.has-text-align-left{
+	text-align:left;
+}
+
+.has-text-align-right{
+	text-align:right;
 }
 
 .wp-element-button, .editor-styles-wrapper .wp-block-button__link {
 	text-transform: capitalize;
+}
+
+.wp-block-buttons.is-vertical{
+	flex-direction:column;
+}
+.wp-block-buttons.is-vertical>.wp-block-button:last-child{
+	margin-bottom:0;
+}
+.wp-block-buttons>.wp-block-button{
+	display:inline-block;
+	margin:0;
+}
+.wp-block-buttons.is-content-justification-left{
+	justify-content:flex-start;
+}
+.wp-block-buttons.is-content-justification-left.is-vertical{
+	align-items:flex-start;
+}
+.wp-block-buttons.is-content-justification-center{
+	justify-content:center;
+}
+.wp-block-buttons.is-content-justification-center.is-vertical{
+	align-items:center;
+}
+.wp-block-buttons.is-content-justification-right{
+	justify-content:flex-end;
+}
+.wp-block-buttons.is-content-justification-right.is-vertical{
+	align-items:flex-end;
+}
+.wp-block-buttons.is-content-justification-space-between{
+	justify-content:space-between;
+}
+.wp-block-buttons.aligncenter{
+	text-align:center;
+}
+.wp-block-buttons:not(.is-content-justification-space-between,.is-content-justification-right,.is-content-justification-left,.is-content-justification-center) .wp-block-button.aligncenter{
+	margin-left:auto;
+	margin-right:auto;
+	width:100%;
+}
+.wp-block-buttons[style*=text-decoration] .wp-block-button,.wp-block-buttons[style*=text-decoration] .wp-block-button__link{
+	text-decoration:inherit;
+}
+.wp-block-buttons.has-custom-font-size .wp-block-button__link{
+	font-size:inherit;
+}
+
+.wp-block-button.aligncenter{
+	text-align:center;
 }
 
 figure {
@@ -80,21 +142,21 @@ figure {
 /* MOBILE VERSION */
 @media (max-width: 800px) {
 
-    .email-notification__header {
-        min-height: $MOBILE_HEADER_SIZE !important; // It is important when there is no logo available.
-    }
+	.email-notification__header {
+		min-height: $MOBILE_HEADER_SIZE !important; // It is important when there is no logo available.
+	}
 
-    .email-notification__header .wp-block-site-title {
-        line-height: $MOBILE_HEADER_SIZE !important;
-    }
+	.email-notification__header .wp-block-site-title {
+		line-height: $MOBILE_HEADER_SIZE !important;
+	}
 
 	.wp-block-site-title {
 		font-size: 15px !important;
 	}
 
 	.wp-block-site-logo img{
-    	max-height: $MOBILE_HEADER_SIZE !important;
-    }
+		max-height: $MOBILE_HEADER_SIZE !important;
+	}
 
 	.wp-block-buttons {
 		margin-bottom: 0 !important;
