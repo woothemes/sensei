@@ -185,7 +185,7 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 
 		if ( $status ) {
 			$post_args['post_status'] = $status;
-		} else {
+		} elseif ( ! $is_new ) {
 			// If status is not provided, use the current status of the question.
 			$post_args['post_status'] = get_post_status( $question_id );
 		}
