@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Avoid creating a new translation if it exists already
