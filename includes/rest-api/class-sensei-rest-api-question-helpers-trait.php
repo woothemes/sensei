@@ -185,9 +185,6 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 
 		if ( $status ) {
 			$post_args['post_status'] = $status;
-		} elseif ( ! $is_new ) {
-			// If status is not provided, use the current status of the question.
-			$post_args['post_status'] = get_post_status( $question_id );
 		}
 
 		// Force publish the question if it's part of a quiz.
@@ -199,7 +196,7 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 			$post_args['post_content'] = $question['description'];
 		}
 
-		$result = wp_insert_post( $post_args );
+		$result = wp_update_post( $post_args );
 
 		if ( ! $is_new && ! is_wp_error( $result ) ) {
 			$this->migrate_non_editor_question( $result, $question['type'] );
@@ -211,7 +208,7 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 		 * @since 3.9.0
 		 * @hook  sensei_rest_api_question_saved
 		 *
-		 * @param {int|WP_Error} $result        Result of wp_insert_post. Post ID on success or WP_Error on failure.
+		 * @param {int|WP_Error} $result        Result of wp_update_post. Post ID on success or WP_Error on failure.
 		 * @param {string}       $question_type The question type.
 		 * @param {array}        $question      The question JSON arguments.
 		 */
