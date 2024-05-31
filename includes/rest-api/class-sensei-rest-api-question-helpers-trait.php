@@ -119,7 +119,7 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 			],
 		];
 
-		$result = wp_insert_post( $post_args );
+		$result = wp_update_post( $post_args );
 
 		/**
 		 * This action is triggered when a category question is created or updated by the lesson quiz REST endpoint.
@@ -127,7 +127,7 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 		 * @since 3.9.0
 		 * @hook  sensei_rest_api_category_question_saved
 		 *
-		 * @param {int|WP_Error} $result   Result of wp_insert_post. Post ID on success or WP_Error on failure.
+		 * @param {int|WP_Error} $result   Result of wp_update_post. Post ID on success or WP_Error on failure.
 		 * @param {array}        $question The question JSON arguments.
 		 */
 		do_action( 'sensei_rest_api_category_question_saved', $result, $question );
