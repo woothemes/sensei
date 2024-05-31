@@ -4455,7 +4455,6 @@
     </UndefinedDocblockClass>
   </file>
   <file src="includes/internal/emails/class-email-list-table.php">
-    <ArgumentTypeCoercion occurrences="1"/>
     <MoreSpecificImplementedParamType occurrences="1">
       <code>$post</code>
     </MoreSpecificImplementedParamType>
@@ -4512,9 +4511,6 @@
     </UndefinedDocblockClass>
   </file>
   <file src="includes/internal/emails/class-email-preview.php">
-    <PossiblyFalseArgument occurrences="1">
-      <code>get_the_ID()</code>
-    </PossiblyFalseArgument>
     <PossiblyNullArgument occurrences="2">
       <code>$this-&gt;get_email_post_for_preview()</code>
       <code>$this-&gt;get_email_post_for_preview()</code>
@@ -5351,9 +5347,10 @@
       <code>true|WP_Error</code>
     </InvalidReturnType>
     <MissingClosureParamType occurrences="1">
-      <code>$object</code>
+      <code>$question</code>
     </MissingClosureParamType>
-    <PossiblyInvalidArgument occurrences="2">
+    <PossiblyInvalidArgument occurrences="3">
+      <code>$post</code>
       <code>$post</code>
       <code>$question_id</code>
     </PossiblyInvalidArgument>
@@ -5377,10 +5374,12 @@
       <code>$current_user</code>
       <code>$current_user</code>
     </RedundantConditionGivenDocblockType>
-    <UndefinedPropertyAssignment occurrences="1">
+    <UndefinedPropertyAssignment occurrences="2">
+      <code>$response-&gt;data</code>
       <code>$response-&gt;data</code>
     </UndefinedPropertyAssignment>
-    <UndefinedPropertyFetch occurrences="1">
+    <UndefinedPropertyFetch occurrences="2">
+      <code>$response-&gt;data</code>
       <code>$response-&gt;data</code>
     </UndefinedPropertyFetch>
   </file>
@@ -5824,21 +5823,16 @@
     </DocblockTypeContradiction>
   </file>
   <file src="includes/wpml/trait-quiz-translation-helper.php">
-    <InvalidArgument occurrences="1">
-      <code>$args</code>
-    </InvalidArgument>
-    <PossiblyInvalidPropertyFetch occurrences="1">
-      <code>$question-&gt;ID</code>
-    </PossiblyInvalidPropertyFetch>
     <InvalidArgument occurrences="2">
       <code>$args</code>
       <code>$args</code>
     </InvalidArgument>
-    <PossiblyInvalidPropertyFetch occurrences="4">
+    <PossiblyInvalidPropertyFetch occurrences="5">
       <code>$existing_term-&gt;description</code>
       <code>$existing_term-&gt;name</code>
       <code>$existing_term-&gt;slug</code>
       <code>$question-&gt;ID</code>
+      <code>$question-&gt;post_type</code>
     </PossiblyInvalidPropertyFetch>
     <UndefinedMethod occurrences="1">
       <code>$new_term</code>
