@@ -80,6 +80,10 @@ class Email_Post_Type {
 			return $editor_settings;
 		}
 
+		// Remove the default styles that might affect the email appearance.
+		$editor_settings['styles'] = array();
+
+		// Disable the default color palette and gradients.
 		$editor_settings['__experimentalFeatures']['color']['defaultPalette']   = false;
 		$editor_settings['__experimentalFeatures']['color']['defaultGradients'] = false;
 
