@@ -44,7 +44,7 @@ class Course_Welcome extends Email_Generators_Abstract {
 		$this->maybe_add_action( 'sensei_user_course_start', [ $this, 'welcome_to_course_for_student' ], 10, 2 );
 
 		// Send welcome email on the day the student gets access to the course.
-		$this->maybe_add_action( 'sensei_pro_welcome_student_access_start_email', [ $this, 'welcome_to_course_for_student' ], 10, 2 );
+		$this->maybe_add_action( 'sensei_pro_course_access_start_student_email_send', [ $this, 'welcome_to_course_for_student' ], 10, 2 );
 	}
 
 	/**

@@ -71,10 +71,10 @@ class Course_Welcome_Test extends \WP_UnitTestCase {
 
 		/* Assert. */
 		do_action( 'sensei_user_course_start', 1, 1 );
-		do_action( 'sensei_pro_welcome_student_access_start_email', 1, 1 );
+		do_action( 'sensei_pro_course_access_start_student_email_send', 1, 1 );
 
 		$priority_for_immediate_start = has_action( 'sensei_user_course_start', [ $generator, 'welcome_to_course_for_student' ] );
-		$priority_for_access_start    = has_action( 'sensei_pro_welcome_student_access_start_email', [ $generator, 'welcome_to_course_for_student' ] );
+		$priority_for_access_start    = has_action( 'sensei_pro_course_access_start_student_email_send', [ $generator, 'welcome_to_course_for_student' ] );
 		self::assertSame( 10, $priority_for_immediate_start );
 		self::assertSame( 10, $priority_for_access_start );
 	}
