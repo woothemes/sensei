@@ -74,17 +74,12 @@ class Lesson_Translation_Test extends \WP_UnitTestCase {
 		};
 		add_filter( 'wpml_object_id', $object_id_fitler, 10, 2 );
 
-		$element_has_translations_filter = function () {
-			return false;
+		$created_duplicates           = array();
+		$copy_post_to_language_filter = function ( $id ) use ( &$created_duplicates ) {
+			$created_duplicates[] = $id;
+			return 1;
 		};
-		add_filter( 'wpml_element_has_translations', $element_has_translations_filter, 10, 0 );
-
-		$created_duplicates               = 0;
-		$admin_make_post_duplicates_acton = function () use ( &$created_duplicates ) {
-			++$created_duplicates;
-		};
-
-		add_action( 'wpml_admin_make_post_duplicates', $admin_make_post_duplicates_acton, 10, 0 );
+		add_filter( 'wpml_copy_post_to_language', $copy_post_to_language_filter );
 
 		$post_duplicates_filter = function ( $post_id ) use ( $new_lesson_id, $course_with_lessons ) {
 			if ( $post_id === $course_with_lessons['lesson_ids'][0] ) {
@@ -104,11 +99,11 @@ class Lesson_Translation_Test extends \WP_UnitTestCase {
 		/* Clean up & Assert. */
 		remove_filter( 'wpml_element_language_details', $element_language_details_filter );
 		remove_filter( 'wpml_object_id', $object_id_fitler );
-		remove_filter( 'wpml_element_has_translations', $element_has_translations_filter );
-		remove_action( 'wpml_admin_make_post_duplicates', $admin_make_post_duplicates_acton );
+		remove_action( 'wpml_copy_post_to_language', $copy_post_to_language_filter );
 		remove_filter( 'wpml_post_duplicates', $post_duplicates_filter );
 
 		// 1 lesson, 3 questions, 1 multiple question, 3 questions inside the multiple question.
-		$this->assertSame( 8, $created_duplicates );
+		$actual = count( array_unique( $created_duplicates ) );
+		$this->assertSame( 8, $actual );
 	}
 }
