@@ -1844,6 +1844,10 @@ class Sensei_Main {
 
 		if ( ! is_null( $role ) ) {
 			$role->add_cap( 'manage_sensei_grades' );
+
+			$role->add_cap( 'manage_lesson_categories' );
+			$role->add_cap( 'manage_course_categories' );
+			$role->add_cap( 'manage_question_categories' );
 		}
 
 		return true;
@@ -1860,6 +1864,10 @@ class Sensei_Main {
 		if ( ! is_null( $role ) ) {
 			$role->add_cap( 'manage_sensei' );
 			$role->add_cap( 'manage_sensei_grades' );
+
+			$role->add_cap( 'manage_lesson_categories' );
+			$role->add_cap( 'manage_course_categories' );
+			$role->add_cap( 'manage_question_categories' );
 		}
 
 		return true;
