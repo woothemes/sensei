@@ -687,9 +687,9 @@ class Sensei_PostTypes {
 			'query_var'         => true,
 			'show_in_nav_menus' => true,
 			'capabilities'      => array(
-				'manage_terms' => 'manage_categories',
+				'manage_terms' => 'manage_course_categories',
 				'edit_terms'   => 'manage_course_categories',
-				'delete_terms' => 'manage_categories',
+				'delete_terms' => 'manage_course_categories',
 				'assign_terms' => 'edit_courses',
 			),
 			'rewrite'           => array(
@@ -839,9 +839,9 @@ class Sensei_PostTypes {
 			'show_admin_column' => true,
 			'show_in_rest'      => true,
 			'capabilities'      => array(
-				'manage_terms' => 'manage_categories',
+				'manage_terms' => 'manage_question_categories',
 				'edit_terms'   => 'manage_question_categories',
-				'delete_terms' => 'manage_categories',
+				'delete_terms' => 'manage_question_categories',
 				'assign_terms' => 'edit_questions',
 			),
 			'rewrite'           => array(
@@ -891,6 +891,12 @@ class Sensei_PostTypes {
 			'show_ui'           => true,
 			'query_var'         => true,
 			'show_in_nav_menus' => true,
+			'capabilities'      => array(
+				'manage_terms' => 'manage_lesson_categories',
+				'edit_terms'   => 'manage_lesson_categories',
+				'delete_terms' => 'manage_lesson_categories',
+				'assign_terms' => 'edit_lessons',
+			),
 			'rewrite'           => array(
 				/**
 				 * Filter the rewrite slug for the lesson tag taxonomy.

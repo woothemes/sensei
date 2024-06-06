@@ -211,6 +211,7 @@ class Sensei_Data_Cleaner {
 		'manage_lesson_categories',
 		'manage_course_categories',
 		'manage_question_categories',
+		'manage_modules',
 		'publish_quizzes',
 		'edit_quizzes',
 		'edit_published_quizzes',

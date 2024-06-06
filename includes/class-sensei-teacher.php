@@ -195,6 +195,9 @@ class Sensei_Teacher {
 				'read_private_courses'           => true,
 				'delete_published_courses'       => true,
 
+				// Modules
+				'manage_modules'                 => true,
+
 				// Quiz
 				'publish_quizzes'                => true,
 				'edit_quizzes'                   => true,
@@ -228,7 +231,7 @@ class Sensei_Teacher {
 
 		foreach ( $caps as $cap => $grant ) {
 
-			// load the capability on to the teacher role
+			// load the capability on to the teacher role.
 			$this->teacher_role->add_cap( $cap, $grant );
 
 		}

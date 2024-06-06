@@ -2179,6 +2179,12 @@ class Sensei_Core_Modules {
 			'public'             => true,
 			'hierarchical'       => true,
 			'show_admin_column'  => false,
+			'capabilities'       => array(
+				'manage_terms' => 'manage_modules',
+				'edit_terms'   => 'manage_modules',
+				'delete_terms' => 'manage_modules',
+				'assign_terms' => 'edit_courses',
+			),
 			'show_in_nav_menus'  => false,
 			'show_in_quick_edit' => false,
 			'show_ui'            => true,

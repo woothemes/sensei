@@ -1848,6 +1848,7 @@ class Sensei_Main {
 			$role->add_cap( 'manage_lesson_categories' );
 			$role->add_cap( 'manage_course_categories' );
 			$role->add_cap( 'manage_question_categories' );
+			$role->add_cap( 'manage_modules' );
 		}
 
 		return true;
@@ -1868,6 +1869,7 @@ class Sensei_Main {
 			$role->add_cap( 'manage_lesson_categories' );
 			$role->add_cap( 'manage_course_categories' );
 			$role->add_cap( 'manage_question_categories' );
+			$role->add_cap( 'manage_modules' );
 		}
 
 		return true;
