@@ -688,7 +688,7 @@ class Sensei_PostTypes {
 			'show_in_nav_menus' => true,
 			'capabilities'      => array(
 				'manage_terms' => 'manage_categories',
-				'edit_terms'   => 'edit_courses',
+				'edit_terms'   => 'manage_course_categories',
 				'delete_terms' => 'manage_categories',
 				'assign_terms' => 'edit_courses',
 			),
@@ -840,7 +840,7 @@ class Sensei_PostTypes {
 			'show_in_rest'      => true,
 			'capabilities'      => array(
 				'manage_terms' => 'manage_categories',
-				'edit_terms'   => 'edit_questions',
+				'edit_terms'   => 'manage_question_categories',
 				'delete_terms' => 'manage_categories',
 				'assign_terms' => 'edit_questions',
 			),
