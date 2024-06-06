@@ -204,6 +204,7 @@ class Sensei_Teacher {
 
 				// Questions
 				'publish_questions'              => true,
+				'manage_question_categories'     => true,
 				'edit_questions'                 => true,
 				'edit_published_questions'       => true,
 				'edit_private_questions'         => true,

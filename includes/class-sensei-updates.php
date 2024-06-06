@@ -88,9 +88,19 @@ class Sensei_Updates {
 		$this->v4_10_update_install_time();
 		$this->v4_12_create_default_emails();
 		$this->v4_19_2_update_legacy_quiz_data();
+		$this->v4_24_1_update_teacher_capabilities();
 
 		// Flush rewrite cache.
 		Sensei()->initiate_rewrite_rules_flush();
+	}
+
+	/**
+	 * Update teacher capabilities.
+	 *
+	 * @since 4.24.1
+	 */
+	private function v4_24_1_update_teacher_capabilities() {
+		Sensei()->teacher->create_role();
 	}
 
 	/**

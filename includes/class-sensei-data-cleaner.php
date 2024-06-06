@@ -210,6 +210,7 @@ class Sensei_Data_Cleaner {
 		// Teacher caps.
 		'manage_lesson_categories',
 		'manage_course_categories',
+		'manage_question_categories',
 		'publish_quizzes',
 		'edit_quizzes',
 		'edit_published_quizzes',
