@@ -1286,7 +1286,7 @@ class Sensei_Core_Modules {
 
 		$ordered = false;
 		if ( 0 < strlen( $module_order ) ) {
-			$ordered = $this->save_course_module_order( esc_attr( $module_order ), esc_attr( $course_id ) );
+			$ordered = $this->save_course_module_order( esc_attr( $module_order ), $course_id );
 		}
 
 		wp_safe_redirect(
