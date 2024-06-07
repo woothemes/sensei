@@ -1275,7 +1275,7 @@ class Sensei_Core_Modules {
 	public function handle_order_modules() {
 		check_admin_referer( 'order_modules' );
 
-		$course_id    = isset( $_POST['course_id'] ) ? intval( $_POST['course_id'] ) : '';
+		$course_id    = isset( $_POST['course_id'] ) ? intval( $_POST['course_id'] ) : 0;
 		$module_order = isset( $_POST['module-order'] ) ? sanitize_text_field( wp_unslash( $_POST['module-order'] ) ) : '';
 
 		if (

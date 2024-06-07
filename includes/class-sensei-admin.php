@@ -1249,7 +1249,7 @@ class Sensei_Admin {
 	public function handle_order_lessons() {
 		check_admin_referer( 'order_lessons' );
 
-		$course_id = isset( $_POST['course_id'] ) ? intval( $_POST['course_id'] ) : '';
+		$course_id = isset( $_POST['course_id'] ) ? intval( $_POST['course_id'] ) : 0;
 
 		if (
 			! current_user_can( 'edit_published_lessons' )
