@@ -685,6 +685,88 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 	}
 
 	/**
+	 * Tests posting multiple choice question with answer "0" (falsy value).
+	 */
+	public function testPostMultipleChoiceQuestion_WhenAnswersContainsFalsyValue_AnswerIsNotRemoved() {
+		$this->login_as_teacher();
+
+		list( $lesson_id, $quiz_id ) = $this->create_lesson_with_quiz();
+
+		$body = [
+			'options'   => [],
+			'questions' => [
+				[
+					'title'  => 'Question',
+					'type'   => 'multiple-choice',
+					'answer' => [
+						'answers' => [
+							[
+								'label'   => 'Right',
+								'correct' => true,
+							],
+							[
+								'label'   => 'Wrong',
+								'correct' => false,
+							],
+							[
+								'label'   => '0',
+								'correct' => false,
+							],
+						],
+					],
+				],
+			],
+		];
+
+		$this->send_post_request( $lesson_id, $body );
+
+		$questions = Sensei()->quiz->get_questions( Sensei()->lesson->lesson_quizzes( $lesson_id ) );
+
+		$this->assertContains( '0', get_post_meta( $questions[0]->ID, '_question_wrong_answers', true ) );
+	}
+
+	/**
+	 * Tests posting multiple choice question with empty string as an answer.
+	 */
+	public function testPostMultipleChoiceQuestion_WhenAnswersContainsEmptyString_AnswerIsRemoved() {
+		$this->login_as_teacher();
+
+		list( $lesson_id, $quiz_id ) = $this->create_lesson_with_quiz();
+
+		$body = [
+			'options'   => [],
+			'questions' => [
+				[
+					'title'  => 'Question',
+					'type'   => 'multiple-choice',
+					'answer' => [
+						'answers' => [
+							[
+								'label'   => 'Right',
+								'correct' => true,
+							],
+							[
+								'label'   => 'Wrong',
+								'correct' => false,
+							],
+							[
+								'label'   => '',
+								'correct' => false,
+							],
+						],
+					],
+				],
+			],
+		];
+
+		$this->send_post_request( $lesson_id, $body );
+
+		$questions = Sensei()->quiz->get_questions( Sensei()->lesson->lesson_quizzes( $lesson_id ) );
+
+		$this->assertCount( 1, get_post_meta( $questions[0]->ID, '_question_wrong_answers', true ) );
+	}
+
+	/**
 	 * Tests editing true/false question properties.
 	 */
 	public function testPostBooleanQuestion() {
