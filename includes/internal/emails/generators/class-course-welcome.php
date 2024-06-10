@@ -56,7 +56,7 @@ class Course_Welcome extends Email_Generators_Abstract {
 	 * @param int  $course_id   The course ID.
 	 * @param bool $is_enrolled Whether the student is enrolled in the course.
 	 */
-	public function welcome_to_course_for_student( $student_id, $course_id, $is_enrolled ) {
+	public function welcome_to_course_for_student( $student_id, $course_id, $is_enrolled = true ) {
 		if ( ! $is_enrolled ) {
 			return;
 		}
