@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Support "0" or other falsy values as an answer for a quiz question
