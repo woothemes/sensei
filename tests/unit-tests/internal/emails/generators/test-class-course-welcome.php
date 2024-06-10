@@ -70,7 +70,7 @@ class Course_Welcome_Test extends \WP_UnitTestCase {
 		$generator->init();
 
 		/* Assert. */
-		do_action( 'sensei_user_course_start', 1, 1 );
+		do_action( 'sensei_course_enrolment_status_changed', 1, 1 );
 		do_action( 'sensei_pro_course_access_start_student_email_send', 1, 1 );
 
 		$priority_for_immediate_start = has_action( 'sensei_course_enrolment_status_changed', [ $generator, 'welcome_to_course_for_student' ] );
