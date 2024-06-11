@@ -83,21 +83,21 @@ class Sensei_PostTypes {
 
 		$this->setup_post_type_labels_base();
 
-		add_action( 'init', array( $this, 'setup_course_post_type' ), 100 );
+		add_action( 'init', array( $this, 'setup_course_post_type' ), 10 );
 		add_action( 'template_redirect', array( $this, 'redirect_course_archive_page' ) );
-		add_action( 'init', array( $this, 'setup_lesson_post_type' ), 100 );
-		add_action( 'init', array( $this, 'setup_quiz_post_type' ), 100 );
-		add_action( 'init', array( $this, 'setup_question_post_type' ), 100 );
-		add_action( 'init', array( $this, 'setup_multiple_question_post_type' ), 100 );
-		add_action( 'init', array( $this, 'setup_sensei_message_post_type' ), 100 );
+		add_action( 'init', array( $this, 'setup_lesson_post_type' ), 10 );
+		add_action( 'init', array( $this, 'setup_quiz_post_type' ), 10 );
+		add_action( 'init', array( $this, 'setup_question_post_type' ), 10 );
+		add_action( 'init', array( $this, 'setup_multiple_question_post_type' ), 10 );
+		add_action( 'init', array( $this, 'setup_sensei_message_post_type' ), 10 );
 
 		// Setup Taxonomies
-		add_action( 'init', array( $this, 'setup_learner_taxonomy' ), 100 );
-		add_action( 'init', array( $this, 'setup_course_category_taxonomy' ), 100 );
-		add_action( 'init', array( $this, 'setup_quiz_type_taxonomy' ), 100 );
-		add_action( 'init', array( $this, 'setup_question_type_taxonomy' ), 100 );
-		add_action( 'init', array( $this, 'setup_question_category_taxonomy' ), 100 );
-		add_action( 'init', array( $this, 'setup_lesson_tag_taxonomy' ), 100 );
+		add_action( 'init', array( $this, 'setup_learner_taxonomy' ), 10 );
+		add_action( 'init', array( $this, 'setup_course_category_taxonomy' ), 10 );
+		add_action( 'init', array( $this, 'setup_quiz_type_taxonomy' ), 10 );
+		add_action( 'init', array( $this, 'setup_question_type_taxonomy' ), 10 );
+		add_action( 'init', array( $this, 'setup_question_category_taxonomy' ), 10 );
+		add_action( 'init', array( $this, 'setup_lesson_tag_taxonomy' ), 10 );
 
 		// Load Post Type Objects
 		$default_post_types = array(
