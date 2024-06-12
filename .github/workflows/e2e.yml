@@ -44,7 +44,7 @@ jobs:
               run: npx playwright install --with-deps chromium
 
             - name: Start wp-env
-              run: npm run wp-env start 
+              run: npx @wordpress/env start 
 
             - name: Run Playwright tests with @setup annotation
               run: CI=true npm run test:e2e:setup-only
