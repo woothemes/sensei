@@ -1,5 +1,7 @@
 # Sensei LMS - Online Courses, Quizzes, & Learning
 
+Testing E2E tests.
+
 [![Trunk Workflow](https://github.com/Automattic/sensei/actions/workflows/trunk.yml/badge.svg)](https://github.com/Automattic/sensei/actions/workflows/trunk.yml)
 
 Welcome to the repository of the Sensei LMS project, an open-source Learning Management System (LMS) built specifically for WordPress. Sensei LMS provides a robust and intuitive platform for creating, managing, and delivering online courses, quizzes, and learning experiences. 
