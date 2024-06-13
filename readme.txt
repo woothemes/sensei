@@ -5,7 +5,7 @@ Tags: lms, eLearning, teach, online courses, woocommerce
 Requires at least: 6.3
 Tested up to: 6.5
 Requires PHP: 7.4
-Stable tag: 4.24.0
+Stable tag: 4.24.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -140,6 +140,17 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 
 == Changelog ==
 
+### 4.24.1 - 2024-06-13
+#### Security
+- Improve security for lessons and modules ordering
+
+#### Fixed
+- Avoid creating a new translation if it exists already [#7609](https://github.com/Automattic/sensei/pull/7609)
+- Change some taxonomy capabilities to fix some behaviors [#7613](https://github.com/Automattic/sensei/pull/7613)
+- Contact teacher form not displaying correctly in Learning Mode [#7610](https://github.com/Automattic/sensei/pull/7610)
+- Register Sensei LMS custom post types without delay [#7607](https://github.com/Automattic/sensei/pull/7607)
+- Support "0" or other falsy values as an answer for a quiz question [#7614](https://github.com/Automattic/sensei/pull/7614)
+
 ### 4.24.0 - 2024-04-25
 #### Security
 - Prevent unauthenticated flushing of rewrite rules [#7596](https://github.com/Automattic/sensei/pull/7596)
@@ -166,15 +177,3 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 #### Fixed
 - Usage of question categories in translated quizzes [#7559](https://github.com/Automattic/sensei/pull/7559)
 - Lessons being automatically published when course is updated [#7582](https://github.com/Automattic/sensei/pull/7582)
-
-### 4.23.0 - 2024-04-04
-#### Added
-- Sensei pro upsell task in Sensei Home [#7562](https://github.com/Automattic/sensei/pull/7562)
-
-#### Deprecated
-- Remove Sell your course with WooCommerce task from core [#7572](https://github.com/Automattic/sensei/pull/7572)
-
-#### Fixed
-- Ensure student can view the lesson content when rendering the Complete Lesson button [#7579](https://github.com/Automattic/sensei/pull/7579)
-- Remove opinionated CSS class from login form [#7542](https://github.com/Automattic/sensei/pull/7542)
-- Visibility improved for focus elements of Course tour [#7570](https://github.com/Automattic/sensei/pull/7570)

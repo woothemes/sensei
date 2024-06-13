@@ -1261,7 +1261,7 @@ class Sensei_Core_Modules {
 			'', // Hide the submenu.
 			__( 'Order Modules', 'sensei-lms' ),
 			__( 'Order Modules', 'sensei-lms' ),
-			'edit_lessons',
+			'edit_courses',
 			$this->order_page_slug,
 			array( $this, 'module_order_screen' )
 		);
@@ -1275,18 +1275,27 @@ class Sensei_Core_Modules {
 	public function handle_order_modules() {
 		check_admin_referer( 'order_modules' );
 
-		$ordered = false;
-		if ( isset( $_POST['module-order'] ) && 0 < strlen( $_POST['module-order'] ) ) {
-			$ordered = $this->save_course_module_order( esc_attr( $_POST['module-order'] ), esc_attr( $_POST['course_id'] ) );
+		$course_id    = isset( $_POST['course_id'] ) ? intval( $_POST['course_id'] ) : 0;
+		$module_order = isset( $_POST['module-order'] ) ? sanitize_text_field( wp_unslash( $_POST['module-order'] ) ) : '';
+
+		if (
+			! Sensei_Course::can_current_user_edit_course( $course_id )
+		) {
+			wp_die( esc_html__( 'Insufficient permissions', 'sensei-lms' ) );
 		}
 
-		wp_redirect(
+		$ordered = false;
+		if ( 0 < strlen( $module_order ) ) {
+			$ordered = $this->save_course_module_order( esc_attr( $module_order ), $course_id );
+		}
+
+		wp_safe_redirect(
 			esc_url_raw(
 				add_query_arg(
 					array(
 						'page'      => $this->order_page_slug,
 						'ordered'   => $ordered,
-						'course_id' => $_POST['course_id'],
+						'course_id' => $course_id,
 					),
 					admin_url( 'admin.php' )
 				)

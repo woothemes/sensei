@@ -1,5 +1,16 @@
 *** Changelog ***
 
+## 4.24.1 - 2024-06-13
+### Security
+- Improve security for lessons and modules ordering
+
+### Fixed
+- Avoid creating a new translation if it exists already [#7609](https://github.com/Automattic/sensei/pull/7609)
+- Change some taxonomy capabilities to fix some behaviors [#7613](https://github.com/Automattic/sensei/pull/7613)
+- Contact teacher form not displaying correctly in Learning Mode [#7610](https://github.com/Automattic/sensei/pull/7610)
+- Register Sensei LMS custom post types without delay [#7607](https://github.com/Automattic/sensei/pull/7607)
+- Support "0" or other falsy values as an answer for a quiz question [#7614](https://github.com/Automattic/sensei/pull/7614)
+
 ## 4.24.0 - 2024-04-25
 ### Security
 - Prevent unauthenticated flushing of rewrite rules [#7596](https://github.com/Automattic/sensei/pull/7596)
