@@ -865,8 +865,8 @@ class Sensei_Quiz {
 		 *
 		 * @hook sensei_user_lesson_reset
 		 *
-		 * @param int {$user_id}   The user ID.
-		 * @param int {$lesson_id} The lesson ID.
+		 * @param {int} $user_id   The user ID.
+		 * @param {int} $lesson_id The lesson ID.
 		 */
 		do_action( 'sensei_user_lesson_reset', $user_id, $lesson_id );
 		if ( ! is_admin() ) {
