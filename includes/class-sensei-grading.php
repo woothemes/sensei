@@ -219,6 +219,7 @@ class Sensei_Grading {
 		do_action( 'grading_before_container' );
 		/**
 		 * Fires before the container of the Grading page.
+		 * This hook allows to wrap the container.
 		 *
 		 * @hook grading_wrapper_container
 		 *
@@ -247,6 +248,7 @@ class Sensei_Grading {
 		<?php
 		/**
 		 * Fires after the container with main content on the Grading page.
+		 * Allows to add extra content.
 		 *
 		 * @hook sensei_grading_extra
 		 */
@@ -254,6 +256,7 @@ class Sensei_Grading {
 
 		/**
 		 * Fires after the container of the Grading page.
+		 * This hook allows to wrap the container.
 		 *
 		 * @hook grading_wrapper_container
 		 *
@@ -304,6 +307,7 @@ class Sensei_Grading {
 
 		/**
 		 * Fires before the container of the Grading page.
+		 * This hook allows to wrap the container.
 		 *
 		 * @hook grading_wrapper_container
 		 *
@@ -329,6 +333,7 @@ class Sensei_Grading {
 		<?php
 		/**
 		 * Fires after the container on the Grading page.
+		 * This hook allows to wrap the container.
 		 *
 		 * @hook grading_wrapper_container
 		 *

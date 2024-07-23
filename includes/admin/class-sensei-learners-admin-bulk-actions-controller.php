@@ -342,6 +342,7 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 		<?php
 		/**
 		 * Fires before rendering the students page container.
+		 * This hook allows to wrap the container.
 		 *
 		 * @hook sensei_learner_admin_wrapper_container
 		 *
@@ -369,6 +370,7 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 		<?php
 		/**
 		 * Fires after rendering the students page container.
+		 * This hook allows to wrap the container.
 		 *
 		 * @hook sensei_learner_admin_wrapper_container
 		 *

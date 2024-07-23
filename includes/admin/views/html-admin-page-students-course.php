@@ -24,6 +24,7 @@ do_action( 'learners_before_container' );
 
 /**
  * Fires before rendering the students page container.
+ * This hook allows to wrap the container.
  *
  * @hook learners_wrapper_container
  *
@@ -42,6 +43,7 @@ Sensei()->learners->learners_headers();
 <?php
 /**
  * Fires after rendering the students page container.
+ * This hook allows to wrap the container.
  *
  * @hook learners_wrapper_container
  *

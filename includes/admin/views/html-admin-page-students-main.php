@@ -31,6 +31,7 @@ do_action( 'sensei_learner_admin_before_container' );
 	<?php
 	/**
 	 * Fires before rendering the students page container.
+	 * This hook allows to wrap the container.
 	 *
 	 * @hook sensei_learner_admin_wrapper_container
 	 *
@@ -58,6 +59,7 @@ do_action( 'sensei_learner_admin_before_container' );
 	<?php
 	/**
 	 * Fires after rendering the students page container.
+	 * This hook allows to wrap the container.
 	 *
 	 * @hook sensei_learner_admin_wrapper_container
 	 *

@@ -431,6 +431,7 @@ class Sensei_Analysis {
 
 		/**
 		 * Fires before the container on the Reports page.
+		 * This hook allows to wrap the container.
 		 *
 		 * @hook analysis_wrapper_container
 		 *
@@ -467,6 +468,7 @@ class Sensei_Analysis {
 
 		/**
 		 * Fires after the container on the Reports page.
+		 * This hook allows to wrap the container.
 		 *
 		 * @hook analysis_wrapper_container
 		 *
