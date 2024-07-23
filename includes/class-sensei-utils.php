@@ -638,8 +638,8 @@ class Sensei_Utils {
 	/**
 	 * Remove user from lesson, deleting all data from the corresponding quiz
 	 *
-	 * @param int $lesson_id The lesson ID.
-	 * @param int $user_id The user ID.
+	 * @param int  $lesson_id The lesson ID.
+	 * @param int  $user_id The user ID.
 	 * @param bool $from_course Whether the user is being removed from a course.
 	 * @return boolean
 	 */

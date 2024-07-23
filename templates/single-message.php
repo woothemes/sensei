@@ -41,7 +41,6 @@ the_content();
  * @hook sensei_single_message_content_inside_after
  *
  * @param {int} $message_id The message ID.
- *
  */
 do_action( 'sensei_single_message_content_inside_after', get_the_ID() );
 
