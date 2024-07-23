@@ -41,7 +41,7 @@ class Eraser {
 		 *
 		 * @hook sensei_tools_progress_tables_deleted
 		 *
-		 * @param array $tables List of deleted tables.
+		 * @param {array} $tables List of deleted tables.
 		 */
 		do_action( 'sensei_tools_progress_tables_deleted', $results );
 

@@ -201,7 +201,7 @@ class Sensei_Learner_Profiles {
 
 		/**
 		 * This hooke fires inside the Sensei_Learner_Profiles::user_info function.
-		 * Just before the htmls is generated.
+		 * Just before the HTML is generated.
 		 *
 		 * @since 1.0.0
 		 *

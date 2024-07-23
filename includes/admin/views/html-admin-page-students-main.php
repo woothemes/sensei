@@ -50,7 +50,7 @@ do_action( 'sensei_learner_admin_before_container' );
 	 * Fires after rendering the students page container.
 	 * Allowing for additional content to be added.
 	 *
-	 * @hook sensei_learner_admin_wrapper_container
+	 * @hook sensei_learner_admin_extra
 	 */
 	do_action( 'sensei_learner_admin_extra' );
 	?>

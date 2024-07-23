@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /**
  * Executes before the Sensei my courses markup begins.
- * This hook only fires whe a user is logged in.
+ * This hook only fires when a user is logged in.
  * If you need to add something here for when users are logged out use `sensei_login_form_before`.
  *
  * @since 1.9.0

@@ -46,7 +46,7 @@ do_action( 'sensei_single_quiz_content_inside_before', get_the_ID() );
 			 *
 			 * @hook sensei_single_quiz_questions_before
 			 *
-			 * @param {int} $the_quiz_id The quiz ID.
+			 * @param {int} $quiz_id The quiz ID.
 			 *
 			 * @hooked Sensei_Quiz::the_user_status_message  - 10
 			 */
@@ -76,7 +76,7 @@ do_action( 'sensei_single_quiz_content_inside_before', get_the_ID() );
 						 *
 						 * @hook sensei_quiz_question_inside_before
 						 *
-						 * @param {int} $the_question_id The question ID.
+						 * @param {int} $question_id The question ID.
 						 *
 						 * @hooked Sensei_Question::the_question_title        - 10
 						 * @hooked Sensei_Question::the_question_description  - 20
@@ -96,7 +96,7 @@ do_action( 'sensei_single_quiz_content_inside_before', get_the_ID() );
 						 *
 						 * @hook sensei_quiz_question_inside_after
 						 *
-						 * @param {int} $the_question_id The question ID.
+						 * @param {int} $question_id The question ID.
 						 *
 						 * @hooked Sensei_Question::the_answer_feedback
 						 */
@@ -117,7 +117,7 @@ do_action( 'sensei_single_quiz_content_inside_before', get_the_ID() );
 			 *
 			 * @hook sensei_single_quiz_questions_after
 			 *
-			 * @param {int} $the_quiz_id The quiz ID.
+			 * @param {int} $quiz_id The quiz ID.
 			 */
 			do_action( 'sensei_single_quiz_questions_after', get_the_id() );
 

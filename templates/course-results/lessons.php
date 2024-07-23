@@ -194,6 +194,8 @@ global $course;
 	 * @since 1.4.0
 	 *
 	 * @hook sensei_course_results_after_lessons
+	 *
+	 * @param {int} $course_id The course ID.
 	 */
 	do_action( 'sensei_course_results_after_lessons', $course->ID );
 	?>

@@ -220,7 +220,7 @@ class Sensei_Grading {
 		/**
 		 * Fires before the container of the Grading page.
 		 *
-		 * @hook grading_before_container
+		 * @hook grading_wrapper_container
 		 *
 		 * @param {string} $which The position ('top' here).
 		 */
@@ -248,7 +248,7 @@ class Sensei_Grading {
 		/**
 		 * Fires after the container with main content on the Grading page.
 		 *
-		 * @hook grading_after_container
+		 * @hook sensei_grading_extra
 		 */
 		do_action( 'sensei_grading_extra' );
 
@@ -305,7 +305,7 @@ class Sensei_Grading {
 		/**
 		 * Fires before the container of the Grading page.
 		 *
-		 * @hook grading_before_container
+		 * @hook grading_wrapper_container
 		 *
 		 * @param {string} $which The position ('top' here).
 		 */
