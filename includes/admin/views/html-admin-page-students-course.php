@@ -15,7 +15,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 $sensei_list_table = new Sensei_Learners_Main();
 $sensei_list_table->prepare_items();
 
+/**
+ * Fires before rendering the students container.
+ *
+ * @hook learners_before_container
+ */
 do_action( 'learners_before_container' );
+
+/**
+ * Fires before rendering the students page container.
+ *
+ * @hook learners_wrapper_container
+ *
+ * @param {string} $position The position of the container ('top' here).
+ */
 do_action( 'learners_wrapper_container', 'top' );
 
 Sensei()->learners->learners_headers();
@@ -27,5 +40,18 @@ Sensei()->learners->learners_headers();
 </form>
 <?php $sensei_list_table->display(); ?>
 <?php
+/**
+ * Fires after rendering the students page container.
+ *
+ * @hook learners_wrapper_container
+ *
+ * @param {string} $position The position of the container ('bottom' here).
+ */
 do_action( 'learners_wrapper_container', 'bottom' );
+
+/**
+ * Fires after rendering the students container.
+ *
+ * @hook learners_after_container
+ */
 do_action( 'learners_after_container' );

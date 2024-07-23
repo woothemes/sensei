@@ -541,7 +541,14 @@ class Sensei_Settings_API {
 				</div>
 			</div>
 
-			<?php do_action( 'settings_before_form' ); ?>
+			<?php
+			/**
+			 * Fires before the settings form.
+			 *
+			 * @hook settings_before_form
+			 */
+			do_action( 'settings_before_form' );
+			?>
 
 			<form id="<?php echo esc_attr( $this->token ); ?>-form" action="options.php" method="post">
 				<?php
@@ -566,7 +573,14 @@ class Sensei_Settings_API {
 				?>
 			</form>
 
-			<?php do_action( 'settings_after_form' ); ?>
+			<?php
+			/**
+			 * Fires after the settings form.
+			 *
+			 * @hook settings_after_form
+			 */
+			do_action( 'settings_after_form' );
+			?>
 		</div><!--/#woothemes-sensei-->
 		<?php
 	}

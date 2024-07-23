@@ -41,13 +41,14 @@ class Email {
 		* Switch language for email
 		*
 		* Allows WPML to switch current language to one preferred by email recipient.
-		* WPML checks language set in user preferences and applies it for email
-		* string localisation
-		* It runs before any email string is obtained and localised
+		* WPML checks language set in user preferences and applies it for email string localisation.
+		* It runs before any email string is obtained and localised.
 		*
 		* @since 1.9.7
 		*
-		* @param string  $email_address Recipient's email address
+		* @hook wpml_switch_language_for_email
+		*
+		* @param {string} $email_address Recipient's email address
 		*/
 		do_action( 'wpml_switch_language_for_email', $email_address ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 	}
@@ -59,12 +60,12 @@ class Email {
 		/**
 		* Restore language after sending email
 		*
-		* Allows WPML to switch language to the last one before switching with
-		* action 'wpml_switch_language_for_email'
-		* It runs just after wp_mail() call
-		* No params
+		* Allows WPML to switch language to the last one before switching with action 'wpml_switch_language_for_email'.
+		* It runs just after wp_mail() call.
 		*
 		* @since 1.9.7
+		*
+		* @hook wpml_restore_language_from_email
 		*/
 		do_action( 'wpml_restore_language_from_email' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 	}

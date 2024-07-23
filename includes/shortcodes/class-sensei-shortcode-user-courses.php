@@ -339,8 +339,20 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 
 		$this->attach_shortcode_hooks();
 
-		// mostly hooks added for legacy and backwards compatiblity sake
+		// Mostly hooks added for legacy and backwards compatiblity sake.
+		/**
+		 * Fires before the user courses are displayed.
+		 *
+		 * @hook sensei_my_courses_before
+		 */
 		do_action( 'sensei_my_courses_before' );
+		/**
+		 * Fires before the user course content is displayed.
+		 *
+		 * @hook sensei_before_user_course_content
+		 *
+		 * @param {WP_User} $user The user object.
+		 */
 		do_action( 'sensei_before_user_course_content', wp_get_current_user() );
 
 		ob_start();
@@ -350,14 +362,40 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 			Sensei_Messages::the_my_messages_link();
 		}
 
+		/**
+		 * Fires before the user course content is displayed inside a container.
+		 *
+		 * @hook sensei_my_courses_content_inside_before
+		 */
 		do_action( 'sensei_my_courses_content_inside_before' );
+
 		Sensei_Templates::get_template( 'loop-course.php' );
+
+		/**
+		 * Fires after the user course content is displayed inside a container.
+		 *
+		 * @hook sensei_my_courses_content_inside_after
+		 */
 		do_action( 'sensei_my_courses_content_inside_after' );
+
 		Sensei_Templates::get_template( 'globals/pagination.php' );
+
 		echo '</section>';
 
-		// mostly hooks added for legacy and backwards compatiblity sake
+		// Mostly hooks added for legacy and backwards compatiblity sake.
+		/**
+		 * Fires after the user course content is displayed.
+		 *
+		 * @hook sensei_after_user_course_content
+		 *
+		 * @param {WP_User} $user The user object.
+		 */
 		do_action( 'sensei_after_user_course_content', wp_get_current_user() );
+		/**
+		 * Fires after the user courses are displayed.
+		 *
+		 * @hook sensei_my_courses_after
+		 */
 		do_action( 'sensei_my_courses_after' );
 
 		$shortcode_output = ob_get_clean();

@@ -15,9 +15,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- *  Executes before the Sensei Login form markup begins.
+ * Executes before the Sensei Login form markup begins.
  *
  * @since 1.9.0
+ *
+ * @hook sensei_login_form_before
  */
 do_action( 'sensei_login_form_before' );
 ?>
@@ -28,11 +30,13 @@ do_action( 'sensei_login_form_before' );
 
 	<?php
 	/**
-	 *  Executes inside the sensei login form before all the default fields.
+	 * Executes inside the sensei login form before all the default fields.
 	 *
 	 * @since 1.6.2
+	 *
+	 * @hook sensei_login_form_inside_before
 	 */
-		do_action( 'sensei_login_form_inside_before' );
+	do_action( 'sensei_login_form_inside_before' );
 	?>
 
 	<p class="sensei-login-username form-row form-row-wide">
@@ -53,13 +57,14 @@ do_action( 'sensei_login_form_before' );
 
 	<?php
 	/**
-	 *  Executes inside the sensei login form after the password field.
-	 *
-	 *  You can use the action to add extra form login fields.
+	 * Executes inside the sensei login form after the password field.
+	 * You can use the action to add extra form login fields.
 	 *
 	 * @since 1.6.2
+	 *
+	 * @hook sensei_login_form_inside_after_password_field
 	 */
-		do_action( 'sensei_login_form_inside_after_password_field' );
+	do_action( 'sensei_login_form_inside_after_password_field' );
 	?>
 
 	<p class='sensei-login-submit'>
@@ -82,11 +87,13 @@ do_action( 'sensei_login_form_before' );
 
 	<?php
 	/**
-	 *  Executes inside the sensei login form after all the default fields.
+	 * Executes inside the sensei login form after all the default fields.
 	 *
 	 * @since 1.6.2
+	 *
+	 * @hook sensei_login_form_inside_after
 	 */
-		do_action( 'sensei_login_form_inside_after' );
+	do_action( 'sensei_login_form_inside_after' );
 	?>
 
 	<?php wp_nonce_field( 'sensei-login' ); ?>
@@ -101,9 +108,11 @@ do_action( 'sensei_login_form_before' );
 
 <?php
 /**
- *  Executes after the Login form markup closes.
+ * Executes after the Login form markup closes.
  *
- *  @since 1.9.0
+ * @since 1.9.0
+ *
+ * @hook sensei_login_form_after
  */
 do_action( 'sensei_login_form_after' );
 ?>

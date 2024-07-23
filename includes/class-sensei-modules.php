@@ -1158,6 +1158,14 @@ class Sensei_Core_Modules {
 		$module_progress = $this->calculate_user_module_progress( $user_id, $module_id, $course_id );
 		update_user_meta( intval( $user_id ), '_module_progress_' . intval( $course_id ) . '_' . intval( $module_id ), intval( $module_progress ) );
 
+		/**
+		 * Action hook triggered after module progress is saved for a user.
+		 *
+		 * @param {int}   $course_id       ID of course.
+		 * @param {int}   $module_id       ID of module.
+		 * @param {int}   $user_id         ID of user.
+		 * @param {float} $module_progress Module progress percentage.
+		 */
 		do_action( 'sensei_module_save_user_progress', $course_id, $module_id, $user_id, $module_progress );
 	}
 

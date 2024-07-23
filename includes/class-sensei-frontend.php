@@ -152,7 +152,12 @@ class Sensei_Frontend {
 			Sensei()->assets->register( 'sensei-stop-double-submission', 'js/stop-double-submission.js', [], true );
 			Sensei()->assets->register( Sensei()->token . '-user-dashboard', 'js/user-dashboard.js', [ 'jquery-ui-tabs' ], true );
 
-			// Allow additional scripts to be loaded.
+			/**
+			 * Fires when the frontend scripts are being enqueued.
+			 * Allow additional scripts to be loaded.
+			 *
+			 * @hook sensei_additional_scripts
+			 */
 			do_action( 'sensei_additional_scripts' );
 
 		}
@@ -186,7 +191,12 @@ class Sensei_Frontend {
 
 		Sensei()->assets->enqueue( Sensei()->token . '-frontend', 'css/frontend.css', [], 'screen' );
 
-		// Allow additional stylesheets to be loaded.
+		/**
+		 * Fires when the frontend styles are being enqueued.
+		 * Allow additional stylesheets to be loaded.
+		 *
+		 * @hook sensei_additional_styles
+		 */
 		do_action( 'sensei_additional_styles' );
 	}
 
@@ -779,6 +789,14 @@ class Sensei_Frontend {
 
 		if ( $url ) {
 
+			/**
+			 * Fires when a user completes a course and is redirected to the course completed page.
+			 *
+			 * @hook sensei_user_course_end
+			 *
+			 * @param {int} $user_id   The user ID.
+			 * @param {int} $course_id The course ID.
+			 */
 			do_action( 'sensei_user_course_end', $user_id, $course_id );
 
 			wp_safe_redirect( esc_url_raw( $url ) );
@@ -820,6 +838,14 @@ class Sensei_Frontend {
 						update_comment_meta( $course_progress->get_id(), $key, $value );
 					}
 
+					/**
+					 * Fires when a user completes a course.
+					 *
+					 * @hook sensei_user_course_end
+					 *
+					 * @param {int} $user_id   The user ID.
+					 * @param {int} $course_id The course ID.
+					 */
 					do_action( 'sensei_user_course_end', $current_user->ID, $sanitized_course_id );
 
 					// Success message.
@@ -986,7 +1012,9 @@ class Sensei_Frontend {
 				 *
 				 * @since 2.0.0
 				 *
-				 * @params int $course_id Course post ID.
+				 * @hook sensei_course_meta_inside_before
+				 *
+				 * @params {int} $course_id Course post ID.
 				 */
 				do_action( 'sensei_course_meta_inside_before', $post_id );
 
@@ -1019,7 +1047,9 @@ class Sensei_Frontend {
 			 *
 			 * @since 2.0.0
 			 *
-			 * @params int $course_id Course post ID.
+			 * @hook sensei_course_meta_inside_after
+			 *
+			 * @params {int} $course_id Course post ID.
 			 */
 			do_action( 'sensei_course_meta_inside_after', $post_id );
 			?>
@@ -1052,7 +1082,14 @@ class Sensei_Frontend {
 
 					<article class="<?php echo esc_attr( implode( ' ', get_post_class( array( 'course', 'post' ), get_the_ID() ) ) ); ?>">
 
-						<?php do_action( 'sensei_course_archive_meta' ); ?>
+						<?php
+						/**
+						 * Fires when course meta is displayed.
+						 *
+						 * @hook sensei_course_archive_meta
+						 */
+						do_action( 'sensei_course_archive_meta' );
+						?>
 
 					</article>
 
@@ -1102,7 +1139,14 @@ class Sensei_Frontend {
 
 					<form method="post" class="register">
 
-						<?php do_action( 'sensei_register_form_start' ); ?>
+						<?php
+						/**
+						 * Fires at the start of the register form.
+						 *
+						 * @hook sensei_register_form_start
+						 */
+						do_action( 'sensei_register_form_start' );
+						?>
 
 						<p class="form-row form-row-wide">
 							<label for="sensei_reg_username"><?php esc_html_e( 'Username', 'sensei-lms' ); ?> <span class="required">*</span></label>
@@ -1122,7 +1166,15 @@ class Sensei_Frontend {
 						<!-- Spam Trap -->
 						<div style="left:-999em; position:absolute;"><label for="trap"><?php esc_html_e( 'Anti-spam', 'sensei-lms' ); ?></label><input type="text" name="email_2" id="trap" tabindex="-1" /></div>
 
-						<?php do_action( 'sensei_register_form_fields' ); ?>
+						<?php
+						/**
+						 * Fires at the end of the register form.
+						 * Allows adding extra fields to the registration form.
+						 *
+						 * @hook sensei_register_form_fields
+						 */
+						do_action( 'sensei_register_form_fields' );
+						?>
 						<?php do_action( 'register_form' ); ?>
 
 						<?php wp_nonce_field( 'sensei-register' ); ?>
@@ -1131,7 +1183,14 @@ class Sensei_Frontend {
 							<input type="submit" class="button wp-element-button" name="register" value="<?php esc_attr_e( 'Register', 'sensei-lms' ); ?>" />
 						</p>
 
-						<?php do_action( 'sensei_register_form_end' ); ?>
+						<?php
+						/**
+						 * Fires at the end of the register form.
+						 *
+						 * @hook sensei_register_form_end
+						 */
+						do_action( 'sensei_register_form_end' );
+						?>
 
 					</form>
 				</div>

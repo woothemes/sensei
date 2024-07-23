@@ -27,7 +27,16 @@ $large = 'text-align: center !important;font-size: 350% !important;line-height: 
 
 ?>
 
-<?php do_action( 'sensei_before_email_content', $template ); ?>
+<?php
+/**
+ * Action hook before email content.
+ *
+ * @hook sensei_before_email_content
+ *
+ * @param {string} $template Template name.
+ */
+do_action( 'sensei_before_email_content', $template );
+?>
 
 <p style="<?php echo esc_attr( $small ); ?>"><?php esc_html_e( 'Your student', 'sensei-lms' ); ?></p>
 
@@ -54,4 +63,13 @@ printf(
 ?>
 </p>
 
-<?php do_action( 'sensei_after_email_content', $template ); ?>
+<?php
+/**
+ * Action hook after email content.
+ *
+ * @hook sensei_after_email_content
+ *
+ * @param {string} $template Template name.
+ */
+do_action( 'sensei_after_email_content', $template );
+?>

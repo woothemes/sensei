@@ -422,11 +422,29 @@ class Sensei_Analysis {
 	private function display_report_page( Sensei_List_Table $list_table, $nav_type = null, array $exclude_query_params = [] ) {
 		$exclude_query_params = array_merge( $exclude_query_params, [ '_wpnonce', '_wp_http_referer', 's' ] );
 
-		// Wrappers
+		/**
+		 * Fires before the container on the Reports page.
+		 *
+		 * @hook analysis_before_container
+		 */
 		do_action( 'analysis_before_container' );
+
+		/**
+		 * Fires before the container on the Reports page.
+		 *
+		 * @hook analysis_wrapper_container
+		 *
+		 * @param {string} $which The placement ('top' here).
+		 */
 		do_action( 'analysis_wrapper_container', 'top' );
 
 		$this->display_nav( $nav_type );
+
+		/**
+		 * Fires after headers on the Reports page.
+		 *
+		 * @hook sensei_analysis_after_headers
+		 */
 		do_action( 'sensei_analysis_after_headers' );
 
 		$list_table->views();
@@ -436,12 +454,31 @@ class Sensei_Analysis {
 			$list_table->table_search_form();
 			Sensei_Utils::output_query_params_as_inputs( $exclude_query_params );
 			$list_table->display();
+
+			/**
+			 * Fires after the list table on the Reports page.
+			 *
+			 * @hook sensei_analysis_extra
+			 */
 			do_action( 'sensei_analysis_extra' );
 			?>
 		</form>
 		<?php
 
+		/**
+		 * Fires after the container on the Reports page.
+		 *
+		 * @hook analysis_wrapper_container
+		 *
+		 * @param {string} $which The placement ('bottom' here).
+		 */
 		do_action( 'analysis_wrapper_container', 'bottom' );
+
+		/**
+		 * Fires after the container on the Reports page.
+		 *
+		 * @hook analysis_after_container
+		 */
 		do_action( 'analysis_after_container' );
 	}
 

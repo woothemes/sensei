@@ -1222,9 +1222,11 @@ class Sensei_PostTypes {
 		Sensei()->learners->learners_admin_menu();
 
 		/**
-		 * Filter used to add new menu item.
+		 * Fires when the Sensei Pro Groups menu item should be added.
 		 *
 		 * @since 4.5.0
+		 *
+		 * @hook sensei_pro_groups_menu_item
 		 */
 		do_action( 'sensei_pro_groups_menu_item', [] );
 
@@ -1338,12 +1340,22 @@ class Sensei_PostTypes {
 	 * Fire the scheduled "initial publish" actions. This is run on `shutdown`.
 	 *
 	 * @since 2.1.0
-	 * @access private
+	 *
+	 * @internal
 	 */
 	public function fire_scheduled_initial_publish_actions() {
 		foreach ( array_unique( $this->initial_publish_post_ids ) as $post_id ) {
 			$post = get_post( $post_id );
 			if ( $post ) {
+				/**
+				 * Fires the scheduled "initial publish" actions for a post on `shutdown`.
+				 *
+				 * @since 2.1.0
+				 *
+				 * @hook sensei_{$post_type}_initial_publish
+				 *
+				 * @param {WP_Post} $post The post.
+				 */
 				do_action( "sensei_{$post->post_type}_initial_publish", $post );
 				$this->mark_post_already_published( $post->ID );
 			}

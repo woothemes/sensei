@@ -19,11 +19,23 @@ $sensei_list_table = new Sensei_Learners_Admin_Bulk_Actions_View(
 );
 $sensei_list_table->prepare_items();
 
+/**
+ * Fires before rendering the students page.
+ *
+ * @hook sensei_learner_admin_before_container
+ */
 do_action( 'sensei_learner_admin_before_container' );
 ?>
 
 <div id="woothemes-sensei" class="wrap woothemes-sensei">
 	<?php
+	/**
+	 * Fires before rendering the students page container.
+	 *
+	 * @hook sensei_learner_admin_wrapper_container
+	 *
+	 * @param {string} $position The position of the container ('top' here).
+	 */
 	do_action( 'sensei_learner_admin_wrapper_container', 'top' );
 	?>
 
@@ -33,10 +45,32 @@ do_action( 'sensei_learner_admin_before_container' );
 				<?php $sensei_list_table->table_search_form(); ?>
 				<?php $sensei_list_table->display(); ?>
 			</form>
-			<?php do_action( 'sensei_learner_admin_extra' ); ?>
+	<?php
+	/**
+	 * Fires after rendering the students page container.
+	 * Allowing for additional content to be added.
+	 *
+	 * @hook sensei_learner_admin_wrapper_container
+	 */
+	do_action( 'sensei_learner_admin_extra' );
+	?>
 
-	<?php do_action( 'sensei_learner_admin_wrapper_container', 'bottom' ); ?>
+	<?php
+	/**
+	 * Fires after rendering the students page container.
+	 *
+	 * @hook sensei_learner_admin_wrapper_container
+	 *
+	 * @param {string} $position The position of the container ('bottom' here).
+	 */
+	do_action( 'sensei_learner_admin_wrapper_container', 'bottom' );
+	?>
 </div>
 
 <?php
+/**
+ * Fires after rendering the students page.
+ *
+ * @hook sensei_learner_admin_after_container
+ */
 do_action( 'sensei_learner_admin_after_container' );

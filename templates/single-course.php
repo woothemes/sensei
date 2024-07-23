@@ -22,7 +22,11 @@ get_sensei_header();
 /**
  * Hook inside the single course post above the content
  *
- * @param integer $course_id
+ * @since  1.9.0
+ *
+ * @hook sensei_single_course_content_inside_before
+ *
+ * @param {int} $course_id The course ID.
  *
  * @hooked Sensei()->frontend->sensei_course_start     -  10
  * @hooked Sensei_Course::the_title                    -  10
@@ -30,7 +34,6 @@ get_sensei_header();
  * @hooked Sensei_Course::the_course_enrolment_actions -  30
  * @hooked Sensei()->message->send_message_link        -  35
  * @hooked Sensei_Course::the_course_video             -  40
- * @since  1.9.0
  */
 do_action( 'sensei_single_course_content_inside_before', get_the_ID() );
 
@@ -48,9 +51,11 @@ while ( have_posts() ) {
 /**
  * Hook inside the single course post above the content
  *
- * @param integer $course_id
- *
  * @since 1.9.0
+ *
+ * @hook sensei_single_course_content_inside_after
+ *
+ * @param {int} $course_id The course ID.
  */
 do_action( 'sensei_single_course_content_inside_after', get_the_ID() );
 

@@ -201,9 +201,13 @@ class Sensei_Learner_Profiles {
 
 		/**
 		 * This hooke fires inside the Sensei_Learner_Profiles::user_info function.
-		 * just before the htmls is generated.
+		 * Just before the htmls is generated.
 		 *
 		 * @since 1.0.0
+		 *
+		 * @hook sensei_learner_profile_info
+		 *
+		 * @param {object} $user The user object.
 		 */
 		do_action( 'sensei_learner_profile_info', $user );
 
