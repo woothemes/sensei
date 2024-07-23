@@ -2820,7 +2820,7 @@ class Sensei_Course {
 		/**
 		 * Fires after course meta is displayed.
 		 *
-		 * @params {int} $course_id The course ID.
+		 * @param {int} $course_id The course ID.
 		 */
 		do_action( 'sensei_course_meta_inside_after', $course->ID );
 

@@ -1014,7 +1014,7 @@ class Sensei_Frontend {
 				 *
 				 * @hook sensei_course_meta_inside_before
 				 *
-				 * @params {int} $course_id Course post ID.
+				 * @param {int} $course_id Course post ID.
 				 */
 				do_action( 'sensei_course_meta_inside_before', $post_id );
 
@@ -1049,7 +1049,7 @@ class Sensei_Frontend {
 			 *
 			 * @hook sensei_course_meta_inside_after
 			 *
-			 * @params {int} $course_id Course post ID.
+			 * @param {int} $course_id Course post ID.
 			 */
 			do_action( 'sensei_course_meta_inside_after', $post_id );
 			?>
