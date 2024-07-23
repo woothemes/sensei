@@ -1161,6 +1161,8 @@ class Sensei_Core_Modules {
 		/**
 		 * Action hook triggered after module progress is saved for a user.
 		 *
+		 * @hook sensei_module_save_user_progress
+		 *
 		 * @param {int}   $course_id       ID of course.
 		 * @param {int}   $module_id       ID of module.
 		 * @param {int}   $user_id         ID of user.
