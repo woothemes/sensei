@@ -91,6 +91,13 @@ if ( ! class_exists( 'Sensei_Email_New_Message_Reply', false ) ) :
 				$this->recipient = stripslashes( $this->original_sender->user_email );
 			}
 
+			/**
+			 * Fires before the mail is sent.
+			 *
+			 * @hook sensei_before_mail
+			 *
+			 * @param {string} $recipient The recipient email.
+			 */
 			do_action( 'sensei_before_mail', $this->recipient );
 
 			// translators: Placeholder is the blog name.
@@ -128,6 +135,11 @@ if ( ! class_exists( 'Sensei_Email_New_Message_Reply', false ) ) :
 			// Send mail
 			Sensei()->emails->send( $this->recipient, $this->subject, Sensei()->emails->get_content( $this->template ) );
 
+			/**
+			 * Fires after the mail is sent.
+			 *
+			 * @hook sensei_after_sending_email
+			 */
 			do_action( 'sensei_after_sending_email' );
 		}
 	}

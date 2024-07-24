@@ -50,7 +50,13 @@ class Sensei_Emails {
 		add_action( 'sensei_new_private_message', array( $this, 'teacher_new_message' ), 10, 1 );
 		add_action( 'sensei_private_message_reply', array( $this, 'new_message_reply' ), 10, 2 );
 
-		// Let 3rd parties unhook the above via this hook
+		/**
+		 * Action hook to allow 3rd parties to unhook Sensei's email actions.
+		 *
+		 * @hook sensei_emails
+		 *
+		 * @param {Sensei_Emails} $emails The Sensei_Emails object.
+		 */
 		do_action( 'sensei_emails', $this );
 	}
 
@@ -232,8 +238,24 @@ class Sensei_Emails {
 
 		ob_start();
 
+		/**
+		 * Action hook before email template is loaded.
+		 *
+		 * @hook sensei_before_email_template
+		 *
+		 * @param {string} $email_template The email template.
+		 */
 		do_action( 'sensei_before_email_template', $email_template );
+
 		include $template;
+
+		/**
+		 * Action hook after email template is loaded.
+		 *
+		 * @hook sensei_after_email_template
+		 *
+		 * @param {string} $email_template The email template.
+		 */
 		do_action( 'sensei_after_email_template', $email_template );
 
 		$email_template = '';

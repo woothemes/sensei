@@ -17,11 +17,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 get_sensei_header();
 
 /**
- * Hook inside the single quiz post above the content
- *
- * @param integer $quiz_id
+ * Hook inside the single quiz post above the content.
  *
  * @since  1.9.0
+ *
+ * @hook sensei_single_quiz_content_inside_before
+ *
+ * @param {int} $quiz_id The quiz ID.
  *
  * @hooked Sensei_Quiz::the_title               - 20
  * @hooked Sensei_Quiz::the_user_status_message - 40
@@ -40,11 +42,13 @@ do_action( 'sensei_single_quiz_content_inside_before', get_the_ID() );
 			<?php
 
 			/**
-			 * Action inside before the question content on single-quiz page
+			 * Action inside before the question content on single-quiz page.
+			 *
+			 * @hook sensei_single_quiz_questions_before
+			 *
+			 * @param {int} $quiz_id The quiz ID.
 			 *
 			 * @hooked Sensei_Quiz::the_user_status_message  - 10
-			 *
-			 * @param string $the_quiz_id
 			 */
 			do_action( 'sensei_single_quiz_questions_before', get_the_id() );
 
@@ -68,14 +72,16 @@ do_action( 'sensei_single_quiz_content_inside_before', get_the_ID() );
 						/**
 						 * Action inside before the question content on single-quiz page
 						 *
+						 * @since  1.9.0
+						 *
+						 * @hook sensei_quiz_question_inside_before
+						 *
+						 * @param {int} $question_id The question ID.
+						 *
 						 * @hooked Sensei_Question::the_question_title        - 10
 						 * @hooked Sensei_Question::the_question_description  - 20
 						 * @hooked Sensei_Question::the_question_media        - 30
 						 * @hooked Sensei_Question::the_question_hidden_field - 40
-						 *
-						 * @param string $the_question_id
-						 *
-						 * @since  1.9.0
 						 */
 						do_action( 'sensei_quiz_question_inside_before', sensei_get_the_question_id() );
 
@@ -86,11 +92,13 @@ do_action( 'sensei_single_quiz_content_inside_before', get_the_ID() );
 						<?php
 
 						/**
-						 * Action inside before the question content on single-quiz page
+						 * Action inside before the question content on single-quiz page.
+						 *
+						 * @hook sensei_quiz_question_inside_after
+						 *
+						 * @param {int} $question_id The question ID.
 						 *
 						 * @hooked Sensei_Question::the_answer_feedback
-						 *
-						 * @param string $the_question_id
 						 */
 						do_action( 'sensei_quiz_question_inside_after', sensei_get_the_question_id() );
 
@@ -105,9 +113,11 @@ do_action( 'sensei_single_quiz_content_inside_before', get_the_ID() );
 			<?php
 
 			/**
-			 * Action inside before the question content on single-quiz page
+			 * Action inside before the question content on single-quiz page.
 			 *
-			 * @param string $the_quiz_id
+			 * @hook sensei_single_quiz_questions_after
+			 *
+			 * @param {int} $quiz_id The quiz ID.
 			 */
 			do_action( 'sensei_single_quiz_questions_after', get_the_id() );
 
@@ -122,6 +132,13 @@ do_action( 'sensei_single_quiz_content_inside_before', get_the_ID() );
 	<?php endif; ?>
 
 	<?php
+	/**
+	 * Hook when the back link is displayed on the single quiz page.
+	 *
+	 * @hook sensei_quiz_back_link
+	 *
+	 * @param {int} $quiz_lesson_id The quiz lesson ID.
+	 */
 	do_action( 'sensei_quiz_back_link', Sensei()->quiz->data->quiz_lesson );
 	?>
 
@@ -132,9 +149,11 @@ do_action( 'sensei_single_quiz_content_inside_before', get_the_ID() );
 /**
  * Hook inside the single quiz post above the content
  *
- * @param integer $quiz_id
- *
  * @since 1.9.0
+ *
+ * @hook sensei_single_quiz_content_inside_after
+ *
+ * @param {int} $quiz_id The quiz ID.
  */
 do_action( 'sensei_single_quiz_content_inside_after', get_the_ID() );
 

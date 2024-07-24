@@ -114,8 +114,10 @@ class Sensei_Course_Manual_Enrolment_Provider extends Sensei_Course_Enrolment_St
 		 *
 		 * @since 3.0.0
 		 *
-		 * @param int $user_id   User ID.
-		 * @param int $course_id Course post ID.
+		 * @hook sensei_manual_enrolment_learner_enrolled
+		 *
+		 * @param {int} $user_id   User ID.
+		 * @param {int} $course_id Course post ID.
 		 */
 		do_action( 'sensei_manual_enrolment_learner_enrolled', $user_id, $course_id );
 
@@ -149,8 +151,10 @@ class Sensei_Course_Manual_Enrolment_Provider extends Sensei_Course_Enrolment_St
 		 *
 		 * @since 3.0.0
 		 *
-		 * @param int $user_id   User ID.
-		 * @param int $course_id Course post ID.
+		 * @hook sensei_manual_enrolment_learner_withdrawn
+		 *
+		 * @param {int} $user_id   User ID.
+		 * @param {int} $course_id Course post ID.
 		 */
 		do_action( 'sensei_manual_enrolment_learner_withdrawn', $user_id, $course_id );
 

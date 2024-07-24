@@ -78,10 +78,28 @@ class Sensei_Templates {
 
 		if ( ! empty( $located ) ) {
 
+			/**
+			 * Fires before the template part is loaded.
+			 *
+			 * @hook sensei_before_template_part
+			 *
+			 * @param {string} $template_name The name of the template.
+			 * @param {string} $template_path The path to the template.
+			 * @param {string} $located The located template.
+			 */
 			do_action( 'sensei_before_template_part', $template_name, $template_path, $located );
 
 			include $located;
 
+			/**
+			 * Fires after the template part is loaded.
+			 *
+			 * @hook sensei_after_template_part
+			 *
+			 * @param {string} $template_name The name of the template.
+			 * @param {string} $template_path The path to the template.
+			 * @param {string} $located The located template.
+			 */
 			do_action( 'sensei_after_template_part', $template_name, $template_path, $located );
 
 		}
@@ -439,6 +457,11 @@ class Sensei_Templates {
 	 */
 	public static function fire_sensei_complete_course_hook() {
 
+		/**
+		 * Fires when a course is completed.
+		 *
+		 * @hook sensei_complete_course
+		 */
 		do_action( 'sensei_complete_course' );
 
 	} //fire_sensei_complete_course_hook
@@ -450,6 +473,11 @@ class Sensei_Templates {
 	 */
 	public static function fire_frontend_messages_hook() {
 
+		/**
+		 * Fires when the frontend messages are displayed.
+		 *
+		 * @hook sensei_frontend_messages
+		 */
 		do_action( 'sensei_frontend_messages' );
 
 	}
