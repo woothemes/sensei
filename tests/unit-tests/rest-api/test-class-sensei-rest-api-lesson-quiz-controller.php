@@ -71,7 +71,6 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 
 		$controller = new Sensei_REST_API_Lesson_Quiz_Controller( '' );
 		$this->assertMeetsSchema( $controller->get_item_schema(), $response->get_data() );
-
 	}
 
 	/**
@@ -682,6 +681,92 @@ class Sensei_REST_API_Lesson_Quiz_Controller_Tests extends WP_Test_REST_TestCase
 
 		$this->assertEquals( 'Updated title', $questions[1]->post_title );
 		$this->assertEquals( '', $questions[1]->post_content );
+	}
+
+	/**
+	 * Tests posting multiple choice question with answer "0" (falsy value).
+	 */
+	public function testSaveQuiz_WhenAnswersContainsFalsyValue_AnswerIsNotRemoved() {
+		// Arrange.
+		$this->login_as_teacher();
+
+		list( $lesson_id, $quiz_id ) = $this->create_lesson_with_quiz();
+
+		$body = [
+			'options'   => [],
+			'questions' => [
+				[
+					'title'  => 'Question',
+					'type'   => 'multiple-choice',
+					'answer' => [
+						'answers' => [
+							[
+								'label'   => 'Right',
+								'correct' => true,
+							],
+							[
+								'label'   => 'Wrong',
+								'correct' => false,
+							],
+							[
+								'label'   => '0',
+								'correct' => false,
+							],
+						],
+					],
+				],
+			],
+		];
+
+		// Act.
+		$this->send_post_request( $lesson_id, $body );
+		$questions = Sensei()->quiz->get_questions( Sensei()->lesson->lesson_quizzes( $lesson_id ) );
+
+		// Assert.
+		$this->assertContains( '0', get_post_meta( $questions[0]->ID, '_question_wrong_answers', true ) );
+	}
+
+	/**
+	 * Tests posting multiple choice question with empty string as an answer.
+	 */
+	public function testSaveQuiz_WhenAnswersContainsEmptyString_AnswerIsRemoved() {
+		// Arrange.
+		$this->login_as_teacher();
+
+		list( $lesson_id, $quiz_id ) = $this->create_lesson_with_quiz();
+
+		$body = [
+			'options'   => [],
+			'questions' => [
+				[
+					'title'  => 'Question',
+					'type'   => 'multiple-choice',
+					'answer' => [
+						'answers' => [
+							[
+								'label'   => 'Right',
+								'correct' => true,
+							],
+							[
+								'label'   => 'Wrong',
+								'correct' => false,
+							],
+							[
+								'label'   => '',
+								'correct' => false,
+							],
+						],
+					],
+				],
+			],
+		];
+
+		// Act.
+		$this->send_post_request( $lesson_id, $body );
+		$questions = Sensei()->quiz->get_questions( Sensei()->lesson->lesson_quizzes( $lesson_id ) );
+
+		// Assert.
+		$this->assertCount( 1, get_post_meta( $questions[0]->ID, '_question_wrong_answers', true ) );
 	}
 
 	/**

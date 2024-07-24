@@ -71,7 +71,7 @@ class Course_Translation {
 			// Create translatons if they don't exist.
 			$is_translated = $this->has_translation_in_language( $lesson_id, 'post_lesson', $details['language_code'] );
 			if ( ! $is_translated ) {
-				$this->admin_make_post_duplicates( $lesson_id );
+				$this->copy_post_to_language( $lesson_id, $details['language_code'], true );
 			}
 
 			$translations = $this->get_post_duplicates( $lesson_id );
@@ -80,7 +80,7 @@ class Course_Translation {
 				$this->update_translated_lesson_properties( (int) $translated_lesson_id, $lesson_id );
 			}
 
-			$this->update_quiz_translations( $lesson_id );
+			$this->update_quiz_translations( $lesson_id, $details['language_code'] );
 
 			// Sync lesson course field across translations.
 			$this->sync_custom_field( $lesson_id, '_lesson_course' );

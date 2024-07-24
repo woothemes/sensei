@@ -1248,12 +1248,18 @@ class Sensei_Admin {
 	 */
 	public function handle_order_lessons() {
 		check_admin_referer( 'order_lessons' );
-		if ( ! current_user_can( 'edit_published_lessons' ) ) {
+
+		$course_id = isset( $_POST['course_id'] ) ? intval( $_POST['course_id'] ) : 0;
+
+		if (
+			! current_user_can( 'edit_published_lessons' )
+			|| ! Sensei_Course::can_current_user_edit_course( $course_id )
+		) {
 			wp_die( esc_html__( 'Insufficient permissions', 'sensei-lms' ) );
 		}
 
 		if (
-			empty( $_POST['course_id'] )
+			empty( $course_id )
 			|| empty( $_POST['lessons'] )
 		) {
 			_doing_it_wrong(
@@ -1273,8 +1279,7 @@ class Sensei_Admin {
 			];
 		}
 
-		$course_id = (int) $_POST['course_id'];
-		$ordered   = $this->sync_lesson_order(
+		$ordered = $this->sync_lesson_order(
 			$lessons_order,
 			$course_id
 		);

@@ -353,7 +353,7 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 			$meta['_answer_order']           = [];
 
 			foreach ( $question['answer']['answers'] ?? [] as $option ) {
-				if ( empty( $option['label'] ) ) {
+				if ( ! isset( $option['label'] ) || '' === $option['label'] ) {
 					continue;
 				}
 
