@@ -109,7 +109,7 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 		$post_title = sprintf( esc_html__( '%1$s Question(s) from %2$s', 'sensei-lms' ), $question_number, $question_category->name );
 
 		$post_args = [
-			'ID'          => $question_id,
+			'ID'          => (int) $question_id,
 			'post_title'  => $post_title,
 			'post_status' => 'publish',
 			'post_type'   => 'multiple_question',
@@ -174,8 +174,8 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 		$is_new = null === $question_id;
 
 		$post_args = [
-			'ID'         => $question_id,
-			'post_title' => $question['title'],
+			'ID'         => (int) $question_id,
+			'post_title' => (string) $question['title'],
 			'post_type'  => 'question',
 			'meta_input' => $this->get_question_meta( $question ),
 			'tax_input'  => [
@@ -184,7 +184,7 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 		];
 
 		if ( $status ) {
-			$post_args['post_status'] = $status;
+			$post_args['post_status'] = (string) $status;
 		}
 
 		// Force publish the question if it's part of a quiz.
@@ -193,7 +193,7 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 		}
 
 		if ( isset( $question['description'] ) ) {
-			$post_args['post_content'] = $question['description'];
+			$post_args['post_content'] = (string) $question['description'];
 		} else {
 			$post_args['post_content'] = '';
 		}
