@@ -194,6 +194,8 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 
 		if ( isset( $question['description'] ) ) {
 			$post_args['post_content'] = $question['description'];
+		} else {
+			$post_args['post_content'] = '';
 		}
 
 		$result = $question_id ? wp_update_post( $post_args ) : wp_insert_post( $post_args );
