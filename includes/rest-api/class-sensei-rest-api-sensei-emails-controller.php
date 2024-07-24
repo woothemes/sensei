@@ -23,7 +23,7 @@ class Sensei_REST_API_Sensei_Emails_Controller extends WP_REST_Posts_Controller 
 	 *
 	 * @param WP_REST_Request $request Full details about the request.
 	 *
-	 * @return true|WP_Error True if the request has read access, WP_Error object otherwise.
+	 * @return bool|WP_Error True if the request has read access, WP_Error object otherwise.
 	 */
 	public function get_items_permissions_check( $request ) {
 		$parent_check = parent::get_items_permissions_check( $request );
@@ -48,7 +48,7 @@ class Sensei_REST_API_Sensei_Emails_Controller extends WP_REST_Posts_Controller 
 	 *
 	 * @param WP_REST_Request $request Full details about the request.
 	 *
-	 * @return true|WP_Error True if the request has read access, WP_Error object otherwise.
+	 * @return bool|WP_Error True if the request has read access, WP_Error object otherwise.
 	 */
 	public function get_item_permissions_check( $request ) {
 		$parent_check = parent::get_item_permissions_check( $request );
