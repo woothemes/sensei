@@ -140,7 +140,12 @@ class Sensei_Course_Theme_Quiz {
 		if ( in_array( $quiz_progress->get_status(), array( 'graded', 'passed' ), true ) ) {
 			$prev_next_urls  = sensei_get_prev_next_lessons( $lesson_id );
 			$next_lesson_url = $prev_next_urls['next']['url'] ?? null;
-			$actions[]       = Sensei_Quiz::get_primary_button_html( __( 'Continue to next lesson', 'sensei-lms' ), $next_lesson_url );
+			if ( $next_lesson_url ) {
+				$actions[] = Sensei_Quiz::get_primary_button_html( __( 'Continue to next lesson', 'sensei-lms' ), $next_lesson_url );
+			} else {
+				$lesson_url = get_permalink( $lesson_id );
+				$actions[]  = Sensei_Quiz::get_primary_button_html( __( 'Back to lesson', 'sensei-lms' ), $lesson_url );
+			}
 		}
 
 		// "Restart Quiz" button.
