@@ -35,6 +35,10 @@ $MOBILE_HEADER_SIZE: 32px;
 	float: right;
 }
 
+.wp-block-image img {
+	height: 100%;
+}
+
 .has-global-padding{
 	padding: 0px;
 }
