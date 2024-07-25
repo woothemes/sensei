@@ -102,11 +102,19 @@ class Sensei_List_Table extends WP_List_Table {
 	 */
 	public function extra_tablenav( $which ) {
 		if ( $which == 'top' ) {
-			// The code that goes before the table is here
+			/**
+			 * Fires before the list table.
+			 *
+			 * @hook sensei_before_list_table
+			 */
 			do_action( 'sensei_before_list_table' );
 		}
 		if ( $which == 'bottom' ) {
-			// The code that goes after the table is there
+			/**
+			 * Fires after the list table.
+			 *
+			 * @hook sensei_after_list_table
+			 */
 			do_action( 'sensei_after_list_table' );
 		}
 	}

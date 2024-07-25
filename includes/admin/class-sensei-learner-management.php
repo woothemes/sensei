@@ -333,6 +333,12 @@ class Sensei_Learner_Management {
 
 		$function = 'learners_' . $args['nav'] . '_nav';
 		$this->$function();
+
+		/**
+		 * Fires after the headers on the Students page.
+		 *
+		 * @hook sensei_learners_after_headers
+		 */
 		do_action( 'sensei_learners_after_headers' );
 
 	}

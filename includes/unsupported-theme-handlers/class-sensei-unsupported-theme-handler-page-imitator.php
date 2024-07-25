@@ -240,6 +240,11 @@ abstract class Sensei_Unsupported_Theme_Handler_Page_Imitator {
 	 * Run the sensei_pagination action. This can be used in a hook.
 	 */
 	public function do_sensei_pagination() {
+		/**
+		 * Fires when the pagination is displayed.
+		 *
+		 * @hook sensei_pagination
+		 */
 		do_action( 'sensei_pagination' );
 	}
 

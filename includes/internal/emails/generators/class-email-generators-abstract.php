@@ -171,6 +171,7 @@ abstract class Email_Generators_Abstract {
 		 * Send HTML email.
 		 *
 		 * @since 4.12.0
+		 *
 		 * @hook sensei_email_send
 		 *
 		 * @param {string} $email_name          The email name.

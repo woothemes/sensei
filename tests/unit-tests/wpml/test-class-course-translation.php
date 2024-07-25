@@ -53,23 +53,25 @@ class Course_Translation_Test extends \WP_UnitTestCase {
 		};
 		add_filter( 'wpml_object_id', $object_id_fitler, 10, 2 );
 
-		$element_has_translations_filter = function () {
-			return false;
+		$get_element_translations_filter = function () {
+			return array();
 		};
-		add_filter( 'wpml_element_has_translations', $element_has_translations_filter, 10, 0 );
+		add_filter( 'wpml_get_element_translations', $get_element_translations_filter, 10, 0 );
 
-		$created_duplicates               = 0;
-		$admin_make_post_duplicates_acton = function ( $post_id ) use ( &$created_duplicates, $old_course ) {
+		$created_duplicates           = 0;
+		$new_lessons_for_copy         = array( $new_lesson1_id, $new_lesson2_id );
+		$copy_post_to_language_filter = function ( $post_id ) use ( &$created_duplicates, $old_course, &$new_lessons_for_copy ) {
 			if ( in_array( $post_id, $old_course['lesson_ids'], true ) ) {
 				++$created_duplicates;
 			}
+			return array_shift( $new_lessons_for_copy );
 		};
-		add_action( 'wpml_admin_make_post_duplicates', $admin_make_post_duplicates_acton, 10, 1 );
+		add_filter( 'wpml_copy_post_to_language', $copy_post_to_language_filter );
 
-		$new_lesson_ids         = array( $new_lesson1_id, $new_lesson2_id );
-		$post_duplicates_filter = function ( $post_id ) use ( &$new_lesson_ids, $old_course ) {
+		$new_lessons_for_duplicates = array( $new_lesson1_id, $new_lesson2_id );
+		$post_duplicates_filter     = function ( $post_id ) use ( &$new_lessons_for_duplicates, $old_course ) {
 			if ( in_array( $post_id, $old_course['lesson_ids'], true ) ) {
-				$lesson_id = array_shift( $new_lesson_ids );
+				$lesson_id = array_shift( $new_lessons_for_duplicates );
 				return array(
 					'a' => $lesson_id,
 				);
@@ -77,7 +79,7 @@ class Course_Translation_Test extends \WP_UnitTestCase {
 
 			return array();
 		};
-		add_filter( 'wpml_post_duplicates', $post_duplicates_filter, 10, 1 );
+		add_filter( 'wpml_post_duplicates', $post_duplicates_filter );
 
 		/* Act. */
 		$course_translation->update_lesson_properties_on_course_translation_created( $new_course_id );
@@ -85,8 +87,8 @@ class Course_Translation_Test extends \WP_UnitTestCase {
 		/* Clean up & Assert. */
 		remove_filter( 'wpml_element_language_details', $element_language_details_filter );
 		remove_filter( 'wpml_object_id', $object_id_fitler );
-		remove_filter( 'wpml_element_has_translations', $element_has_translations_filter );
-		remove_action( 'wpml_admin_make_post_duplicates', $admin_make_post_duplicates_acton );
+		remove_filter( 'wpml_get_element_translations', $get_element_translations_filter );
+		remove_filter( 'wpml_copy_post_to_language', $copy_post_to_language_filter );
 		remove_filter( 'wpml_post_duplicates', $post_duplicates_filter );
 
 		$this->assertSame( 2, $created_duplicates );

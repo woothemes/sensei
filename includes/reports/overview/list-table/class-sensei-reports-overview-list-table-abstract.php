@@ -303,8 +303,10 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 		/**
 		 * Fires before the top filter inputs on the reports overview screen.
 		 *
-		 * @hook sensei_reports_overview_before_top_filters
 		 * @since 4.6.0
+		 *
+		 * @hook sensei_reports_overview_before_top_filters
+		 *
 		 * @param {string} $report_type The report type.
 		 */
 		do_action( 'sensei_reports_overview_before_top_filters', $this->type );
@@ -348,8 +350,10 @@ abstract class Sensei_Reports_Overview_List_Table_Abstract extends Sensei_List_T
 		/**
 		 * Fires after the top filter inputs on the reports overview screen.
 		 *
-		 * @hook sensei_reports_overview_after_top_filters
 		 * @since 4.6.0
+		 *
+		 * @hook sensei_reports_overview_after_top_filters
+		 *
 		 * @param {string} $report_type The report type.
 		 */
 		do_action( 'sensei_reports_overview_after_top_filters', $this->type );

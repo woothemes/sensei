@@ -68,6 +68,12 @@ class Sensei_Unsupported_Theme_Handler_Message_Archive
 		add_filter( 'sensei_show_main_footer', '__return_false' );
 
 		Sensei_Templates::get_template( 'archive-message.php' );
+
+		/**
+		 * Fires when the pagination is displayed.
+		 *
+		 * @hook sensei_pagination
+		 */
 		do_action( 'sensei_pagination' );
 
 		$content = ob_get_clean();

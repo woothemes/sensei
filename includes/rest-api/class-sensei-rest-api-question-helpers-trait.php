@@ -125,6 +125,7 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 		 * This action is triggered when a category question is created or updated by the lesson quiz REST endpoint.
 		 *
 		 * @since 3.9.0
+		 *
 		 * @hook  sensei_rest_api_category_question_saved
 		 *
 		 * @param {int|WP_Error} $result   Result of wp_insert_post. Post ID on success or WP_Error on failure.
@@ -206,6 +207,7 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 		 * This action is triggered when a question is created or updated by the lesson quiz REST endpoint.
 		 *
 		 * @since 3.9.0
+		 *
 		 * @hook  sensei_rest_api_question_saved
 		 *
 		 * @param {int|WP_Error} $result        Result of wp_insert_post. Post ID on success or WP_Error on failure.
@@ -353,7 +355,7 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 			$meta['_answer_order']           = [];
 
 			foreach ( $question['answer']['answers'] ?? [] as $option ) {
-				if ( empty( $option['label'] ) ) {
+				if ( ! isset( $option['label'] ) || '' === $option['label'] ) {
 					continue;
 				}
 
@@ -437,7 +439,7 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 	 *
 	 * @return array
 	 */
-	private function get_category_question( WP_Post $question ) : array {
+	private function get_category_question( WP_Post $question ): array {
 		$category = (int) get_post_meta( $question->ID, 'category', true );
 		$number   = (int) get_post_meta( $question->ID, 'number', true );
 
@@ -494,7 +496,7 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 	 *
 	 * @return array Media info. It includes the type, id, url and title.
 	 */
-	private function get_question_media( int $question_media_id, int $question_id ) : array {
+	private function get_question_media( int $question_media_id, int $question_id ): array {
 		$question_media = [];
 		$mimetype       = get_post_mime_type( $question_media_id );
 		$attachment     = get_post( $question_media_id );

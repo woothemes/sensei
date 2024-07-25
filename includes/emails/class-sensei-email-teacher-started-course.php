@@ -53,6 +53,13 @@ if ( ! class_exists( 'Sensei_Email_Teacher_Started_Course', false ) ) :
 			// Set recipient (learner)
 			$this->recipient = stripslashes( $this->teacher->user_email );
 
+			/**
+			 * Action hook before email is sent.
+			 *
+			 * @hook sensei_before_mail
+			 *
+			 * @param {string} $recipient The email recipient.
+			 */
 			do_action( 'sensei_before_mail', $this->recipient );
 
 			/**
@@ -99,6 +106,11 @@ if ( ! class_exists( 'Sensei_Email_Teacher_Started_Course', false ) ) :
 			// Send mail
 			Sensei()->emails->send( $this->recipient, $this->subject, Sensei()->emails->get_content( $this->template ) );
 
+			/**
+			 * Action hook after email is sent.
+			 *
+			 * @hook sensei_after_sending_email
+			 */
 			do_action( 'sensei_after_sending_email' );
 		}
 	}

@@ -142,7 +142,11 @@ class Sensei_Course_Results {
 	 * @since 1.9.0
 	 */
 	public static function fire_sensei_message_hook() {
-
+		/**
+		 * Fires when the frontend messages are displayed.
+		 *
+		 * @hook sensei_frontend_messages
+		 */
 		do_action( 'sensei_frontend_messages' );
 
 	}
