@@ -211,10 +211,29 @@ class Sensei_Grading {
 		$sensei_grading_overview->prepare_items();
 
 		// Wrappers
+		/**
+		 * Fires before the container of the Grading page.
+		 *
+		 * @hook grading_before_container
+		 */
 		do_action( 'grading_before_container' );
+		/**
+		 * Fires before the container of the Grading page.
+		 * This hook allows to wrap the container.
+		 *
+		 * @hook grading_wrapper_container
+		 *
+		 * @param {string} $which The position ('top' here).
+		 */
 		do_action( 'grading_wrapper_container', 'top' );
 
 		$this->grading_default_nav();
+
+		/**
+		 * Fires after the headers of the Grading page.
+		 *
+		 * @hook sensei_grading_after_headers
+		 */
 		do_action( 'sensei_grading_after_headers' );
 
 		$sensei_grading_overview->views();
@@ -227,8 +246,29 @@ class Sensei_Grading {
 			?>
 		</form>
 		<?php
+		/**
+		 * Fires after the container with main content on the Grading page.
+		 * Allows to add extra content.
+		 *
+		 * @hook sensei_grading_extra
+		 */
 		do_action( 'sensei_grading_extra' );
+
+		/**
+		 * Fires after the container of the Grading page.
+		 * This hook allows to wrap the container.
+		 *
+		 * @hook grading_wrapper_container
+		 *
+		 * @param {string} $which The position ('bottom' here).
+		 */
 		do_action( 'grading_wrapper_container', 'bottom' );
+
+		/**
+		 * Fires after the container of the Grading page.
+		 *
+		 * @hook grading_after_container
+		 */
 		do_action( 'grading_after_container' );
 	}
 
@@ -258,10 +298,30 @@ class Sensei_Grading {
 		$sensei_grading_user_profile = new Sensei_Grading_User_Quiz( $user_id, $quiz_id );
 
 		// Wrappers
+		/**
+		 * Fires before the container of the Grading page.
+		 *
+		 * @hook grading_before_container
+		 */
 		do_action( 'grading_before_container' );
+
+		/**
+		 * Fires before the container of the Grading page.
+		 * This hook allows to wrap the container.
+		 *
+		 * @hook grading_wrapper_container
+		 *
+		 * @param {string} $which The position ('top' here).
+		 */
 		do_action( 'grading_wrapper_container', 'top' );
 
 		$this->grading_user_quiz_nav();
+
+		/**
+		 * Fires after the headers of the Grading page.
+		 *
+		 * @hook sensei_grading_after_headers
+		 */
 		do_action( 'sensei_grading_after_headers' );
 
 		?>
@@ -271,7 +331,21 @@ class Sensei_Grading {
 			</div>
 		</div>
 		<?php
+		/**
+		 * Fires after the container on the Grading page.
+		 * This hook allows to wrap the container.
+		 *
+		 * @hook grading_wrapper_container
+		 *
+		 * @param {string} $which The position ('bottom' here).
+		 */
 		do_action( 'grading_wrapper_container', 'bottom' );
+
+		/**
+		 * Fires after the container of the Grading page.
+		 *
+		 * @hook grading_after_container
+		 */
 		do_action( 'grading_after_container' );
 	}
 
@@ -796,8 +870,15 @@ class Sensei_Grading {
 		}
 
 		if ( $lesson_progress->is_complete() ) {
-
-			/* The action is documented in includes/class-sensei-utils.php */
+			/**
+			 * Fires when a user completes a lesson.
+			 * Here as part of grading a quiz.
+			 *
+			 * @hook sensei_user_lesson_end
+			 *
+			 * @param {int} $user_id The user ID.
+			 * @param {int} $lesson_id The lesson ID.
+			 */
 			do_action( 'sensei_user_lesson_end', $user_id, $quiz_lesson_id );
 
 		}

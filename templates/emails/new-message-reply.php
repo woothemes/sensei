@@ -26,7 +26,16 @@ $large = 'text-align: center !important;font-size: 350% !important;line-height: 
 
 ?>
 
-<?php do_action( 'sensei_before_email_content', $template ); ?>
+<?php
+/**
+ * Action hook before email content.
+ *
+ * @hook sensei_before_email_content
+ *
+ * @param {string} $template Template name.
+ */
+do_action( 'sensei_before_email_content', $template );
+?>
 
 <h2 style="<?php echo esc_attr( $large ); ?>"><?php echo esc_html( $commenter_name ); ?></h2>
 
@@ -52,4 +61,13 @@ printf( esc_html__( 'You can view the message and reply %1$shere%2$s.', 'sensei-
 ?>
 </p>
 
-<?php do_action( 'sensei_after_email_content', $template ); ?>
+<?php
+/**
+ * Action hook after email content.
+ *
+ * @hook sensei_after_email_content
+ *
+ * @param {string} $template Template name.
+ */
+do_action( 'sensei_after_email_content', $template );
+?>

@@ -21,6 +21,8 @@ get_sensei_header();
  *
  * @since 1.9.0
  *
+ * @hook sensei_learner_profile_content_before
+ *
  * @hooked Sensei_Learner_Profiles::deprecate_sensei_learner_profile_content_hook   - 10
  * @hooked Sensei_Templates::fire_sensei_complete_course_hook                      - 20
  */
@@ -36,6 +38,8 @@ do_action( 'sensei_learner_profile_content_before' );
 		 * This hook fire inside learner-profile.php inside directly before the content
 		 *
 		 * @since 1.9.0
+		 *
+		 * @hook sensei_learner_profile_inside_content_before
 		 *
 		 * @hooked  Sensei_Templates::fire_frontend_messages_hook
 		 */
@@ -75,6 +79,8 @@ do_action( 'sensei_learner_profile_content_before' );
 		 * This hook fire inside learner-profile.php inside directly after the content
 		 *
 		 * @since 1.9.0
+		 *
+		 * @hook sensei_learner_profile_inside_content_after
 		 */
 		do_action( 'sensei_learner_profile_inside_content_after' );
 		?>
@@ -88,6 +94,8 @@ do_action( 'sensei_learner_profile_content_before' );
  * This hook fire inside learner-profile.php after the content
  *
  * @since 1.9.0
+ *
+ * @hook sensei_learner_profile_content_after
  */
 do_action( 'sensei_learner_profile_content_after' );
 ?>

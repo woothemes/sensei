@@ -1050,9 +1050,11 @@ class Sensei_Course {
 		 *
 		 * @since 2.2.0
 		 *
-		 * @param int    $post_id        The course ID.
-		 * @param string $meta_key       The meta to be saved.
-		 * @param mixed  $new_meta_value The meta value to be saved.
+		 * @hook sensei_course_meta_before_save
+		 *
+		 * @param {int}    $post_id        The course ID.
+		 * @param {string} $meta_key       The meta to be saved.
+		 * @param {mixed}  $new_meta_value The meta value to be saved.
 		 */
 		do_action( 'sensei_course_meta_before_save', $post_id, $meta_key, $new_meta_value );
 
@@ -1894,6 +1896,13 @@ class Sensei_Course {
 
 		$manage = ( $user->ID == get_current_user_id() ) ? true : false;
 
+		/**
+		 * Action to run before the student course content is loaded.
+		 *
+		 * @hook sensei_before_learner_course_content
+		 *
+		 * @param {object} $user User object.
+		 */
 		do_action( 'sensei_before_learner_course_content', $user );
 
 		// Build Output HTML
@@ -1901,7 +1910,13 @@ class Sensei_Course {
 
 		if ( is_a( $user, 'WP_User' ) ) {
 
-			// Allow action to be run before My Courses content has loaded
+			/**
+			 * Fires before the My Courses content is loaded.
+			 *
+			 * @hook sensei_before_my_courses
+			 *
+			 * @param {int} $user_id User ID.
+			 */
 			do_action( 'sensei_before_my_courses', $user->ID );
 
 			// Logic for Active and Completed Courses
@@ -2204,7 +2219,14 @@ class Sensei_Course {
 		ob_start();
 		?>
 
-		<?php do_action( 'sensei_before_user_courses' ); ?>
+		<?php
+		/**
+		 * Action to run before the user courses are displayed.
+		 *
+		 * @hook sensei_before_user_courses
+		 */
+		do_action( 'sensei_before_user_courses' );
+		?>
 
 		<?php
 		if ( $manage && ( ! isset( Sensei()->settings->settings['messages_disable'] ) || ! Sensei()->settings->settings['messages_disable'] ) ) {
@@ -2225,7 +2247,14 @@ class Sensei_Course {
 				<li><a href="#completed-courses"><?php esc_html_e( 'Completed Courses', 'sensei-lms' ); ?></a></li>
 			</ul>
 
-			<?php do_action( 'sensei_before_active_user_courses' ); ?>
+			<?php
+			/**
+			 * Action to run before the active user courses are displayed.
+			 *
+			 * @hook sensei_before_active_user_courses
+			 */
+			do_action( 'sensei_before_active_user_courses' );
+			?>
 
 			<?php
 			$course_page_url = self::get_courses_page_url();
@@ -2279,9 +2308,23 @@ class Sensei_Course {
 
 			</div>
 
-			<?php do_action( 'sensei_after_active_user_courses' ); ?>
+			<?php
+			/**
+			 * Action to run after the active user courses are displayed.
+			 *
+			 * @hook sensei_after_active_user_courses
+			 */
+			do_action( 'sensei_after_active_user_courses' );
+			?>
 
-			<?php do_action( 'sensei_before_completed_user_courses' ); ?>
+			<?php
+			/**
+			 * Action to run before the completed user courses are displayed.
+			 *
+			 * @hook sensei_before_completed_user_courses
+			 */
+			do_action( 'sensei_before_completed_user_courses' );
+			?>
 
 			<div id="completed-courses">
 
@@ -2312,16 +2355,37 @@ class Sensei_Course {
 
 			</div>
 
-			<?php do_action( 'sensei_after_completed_user_courses' ); ?>
+			<?php
+			/**
+			 * Action to run after the completed user courses are displayed.
+			 *
+			 * @hook sensei_after_completed_user_courses
+			 */
+			do_action( 'sensei_after_completed_user_courses' );
+			?>
 
 		</div>
 
-		<?php do_action( 'sensei_after_user_courses' ); ?>
+		<?php
+		/**
+		 * Action to run after the user courses are displayed.
+		 *
+		 * @hook sensei_after_user_courses
+		 */
+		do_action( 'sensei_after_user_courses' );
+		?>
 
 		<?php
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output escaped above and should be escaped in hooked methods.
 		echo ob_get_clean();
 
+		/**
+		 * Action to run after the student course content is displayed.
+		 *
+		 * @hook sensei_after_learner_course_content
+		 *
+		 * @param {object} $user User object.
+		 */
 		do_action( 'sensei_after_learner_course_content', $user );
 	}
 
@@ -2722,7 +2786,13 @@ class Sensei_Course {
 
 		echo '<div class="sensei-course-meta">';
 
-		/** This action is documented in includes/class-sensei-frontend.php */
+		/**
+		 * Fires before the course meta is displayed.
+		 *
+		 * @hook sensei_course_meta_inside_before
+		 *
+		 * @param {int} $course_id The course ID.
+		 */
 		do_action( 'sensei_course_meta_inside_before', $course->ID );
 
 		echo '<span class="course-lesson-count">' .
@@ -2747,7 +2817,11 @@ class Sensei_Course {
 			echo '<span class="course-lesson-progress">' . esc_html( sprintf( __( '%1$d of %2$d lessons completed', 'sensei-lms' ), $completed, $lesson_count ) ) . '</span>';
 		}
 
-		/** This action is documented in includes/class-sensei-frontend.php */
+		/**
+		 * Fires after course meta is displayed.
+		 *
+		 * @param {int} $course_id The course ID.
+		 */
 		do_action( 'sensei_course_meta_inside_after', $course->ID );
 
 		echo '</div>';
@@ -3722,11 +3796,13 @@ class Sensei_Course {
 			}
 		} else {
 			/**
-			 * Action to output the course enrolment buttons. When this is
-			 * called, we know that the user is not taking the course, but do
-			 * not know whether the user is logged in.
+			 * Action to output the course enrolment buttons.
+			 * When this is called, we know that the user is not taking the course,
+			 * but do not know whether the user is logged in.
 			 *
 			 * @since 2.0.0
+			 *
+			 * @hook sensei_output_course_enrolment_actions
 			 */
 			do_action( 'sensei_output_course_enrolment_actions' );
 		}

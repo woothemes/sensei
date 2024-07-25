@@ -125,6 +125,7 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 		 * This action is triggered when a category question is created or updated by the lesson quiz REST endpoint.
 		 *
 		 * @since 3.9.0
+		 *
 		 * @hook  sensei_rest_api_category_question_saved
 		 *
 		 * @param {int|WP_Error} $result   Result of wp_insert_post. Post ID on success or WP_Error on failure.
@@ -208,6 +209,7 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 		 * This action is triggered when a question is created or updated by the lesson quiz REST endpoint.
 		 *
 		 * @since 3.9.0
+		 *
 		 * @hook  sensei_rest_api_question_saved
 		 *
 		 * @param {int|WP_Error} $result        Result of wp_insert_post. Post ID on success or WP_Error on failure.

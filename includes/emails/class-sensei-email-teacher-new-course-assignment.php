@@ -43,18 +43,24 @@ class Sensei_Email_Teacher_New_Course_Assignment {
 	}
 
 	/**
-	 * trigger function.
+	 * Trigger email sending.
 	 *
-	 * @access public
-	 * @param $teacher_id
-	 * @param $course_id
-	 * @return void
+	 * @param int $teacher_id The teacher ID.
+	 * @param int $course_id The course ID.
 	 */
 	function trigger( $teacher_id = 0, $course_id = 0 ) {
 		global $sensei_email_data;
 
 		$this->teacher   = new WP_User( $teacher_id );
 		$this->recipient = stripslashes( $this->teacher->user_email );
+
+		/**
+		 * Fires before the mail is sent.
+		 *
+		 * @hook sensei_before_mail
+		 *
+		 * @param {string} $recipient The recipient email.
+		 */
 		do_action( 'sensei_before_mail', $this->recipient );
 
 		$this->heading = apply_filters( 'sensei_email_heading', __( 'Course assigned to you', 'sensei-lms' ), $this->template );
@@ -82,6 +88,11 @@ class Sensei_Email_Teacher_New_Course_Assignment {
 		// Send mail
 		Sensei()->emails->send( $this->recipient, $this->subject, Sensei()->emails->get_content( $this->template ) );
 
+		/**
+		 * Fires after the mail is sent.
+		 *
+		 * @hook sensei_after_sending_email
+		 */
 		do_action( 'sensei_after_sending_email' );
 	}
 }

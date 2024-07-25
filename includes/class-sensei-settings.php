@@ -190,8 +190,9 @@ class Sensei_Settings extends Sensei_Settings_API {
 					/**
 					 * Fires after the navigation links are displayed.
 					 *
-					 * @hook  sensei_settings_after_links
 					 * @since 4.12.0
+					 *
+					 * @hook  sensei_settings_after_links
 					 *
 					 * @param {string} $tab_name The tab slug.
 					 */

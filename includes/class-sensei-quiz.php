@@ -858,7 +858,16 @@ class Sensei_Quiz {
 			}
 		}
 
-		// Run any action on quiz/lesson reset (previously this didn't occur on resetting a quiz, see resetting a lesson in sensei_complete_lesson().
+		/**
+		 * Fires when a user resets a lesson.
+		 * Run any action on quiz/lesson reset (previously this didn't occur on resetting a quiz,
+		 * see resetting a lesson in sensei_complete_lesson()).
+		 *
+		 * @hook sensei_user_lesson_reset
+		 *
+		 * @param {int} $user_id   The user ID.
+		 * @param {int} $lesson_id The lesson ID.
+		 */
 		do_action( 'sensei_user_lesson_reset', $user_id, $lesson_id );
 		if ( ! is_admin() ) {
 			Sensei()->notices->add_notice( __( 'Lesson Reset Successfully.', 'sensei-lms' ), 'info' );
@@ -971,8 +980,15 @@ class Sensei_Quiz {
 		}
 
 		if ( $lesson_progress->is_complete() ) {
-
-			/* The action is documented in includes/class-sensei-utils.php */
+			/**
+			 * Fires when a user completes a lesson.
+			 * Here when the answers are submitted and the lesson is complete.
+			 *
+			 * @hook sensei_user_lesson_end
+			 *
+			 * @param {int} $user_id The user ID.
+			 * @param {int} $lesson_id The lesson ID.
+			 */
 			do_action( 'sensei_user_lesson_end', $user_id, $lesson_id );
 
 		}
@@ -980,14 +996,17 @@ class Sensei_Quiz {
 		/**
 		 * User quiz has been submitted
 		 *
-		 * Fires the end of the submit_answers_for_grading function. It will fire irrespective of the submission
+		 * Fires the end of the submit_answers_for_grading function.
+		 * It will fire irrespective of the submission
 		 * results.
 		 *
-		 * @param int $user_id
-		 * @param int $quiz_id
-		 * @param string $grade
-		 * @param string $quiz_pass_percentage
-		 * @param string $quiz_grade_type
+		 * @hook sensei_user_quiz_submitted
+		 *
+		 * @param {int} $user_id The user ID.
+		 * @param {int} $quiz_id The quiz ID.
+		 * @param {int|false} $grade The grade of the quiz.
+		 * @param {float} $quiz_pass_percentage The pass percentage of the quiz.
+		 * @param {string} $quiz_grade_type The grade type of the quiz.
 		 */
 		do_action( 'sensei_user_quiz_submitted', $user_id, $quiz_id, $grade, $quiz_pass_percentage, $quiz_grade_type );
 

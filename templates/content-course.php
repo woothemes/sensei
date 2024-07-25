@@ -21,12 +21,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 	<?php
 	/**
-	 * This action runs before the sensei course content. It runs inside the sensei
-	 * content-course.php template.
+	 * This action runs before the sensei course content.
+	 * It runs inside the sensei content-course.php template.
 	 *
 	 * @since 1.9
 	 *
-	 * @param integer $course_id
+	 * @hook sensei_course_content_before
+	 *
+	 * @param {int} $course_id The course ID.
 	 */
 	do_action( 'sensei_course_content_before', get_the_ID() );
 	?>
@@ -41,7 +43,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 			 *
 			 * @since 1.9
 			 *
-			 * @param integer $course_id
+			 * @hook sensei_course_content_inside_before
+			 *
+			 * @param {int} $course_id The course ID.
 			 *
 			 * @hooked Sensei_Templates::the_title          - 5
 			 * @hooked Sensei()->course->course_image       - 10
@@ -66,7 +70,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 			 *
 			 * @since 1.9
 			 *
-			 * @param integer $course_id
+			 * @hook sensei_course_content_inside_after
+			 *
+			 * @param {int} $course_id The course ID.
 			 *
 			 * @hooked  Sensei()->course->the_course_free_lesson_preview - 20
 			 */
@@ -83,7 +89,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	 *
 	 * @since 1.9
 	 *
-	 * @param integer $course_id
+	 * @hook sensei_course_content_after
+	 *
+	 * @param {int} $course_id The course ID.
 	 *
 	 * @hooked  Sensei()->course->the_course_free_lesson_preview - 20
 	 */

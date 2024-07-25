@@ -22,9 +22,13 @@ global $course;
 	<?php
 	/**
 	 * Fires inside course-results/lessons.php after the
-	 * is uer logged check, just above the lessons header.
+	 * is user logged check, just above the lessons header.
 	 *
 	 * @since 1.4.0
+	 *
+	 * @hook sensei_course_results_before_lessons
+	 *
+	 * @param {int} $course_id The course ID.
 	 */
 	do_action( 'sensei_course_results_before_lessons', $course->ID );
 	?>
@@ -185,9 +189,13 @@ global $course;
 	<?php
 	/**
 	 * Fires inside course-results/lessons.php after the
-	 * is uer logged check, at the bottom of all lessons.
+	 * is user logged check, at the bottom of all lessons.
 	 *
 	 * @since 1.4.0
+	 *
+	 * @hook sensei_course_results_after_lessons
+	 *
+	 * @param {int} $course_id The course ID.
 	 */
 	do_action( 'sensei_course_results_after_lessons', $course->ID );
 	?>

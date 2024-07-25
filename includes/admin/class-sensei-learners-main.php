@@ -1040,6 +1040,12 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 	public function data_table_header() {
 
 		echo '<div class="learners-selects">';
+
+		/**
+		 * Fires before the dropdown filters on the learner management screen.
+		 *
+		 * @hook sensei_learners_before_dropdown_filters
+		 */
 		do_action( 'sensei_learners_before_dropdown_filters' );
 
 		// Display Course Categories only on default view.
@@ -1113,6 +1119,11 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 		parent::extra_tablenav( $which );
 
 		if ( 'bottom' === $which ) {
+			/**
+			 * Fires after the extra table nav markup on the student management screen.
+			 *
+			 * @hook sensei_learners_extra
+			 */
 			do_action( 'sensei_learners_extra' );
 		}
 
@@ -1275,7 +1286,12 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 					<input type="hidden" name="add_course_id" value="<?php echo esc_attr( $form_course_id ); ?>" />
 					<input type="hidden" name="add_lesson_id" value="<?php echo esc_attr( $form_lesson_id ); ?>" />
 					<?php
-						do_action( 'sensei_learners_add_learner_form' );
+					/**
+					 * Fires in the end of the add learner form on the student management screen.
+					 *
+					 * @hook sensei_learners_add_learner_form
+					 */
+					do_action( 'sensei_learners_add_learner_form' );
 					?>
 					<?php wp_nonce_field( 'add_learner_to_sensei', 'add_learner_nonce' ); ?>
 				</form>

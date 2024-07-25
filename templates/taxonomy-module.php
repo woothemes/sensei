@@ -22,6 +22,8 @@ get_sensei_header();
 		 * Fires before rendering any markup on the module page.
 		 *
 		 * @since 1.9.20
+		 *
+		 * @hook sensei_taxonomy_module_content_before
 		 */
 		do_action( 'sensei_taxonomy_module_content_before' );
 	?>
@@ -33,6 +35,8 @@ get_sensei_header();
 					 * Fires before rendering the module content.
 					 *
 					 * @since 1.9.20
+					 *
+					 * @hook sensei_taxonomy_module_content_inside_before
 					 */
 					do_action( 'sensei_taxonomy_module_content_inside_before' );
 				?>
@@ -42,6 +46,8 @@ get_sensei_header();
 					 * Fires after rendering the module content.
 					 *
 					 * @since 1.9.20
+					 *
+					 * @hook sensei_taxonomy_module_content_inside_after
 					 */
 					do_action( 'sensei_taxonomy_module_content_inside_after' );
 				?>
@@ -53,6 +59,8 @@ get_sensei_header();
 		 * Fires after rendering all markup on the module page.
 		 *
 		 * @since 1.9.20
+		 *
+		 * @hook sensei_taxonomy_module_content_after
 		 */
 		do_action( 'sensei_taxonomy_module_content_after' );
 	?>
