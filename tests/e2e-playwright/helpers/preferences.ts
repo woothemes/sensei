@@ -31,7 +31,8 @@ export const createUserPreference = async (
 	browser: Browser,
 	user: User
 ): Promise< UserPreference > => {
-	const userPage = await login( await browser.newPage(), user );
+	const page = await browser.newPage();
+	const userPage = await login( page, user );
 	const path = getContextByRole( user.username );
 	const initialState = await userPage.request.storageState( { path } );
 
