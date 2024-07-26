@@ -687,9 +687,9 @@ class Sensei_PostTypes {
 			'query_var'         => true,
 			'show_in_nav_menus' => true,
 			'capabilities'      => array(
-				'manage_terms' => 'manage_categories',
-				'edit_terms'   => 'edit_courses',
-				'delete_terms' => 'manage_categories',
+				'manage_terms' => 'manage_course_categories',
+				'edit_terms'   => 'manage_course_categories',
+				'delete_terms' => 'manage_course_categories',
 				'assign_terms' => 'edit_courses',
 			),
 			'rewrite'           => array(
@@ -839,9 +839,9 @@ class Sensei_PostTypes {
 			'show_admin_column' => true,
 			'show_in_rest'      => true,
 			'capabilities'      => array(
-				'manage_terms' => 'manage_categories',
-				'edit_terms'   => 'edit_questions',
-				'delete_terms' => 'manage_categories',
+				'manage_terms' => 'manage_question_categories',
+				'edit_terms'   => 'manage_question_categories',
+				'delete_terms' => 'manage_question_categories',
 				'assign_terms' => 'edit_questions',
 			),
 			'rewrite'           => array(
@@ -892,9 +892,9 @@ class Sensei_PostTypes {
 			'query_var'         => true,
 			'show_in_nav_menus' => true,
 			'capabilities'      => array(
-				'manage_terms' => 'manage_categories',
-				'edit_terms'   => 'edit_lessons',
-				'delete_terms' => 'manage_categories',
+				'manage_terms' => 'manage_lesson_categories',
+				'edit_terms'   => 'manage_lesson_categories',
+				'delete_terms' => 'manage_lesson_categories',
 				'assign_terms' => 'edit_lessons',
 			),
 			'rewrite'           => array(
@@ -1222,9 +1222,11 @@ class Sensei_PostTypes {
 		Sensei()->learners->learners_admin_menu();
 
 		/**
-		 * Filter used to add new menu item.
+		 * Fires when the Sensei Pro Groups menu item should be added.
 		 *
 		 * @since 4.5.0
+		 *
+		 * @hook sensei_pro_groups_menu_item
 		 */
 		do_action( 'sensei_pro_groups_menu_item', [] );
 
@@ -1338,12 +1340,22 @@ class Sensei_PostTypes {
 	 * Fire the scheduled "initial publish" actions. This is run on `shutdown`.
 	 *
 	 * @since 2.1.0
-	 * @access private
+	 *
+	 * @internal
 	 */
 	public function fire_scheduled_initial_publish_actions() {
 		foreach ( array_unique( $this->initial_publish_post_ids ) as $post_id ) {
 			$post = get_post( $post_id );
 			if ( $post ) {
+				/**
+				 * Fires the scheduled "initial publish" actions for a post on `shutdown`.
+				 *
+				 * @since 2.1.0
+				 *
+				 * @hook sensei_{$post_type}_initial_publish
+				 *
+				 * @param {WP_Post} $post The post.
+				 */
 				do_action( "sensei_{$post->post_type}_initial_publish", $post );
 				$this->mark_post_already_published( $post->ID );
 			}

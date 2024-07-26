@@ -496,8 +496,9 @@ class Sensei_Main {
 		/**
 		 * Fires once all global objects have been set in Sensei.
 		 *
-		 * @hook sensei_loaded
 		 * @since 3.6.0
+		 *
+		 * @hook sensei_loaded
 		 *
 		 * @param {Sensei_Main} $sensei Sensei object.
 		 */
@@ -972,6 +973,11 @@ class Sensei_Main {
 			}
 		}
 
+		/**
+		 * Fires after Sensei widgets have been registered.
+		 *
+		 * @hook sensei_register_widgets
+		 */
 		do_action( 'sensei_register_widgets' );
 	}
 
@@ -1844,6 +1850,11 @@ class Sensei_Main {
 
 		if ( ! is_null( $role ) ) {
 			$role->add_cap( 'manage_sensei_grades' );
+
+			$role->add_cap( 'manage_lesson_categories' );
+			$role->add_cap( 'manage_course_categories' );
+			$role->add_cap( 'manage_question_categories' );
+			$role->add_cap( 'manage_modules' );
 		}
 
 		return true;
@@ -1860,6 +1871,11 @@ class Sensei_Main {
 		if ( ! is_null( $role ) ) {
 			$role->add_cap( 'manage_sensei' );
 			$role->add_cap( 'manage_sensei_grades' );
+
+			$role->add_cap( 'manage_lesson_categories' );
+			$role->add_cap( 'manage_course_categories' );
+			$role->add_cap( 'manage_question_categories' );
+			$role->add_cap( 'manage_modules' );
 		}
 
 		return true;

@@ -465,6 +465,7 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 			 * Trigger an action when a data port job is complete.
 			 *
 			 * @since 3.2.0
+			 *
 			 * @hook sensei_data_port_complete
 			 *
 			 * @param {Sensei_Data_Port_Job} $data_port_job The data port job object.

@@ -411,6 +411,14 @@ class Sensei_Messages {
 		// Force comment to be approved.
 		wp_set_comment_status( $comment_id, 'approve' );
 
+		/**
+		 * Fires when a private message reply is received.
+		 *
+		 * @hook sensei_private_message_reply
+		 *
+		 * @param {WP_Comment} $comment The comment object.
+		 * @param {WP_Post}    $message The message post object.
+		 */
 		do_action( 'sensei_private_message_reply', $comment, $message );
 	}
 
@@ -527,6 +535,7 @@ class Sensei_Messages {
 				 * Fires when a new private message is sent.
 				 *
 				 * @since 1.8.0
+				 *
 				 * @hook  sensei_new_private_message
 				 *
 				 * @param {int} $message_id The message ID.
