@@ -36,7 +36,8 @@ $MOBILE_HEADER_SIZE: 32px;
 }
 
 .wp-block-image img {
-	height: 100%;
+	height: auto;
+	box-sizing: border-box;
 }
 
 .has-global-padding{
