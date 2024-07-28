@@ -108,11 +108,10 @@ class Sensei_Course_Theme_Quiz {
 				if ( $quiz_graded_email && 'publish' === $quiz_graded_email->post_status ) {
 					$email_enabled = true;
 				}
-			} else { // Old quiz graded email.
-				if ( isset( Sensei()->settings->settings['email_learners'] ) &&
-					in_array( 'learner-graded-quiz', (array) Sensei()->settings->settings['email_learners'], true ) ) {
-					$email_enabled = true;
-				}
+			} elseif ( isset( Sensei()->settings->settings['email_learners'] ) &&
+				in_array( 'learner-graded-quiz', (array) Sensei()->settings->settings['email_learners'], true ) ) {
+				// Old quiz graded email.
+				$email_enabled = true;
 			}
 
 			if ( $email_enabled ) {
@@ -144,6 +143,7 @@ class Sensei_Course_Theme_Quiz {
 				$actions[] = Sensei_Quiz::get_primary_button_html( __( 'Continue to next lesson', 'sensei-lms' ), $next_lesson_url );
 			} else {
 				$lesson_url = get_permalink( $lesson_id );
+				$lesson_url = empty( $lesson_url ) ? null : $lesson_url;
 				$actions[]  = Sensei_Quiz::get_primary_button_html( __( 'Back to lesson', 'sensei-lms' ), $lesson_url );
 			}
 		}
