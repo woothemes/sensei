@@ -263,6 +263,11 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 			$this->attach_lessons_multiple_questions( $multiple_question_count, $lesson_id, $args['multiple_question_args'], $args['quiz_args'] );
 		}
 
+		if ( $course_id && count( $lesson_ids ) ) {
+			$admin = new Sensei_Admin();
+			$admin->save_lesson_order( implode( ',', $lesson_ids ), $course_id );
+		}
+
 		return array(
 			'course_id'  => $course_id,
 			'lesson_ids' => $lesson_ids,
