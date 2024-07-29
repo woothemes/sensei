@@ -1,7 +1,7 @@
 /**
  * WordPress dependencies
  */
-import { createReduxStore, register, registerStore } from '@wordpress/data';
+import { createReduxStore, register } from '@wordpress/data';
 
 /**
  * Compose an action creator with the given start, success and error actions.
@@ -59,11 +59,7 @@ export const createReducerFromActionMap = ( reducers, defaultState ) => {
  * @return {string|Object} Store key.
  */
 export const createStore = ( name, settings ) => {
-	if ( createReduxStore ) {
-		const store = createReduxStore( name, settings );
-		register( store );
-		return store;
-	}
-	registerStore( name, settings );
-	return name;
+	const store = createReduxStore( name, settings );
+	register( store );
+	return store;
 };
