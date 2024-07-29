@@ -22,21 +22,21 @@ class Sensei_Block_Quiz_Question {
 		Sensei_Blocks::register_sensei_block(
 			'sensei-lms/quiz-question',
 			[
-				'render_callback' => [ $this, '__return_empty_string' ],
+				'render_callback' => '__return_empty_string',
 			],
 			Sensei()->assets->src_path( 'blocks/quiz/question-block' )
 		);
 		Sensei_Blocks::register_sensei_block(
 			'sensei-lms/question-description',
 			[
-				'render_callback' => [ $this, '__return_empty_string' ],
+				'render_callback' => '__return_empty_string',
 			],
 			Sensei()->assets->src_path( 'blocks/quiz/question-description-block' )
 		);
 		Sensei_Blocks::register_sensei_block(
 			'sensei-lms/question-answers',
 			[
-				'render_callback' => [ $this, '__return_empty_string' ],
+				'render_callback' => '__return_empty_string',
 			],
 			Sensei()->assets->src_path( 'blocks/quiz/question-answers-block' )
 		);
