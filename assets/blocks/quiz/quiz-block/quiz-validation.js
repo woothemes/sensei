@@ -4,9 +4,10 @@
 import { Notice } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import {
-	PluginPostStatusInfo,
-	PluginPrePublishPanel,
+	PluginPostStatusInfo as DeprecatedPluginPostStatusInfo,
+	PluginPrePublishPanel as DeprecatedPluginPrePublishPanel,
 } from '@wordpress/edit-post';
+import { PluginPostStatusInfo, PluginPrePublishPanel } from '@wordpress/editor';
 import { useCallback } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
 
@@ -15,6 +16,14 @@ import { __, _n, sprintf } from '@wordpress/i18n';
  */
 import { BLOCK_META_STORE } from '../../../shared/blocks/block-metadata';
 import { Effect, usePostSavingEffect } from '../../../shared/helpers/blocks';
+
+if ( ! PluginPostStatusInfo ) {
+	PluginPostStatusInfo = DeprecatedPluginPostStatusInfo;
+}
+
+if ( ! PluginPrePublishPanel ) {
+	PluginPrePublishPanel = DeprecatedPluginPrePublishPanel;
+}
 
 /**
  * Notice about incomplete questions in the quiz.
