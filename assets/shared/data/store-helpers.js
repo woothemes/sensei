@@ -3,6 +3,9 @@
  */
 import { createReduxStore, register } from '@wordpress/data';
 
+window.senseiStores = window.senseiStores || [];
+const { senseiStores } = window;
+
 /**
  * Compose an action creator with the given start, success and error actions.
  *
@@ -59,7 +62,12 @@ export const createReducerFromActionMap = ( reducers, defaultState ) => {
  * @return {string|Object} Store key.
  */
 export const createStore = ( name, settings ) => {
+	if ( senseiStores[ name ] ) {
+		return senseiStores[ name ];
+	}
+
 	const store = createReduxStore( name, settings );
 	register( store );
+	senseiStores[ name ] = store;
 	return store;
 };
