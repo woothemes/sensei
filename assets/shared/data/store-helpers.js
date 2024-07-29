@@ -3,6 +3,8 @@
  */
 import { createReduxStore, register } from '@wordpress/data';
 
+// We register the store in the global scope to avoid registering it multiple times.
+// The reason to be in the global scope is that some times we have different built files using the same source.
 window.senseiStores = window.senseiStores || [];
 const { senseiStores } = window;
 
