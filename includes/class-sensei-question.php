@@ -387,7 +387,7 @@ class Sensei_Question {
 			return;
 		}
 
-		$lessons = false;
+		$lessons = [];
 
 		foreach ( $quizzes as $quiz ) {
 
