@@ -74,6 +74,7 @@ class Sensei_REST_API_Course_Progress_Controller extends \WP_REST_Controller {
 			$student               = new WP_User( $student_id );
 			$result[ $student_id ] = false;
 			if ( $student->exists() ) {
+				$result[ $student_id ] = [];
 				foreach ( $course_ids as $course_id ) {
 					$result[ $student_id ][ $course_id ] = false;
 					if ( Sensei_Utils::has_started_course( $course_id, $student_id ) ) {

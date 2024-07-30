@@ -203,7 +203,7 @@ class Sensei_Course_Theme_Styles {
 			);
 			$value          = "var(--wp--$unwrapped_name)";
 		} elseif ( preg_match( '/^[a-z0-9-]+$/i', $value ) ) {
-			$value = "var(--wp--preset--color--${value})";
+			$value = "var(--wp--preset--color--{$value})";
 		}
 
 		return $value;

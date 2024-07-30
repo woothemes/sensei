@@ -15,6 +15,13 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 	use Sensei_Test_Redirect_Helpers;
 
 	/**
+	 * The original screen.
+	 *
+	 * @var WP_Screen
+	 */
+	private $original_screen;
+
+	/**
 	 * Set up before the class.
 	 */
 	public static function setUpBeforeClass(): void {

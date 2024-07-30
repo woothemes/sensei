@@ -39,6 +39,13 @@ class Email_User_Profile_Settings_Test extends \WP_UnitTestCase {
 	 */
 	protected $list_table;
 
+	/**
+	 * Email subscription instance.
+	 *
+	 * @var \Sensei\Internal\Emails\Email_Subscription
+	 */
+	protected $subscription;
+
 	public function setUp(): void {
 		parent::setUp();
 

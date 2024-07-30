@@ -402,7 +402,7 @@ class Sensei_Data_Port_Utilities {
 	 *
 	 * @return array|string[]
 	 */
-	public static function split_list_safely( $str_list, $remove_quotes = false ) {
+	public static function split_list_safely( string $str_list, bool $remove_quotes = false ) {
 		if ( empty( trim( $str_list ) ) ) {
 			return [];
 		}

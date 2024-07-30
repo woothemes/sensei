@@ -18,6 +18,20 @@ class Sensei_Block_Learner_Courses_Test extends WP_UnitTestCase {
 	private $block;
 
 	/**
+	 * The course post.
+	 *
+	 * @var WP_Post
+	 */
+	private $course;
+
+	/**
+	 * Factory for setting up testing data.
+	 *
+	 * @var Sensei_Factory
+	 */
+	protected $factory;
+
+	/**
 	 * Set up the test.
 	 */
 	public function setUp(): void {

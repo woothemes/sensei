@@ -263,7 +263,7 @@ abstract class Sensei_Usage_Tracking_Base {
 		$p                 = array();
 
 		foreach ( $properties as $key => $value ) {
-			$p[] = rawurlencode( $key ) . '=' . rawurlencode( $value );
+			$p[] = rawurlencode( $key ) . '=' . rawurlencode( (string) $value );
 		}
 
 		$pixel .= '?' . implode( '&', $p ) . '&_=_'; // EOF marker.
