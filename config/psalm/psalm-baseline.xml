@@ -2237,14 +2237,13 @@
       <code>WP_Query</code>
       <code>integer</code>
     </InvalidReturnType>
-    <InvalidScalarArgument occurrences="7">
+    <InvalidScalarArgument occurrences="6">
       <code>$course_id</code>
       <code>$course_id</code>
       <code>$possible_user_id</code>
       <code>$post_after-&gt;post_author</code>
       <code>$term</code>
       <code>$term</code>
-      <code>esc_attr( $_POST['course_id'] )</code>
     </InvalidScalarArgument>
     <MissingParamType occurrences="21">
       <code>$args</code>
@@ -2550,16 +2549,15 @@
       <code>$attachment_src[1]</code>
       <code>$attachment_src[2]</code>
     </PossiblyInvalidArrayAccess>
-    <PossiblyInvalidArrayAssignment occurrences="2">
-      <code>$lessons[ $lesson_id ]</code>
-      <code>$lessons[ $lesson_id ]</code>
-    </PossiblyInvalidArrayAssignment>
     <PossiblyInvalidIterator occurrences="1">
       <code>$cats</code>
     </PossiblyInvalidIterator>
     <PossiblyInvalidPropertyFetch occurrences="1">
       <code>$user_lesson_status-&gt;comment_approved</code>
     </PossiblyInvalidPropertyFetch>
+    <PossiblyUndefinedArrayOffset occurrences="1">
+      <code>$lesson['link']</code>
+    </PossiblyUndefinedArrayOffset>
     <TypeDoesNotContainType occurrences="1">
       <code>$is_quiz_graded</code>
     </TypeDoesNotContainType>
@@ -3071,12 +3069,11 @@
       <code>require_once ABSPATH . 'wp-admin/includes/image.php'</code>
       <code>require_once ABSPATH . 'wp-admin/includes/plugin-install.php'</code>
     </MissingFile>
-    <MissingParamType occurrences="15">
+    <MissingParamType occurrences="14">
       <code>$attributes</code>
       <code>$course_id</code>
       <code>$data_key</code>
       <code>$file</code>
-      <code>$from_course</code>
       <code>$key</code>
       <code>$options</code>
       <code>$plugin_class_to_look_for</code>
@@ -3561,9 +3558,6 @@
       <code>null === $first</code>
       <code>null === $second</code>
     </DocblockTypeContradiction>
-    <InvalidAttribute occurrences="1">
-      <code>\ReturnTypeWillChange</code>
-    </InvalidAttribute>
     <InvalidReturnStatement occurrences="1">
       <code>wp_delete_attachment( $file_id, true )</code>
     </InvalidReturnStatement>
@@ -3622,9 +3616,6 @@
       <code>! self::$instance</code>
       <code>self::$instance</code>
     </DocblockTypeContradiction>
-    <InvalidAttribute occurrences="1">
-      <code>\ReturnTypeWillChange</code>
-    </InvalidAttribute>
     <InvalidReturnStatement occurrences="2">
       <code>$this-&gt;create_job( $user_id, Sensei_Export_Job::class )</code>
       <code>$this-&gt;create_job( $user_id, Sensei_Import_Job::class )</code>
@@ -4200,10 +4191,6 @@
     </MissingPropertyType>
   </file>
   <file src="includes/emails/class-sensei-email-teacher-new-course-assignment.php">
-    <MissingParamType occurrences="2">
-      <code>$course_id</code>
-      <code>$teacher_id</code>
-    </MissingParamType>
     <MissingPropertyType occurrences="6">
       <code>$heading</code>
       <code>$learner</code>
@@ -4299,9 +4286,6 @@
     </RedundantPropertyInitializationCheck>
   </file>
   <file src="includes/enrolment/class-sensei-course-enrolment-provider-results.php">
-    <InvalidAttribute occurrences="1">
-      <code>\ReturnTypeWillChange</code>
-    </InvalidAttribute>
     <InvalidScalarArgument occurrences="1">
       <code>$version</code>
     </InvalidScalarArgument>
@@ -4410,17 +4394,9 @@
     <InvalidArgument occurrences="1">
       <code>$provider_states</code>
     </InvalidArgument>
-    <InvalidAttribute occurrences="1">
-      <code>\ReturnTypeWillChange</code>
-    </InvalidAttribute>
     <InvalidPropertyAssignmentValue occurrences="1">
       <code>$provider_states</code>
     </InvalidPropertyAssignmentValue>
-  </file>
-  <file src="includes/enrolment/class-sensei-enrolment-provider-state.php">
-    <InvalidAttribute occurrences="1">
-      <code>\ReturnTypeWillChange</code>
-    </InvalidAttribute>
   </file>
   <file src="includes/hooks/template.php">
     <ArgumentTypeCoercion occurrences="1">
