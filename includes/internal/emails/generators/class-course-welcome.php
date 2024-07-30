@@ -66,6 +66,14 @@ class Course_Welcome extends Email_Generators_Abstract {
 			return;
 		}
 
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+		$original_course_id = apply_filters( 'wpml_original_element_id', null, $course_id, 'post_course' );
+
+		// Prevent sending emails for the copy courses created by WPML for translations.
+		if ( $original_course_id && intval( $original_course_id ) !== $course_id ) {
+			return;
+		}
+
 		$student    = new \WP_User( $student_id );
 		$teacher_id = $course->post_author;
 		$teacher    = new \WP_User( $teacher_id );
