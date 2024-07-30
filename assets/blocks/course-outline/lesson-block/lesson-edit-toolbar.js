@@ -1,7 +1,12 @@
 /**
  * WordPress dependencies
  */
-import { Button, Spinner, Toolbar, ToolbarItem } from '@wordpress/components';
+import {
+	Button,
+	Spinner,
+	ToolbarGroup,
+	ToolbarItem,
+} from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { store as editPostStore } from '@wordpress/edit-post';
 import { store as editorStore } from '@wordpress/editor';
@@ -75,7 +80,11 @@ const LessonEditToolbar = ( { lessonId, lessonTitle } ) => {
 		toolbarItem = savingPostIndicator;
 	}
 
-	return <Toolbar className="components-button">{ toolbarItem }</Toolbar>;
+	return (
+		<ToolbarGroup className="components-button">
+			{ toolbarItem }
+		</ToolbarGroup>
+	);
 };
 
 export default LessonEditToolbar;
