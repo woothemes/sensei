@@ -36,8 +36,6 @@ export function registerTemplateBlocks( blocks ) {
 			return;
 		}
 
-		const isTemplate =
-			'lesson' === postType && editPost.isEditingTemplate();
-		toggleBlockRegistration( isTemplate );
+		toggleBlockRegistration( false );
 	} );
 }
