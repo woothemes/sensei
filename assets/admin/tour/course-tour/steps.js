@@ -48,7 +48,7 @@ function focusOnCourseOutlineBlock() {
 	if ( ! courseOutlineBlock ) {
 		return;
 	}
-	dispatch( editorStore ).selectBlock( courseOutlineBlock.clientId );
+	dispatch( blockEditorStore ).selectBlock( courseOutlineBlock.clientId );
 }
 
 async function ensureLessonBlocksIsInEditor() {
