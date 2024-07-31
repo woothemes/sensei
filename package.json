@@ -29,7 +29,7 @@
     "@wordpress/base-styles": "wp-5.9",
     "@wordpress/block-editor": "wp-5.9",
     "@wordpress/blocks": "wp-5.9",
-    "@wordpress/components": "wp-5.9",
+    "@wordpress/components": "28.4.0",
     "@wordpress/compose": "wp-5.9",
     "@wordpress/core-data": "wp-5.9",
     "@wordpress/data": "6.1.5",
