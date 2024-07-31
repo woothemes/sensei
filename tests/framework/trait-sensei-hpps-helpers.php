@@ -6,6 +6,7 @@
  */
 
 // phpcs:disable WordPress.NamingConventions.ValidFunctionName.MethodNameInvalid -- Using PHPUnit conventions.
+// phpcs:disable PSR2.Classes.PropertyDeclaration.Underscore
 
 use Sensei\Internal\Quiz_Submission\Answer\Repositories\Answer_Repository_Factory;
 use Sensei\Internal\Quiz_Submission\Grade\Repositories\Grade_Repository_Factory;
