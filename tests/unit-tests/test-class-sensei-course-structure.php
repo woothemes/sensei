@@ -1732,10 +1732,10 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 		$course_structure = Sensei_Course_Structure::instance( $course_id );
 
 		$lesson_created_action_fired = false;
-		$action                      = function( $lesson_id, $course_id ) use ( &$lesson_created_action_fired ) {
+		$action                      = function () use ( &$lesson_created_action_fired ) {
 			$lesson_created_action_fired = true;
 		};
-		add_action( 'sensei_course_structure_lesson_created', $action, 10, 2 );
+		add_action( 'sensei_course_structure_lesson_created', $action, 10 );
 
 		/* Act. */
 		$course_structure->save( $new_structure );
@@ -1760,15 +1760,63 @@ class Sensei_Course_Structure_Test extends WP_UnitTestCase {
 		$course_structure = Sensei_Course_Structure::instance( $course_id );
 
 		$quiz_created_action_fired = false;
-		$action                    = function( $quiz, $lesson ) use ( &$quiz_created_action_fired ) {
+		$action                    = function () use ( &$quiz_created_action_fired ) {
 			$quiz_created_action_fired = true;
 		};
-		add_action( 'sensei_quiz_create', $action, 10, 2 );
+		add_action( 'sensei_quiz_create', $action, 10 );
 
 		/* Act. */
 		$course_structure->save( $new_structure );
 
 		/* Assert. */
 		$this->assertTrue( $quiz_created_action_fired );
+	}
+
+
+	/**
+	 * Tests to ensure items without types fail save.
+	 */
+	public function testSave_ModulesWithoutTitles_SavesWithDefaultTitles() {
+		/* Arrange. */
+		$this->login_as_teacher();
+
+		$course_id = $this->factory->course->create();
+
+		$new_structure = array(
+			array(
+				'type'    => 'module',
+				'title'   => '',
+				'lessons' => array(),
+			),
+			array(
+				'type'    => 'module',
+				'title'   => 'Module 2',
+				'lessons' => array(),
+			),
+			array(
+				'type'    => 'module',
+				'title'   => '',
+				'lessons' => array(),
+			),
+		);
+
+		$course_structure = Sensei_Course_Structure::instance( $course_id );
+
+		/* Act. */
+		$course_structure->save( $new_structure );
+
+		/* Assert. */
+		$structure = $course_structure->get( 'edit' );
+		$actual    = $this->extractTitlesFromItems( $structure );
+		$expected  = array( 'Module 1', 'Module 2', 'Module 3' );
+		$this->assertSame( $expected, $actual );
+	}
+
+	private function extractTitlesFromItems( $items ) {
+		$titles = array();
+		foreach ( $items as $item ) {
+			$titles[] = $item['title'];
+		}
+		return $titles;
 	}
 }
