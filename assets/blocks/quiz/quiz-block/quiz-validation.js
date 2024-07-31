@@ -11,8 +11,9 @@ import {
 	PluginPostStatusInfo as NewPluginPostStatusInfo,
 	PluginPrePublishPanel as NewPluginPrePublishPanel,
 } from '@wordpress/editor';
-import { useCallback } from '@wordpress/element';
+import { useCallback, useMemo } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
+import { store as blockEditorStore } from '@wordpress/block-editor';
 
 /**
  * Internal dependencies
@@ -24,6 +25,49 @@ const PluginPostStatusInfo =
 	NewPluginPostStatusInfo || DeprecatedPluginPostStatusInfo;
 const PluginPrePublishPanel =
 	NewPluginPrePublishPanel || DeprecatedPluginPrePublishPanel;
+
+/**
+ * Get incomplete questions for a quiz.
+ *
+ * @param {string} clientId
+ * @return {Object[]} Incomplete questions.
+ */
+const useIncompleteQuestions = ( clientId ) => {
+	const { questionBlocks } = useSelect(
+		( select ) => ( {
+			questionBlocks: select( blockEditorStore ).getBlocks( clientId ),
+		} ),
+		[ clientId ]
+	);
+
+	const blockIds = useMemo(
+		() => questionBlocks.map( ( block ) => block.clientId ),
+		[ questionBlocks ]
+	);
+
+	const { errors } = useSelect(
+		( select ) => ( {
+			errors: select( BLOCK_META_STORE ).getMultipleBlockMeta(
+				blockIds,
+				'validationErrors'
+			),
+		} ),
+		[ clientId, blockIds ]
+	);
+
+	const incompleteQuestions = useMemo(
+		() =>
+			questionBlocks
+				.map( ( block ) => ( {
+					...block,
+					errors: errors[ block.clientId ],
+				} ) )
+				.filter( ( q ) => q.errors?.length ),
+		[ questionBlocks, errors ]
+	);
+
+	return incompleteQuestions;
+};
 
 /**
  * Notice about incomplete questions in the quiz.
@@ -70,24 +114,7 @@ const IncompleteQuestionsNotice = ( { count, onClick } ) => (
  * @param {Function} props.setMeta
  */
 const QuizValidationResult = ( { clientId, setMeta } ) => {
-	const incompleteQuestions = useSelect(
-		( select ) => {
-			const questionBlocks = select( 'core/block-editor' ).getBlocks(
-				clientId
-			);
-			const errors = select( BLOCK_META_STORE ).getMultipleBlockMeta(
-				questionBlocks.map( ( block ) => block.clientId ),
-				'validationErrors'
-			);
-			return questionBlocks
-				.map( ( block ) => ( {
-					...block,
-					errors: errors[ block.clientId ],
-				} ) )
-				.filter( ( q ) => q.errors?.length );
-		},
-		[ clientId ]
-	);
+	const incompleteQuestions = useIncompleteQuestions( clientId );
 
 	const toggleValidationErrors = useCallback(
 		( on = true ) => {
@@ -96,7 +123,7 @@ const QuizValidationResult = ( { clientId, setMeta } ) => {
 		[ setMeta ]
 	);
 
-	const { selectBlock } = useDispatch( 'core/block-editor' );
+	const { selectBlock } = useDispatch( blockEditorStore );
 	const selectFirstIncompleteQuestionBlock = () => {
 		if ( ! incompleteQuestions.length ) return;
 		toggleValidationErrors( true );

@@ -2,7 +2,12 @@
  * WordPress dependencies
  */
 import { createHigherOrderComponent } from '@wordpress/compose';
-import { dispatch, useDispatch, useSelect } from '@wordpress/data';
+import {
+	dispatch,
+	useDispatch,
+	useSelect,
+	createSelector,
+} from '@wordpress/data';
 import {
 	createContext,
 	useCallback,
@@ -76,12 +81,15 @@ const store = {
 		 * @param {string}   [key]     Only return metadata for the given key.
 		 * @return {Object} Blocks metadata, indexed by block ID.
 		 */
-		getMultipleBlockMeta: ( state, clientIds = [], key = null ) => {
-			const blocks = clientIds?.length
-				? pick( state, clientIds )
-				: { ...state };
-			return key ? mapValues( blocks, key ) : blocks;
-		},
+		getMultipleBlockMeta: createSelector(
+			( state, clientIds = [], key = null ) => {
+				const blocks = clientIds?.length
+					? pick( state, clientIds )
+					: state;
+				return key ? mapValues( blocks, key ) : blocks;
+			},
+			( state ) => [ state ]
+		),
 	},
 };
 
