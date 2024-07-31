@@ -346,7 +346,9 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 		update_option( 'sensei_activation_redirect', 1 );
 
 		// Act.
+		ob_start();
 		Sensei()->setup_wizard->render_wizard_page();
+		ob_end_clean();
 
 		// Assert.
 		$this->assertFalse( get_option( 'sensei_activation_redirect', false ) );
