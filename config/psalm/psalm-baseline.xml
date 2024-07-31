@@ -1297,6 +1297,9 @@
     <InvalidScalarArgument occurrences="1">
       <code>$course_name</code>
     </InvalidScalarArgument>
+    <MissingClosureReturnType occurrences="1">
+      <code>function ( $item ) use ( &amp;$existing_module_names, &amp;$i ) {</code>
+    </MissingClosureReturnType>
     <NullableReturnStatement occurrences="1">
       <code>$term-&gt;term_id</code>
     </NullableReturnStatement>
@@ -3558,6 +3561,9 @@
       <code>null === $first</code>
       <code>null === $second</code>
     </DocblockTypeContradiction>
+    <InvalidAttribute occurrences="1">
+      <code>\ReturnTypeWillChange</code>
+    </InvalidAttribute>
     <InvalidReturnStatement occurrences="1">
       <code>wp_delete_attachment( $file_id, true )</code>
     </InvalidReturnStatement>
@@ -3616,6 +3622,9 @@
       <code>! self::$instance</code>
       <code>self::$instance</code>
     </DocblockTypeContradiction>
+    <InvalidAttribute occurrences="1">
+      <code>\ReturnTypeWillChange</code>
+    </InvalidAttribute>
     <InvalidReturnStatement occurrences="2">
       <code>$this-&gt;create_job( $user_id, Sensei_Export_Job::class )</code>
       <code>$this-&gt;create_job( $user_id, Sensei_Import_Job::class )</code>
@@ -4286,6 +4295,9 @@
     </RedundantPropertyInitializationCheck>
   </file>
   <file src="includes/enrolment/class-sensei-course-enrolment-provider-results.php">
+    <InvalidAttribute occurrences="1">
+      <code>\ReturnTypeWillChange</code>
+    </InvalidAttribute>
     <InvalidScalarArgument occurrences="1">
       <code>$version</code>
     </InvalidScalarArgument>
@@ -4394,9 +4406,17 @@
     <InvalidArgument occurrences="1">
       <code>$provider_states</code>
     </InvalidArgument>
+    <InvalidAttribute occurrences="1">
+      <code>\ReturnTypeWillChange</code>
+    </InvalidAttribute>
     <InvalidPropertyAssignmentValue occurrences="1">
       <code>$provider_states</code>
     </InvalidPropertyAssignmentValue>
+  </file>
+  <file src="includes/enrolment/class-sensei-enrolment-provider-state.php">
+    <InvalidAttribute occurrences="1">
+      <code>\ReturnTypeWillChange</code>
+    </InvalidAttribute>
   </file>
   <file src="includes/hooks/template.php">
     <ArgumentTypeCoercion occurrences="1">
@@ -5255,12 +5275,6 @@
     </UndefinedPropertyFetch>
   </file>
   <file src="includes/rest-api/class-sensei-rest-api-question-helpers-trait.php">
-    <ArgumentTypeCoercion occurrences="1">
-      <code>$post_args</code>
-    </ArgumentTypeCoercion>
-    <InvalidArgument occurrences="1">
-      <code>$post_args</code>
-    </InvalidArgument>
     <PossibleRawObjectIteration occurrences="1">
       <code>$question_categories</code>
     </PossibleRawObjectIteration>
