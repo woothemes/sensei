@@ -192,7 +192,7 @@ class Sensei_Analysis_Lesson_List_Table extends Sensei_List_Table {
 		$this->search = $search;
 
 		$args = array(
-			'number'  => '',
+			'number'  => -1,
 			'offset'  => 0,
 			'orderby' => $orderby,
 			'order'   => $order,
@@ -285,7 +285,7 @@ class Sensei_Analysis_Lesson_List_Table extends Sensei_List_Table {
 		$escaped_column_data = array();
 
 		foreach ( $column_data as $key => $data ) {
-			$escaped_column_data[ $key ] = wp_kses_post( $data );
+			$escaped_column_data[ $key ] = $data ? wp_kses_post( $data ) : $data;
 		}
 
 		return $escaped_column_data;

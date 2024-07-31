@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Deprecation notice on the question edit screen on PHP 8.1
