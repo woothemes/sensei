@@ -209,7 +209,7 @@ function getTourSteps() {
 				heading: __( 'Adding a module', 'sensei-lms' ),
 				descriptions: {
 					desktop: __(
-						'A module is a container for a group of related lessons in a course. Click + to open the inserter. Then click the Module option.',
+						'A module is a container for a group of related lessons in a course. Click + to open the inserter. Then click the Module option and give it a name.',
 						'sensei-lms'
 					),
 					mobile: null,

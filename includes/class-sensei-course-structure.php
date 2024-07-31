@@ -230,7 +230,8 @@ class Sensei_Course_Structure {
 	 * @return bool|WP_Error
 	 */
 	public function save( array $raw_structure ) {
-		$structure = $this->sanitize_structure( $raw_structure );
+		$raw_structure = $this->ensure_modules_have_names( $raw_structure );
+		$structure     = $this->sanitize_structure( $raw_structure );
 		if ( is_wp_error( $structure ) ) {
 			return $structure;
 		}
@@ -711,6 +712,54 @@ class Sensei_Course_Structure {
 			$module_ids,
 			$module_titles,
 		];
+	}
+
+	/**
+	 * Check if modules have titles and set the default ones otherwise.
+	 *
+	 * @param array $raw_structure Structure array as returned by get().
+	 *
+	 * @return array Structure array with module titles set.
+	 */
+	private function ensure_modules_have_names( array $raw_structure ) {
+		$existing_module_names = array_map(
+			function ( $item ) {
+				if ( ! isset( $item['type'], $item['title'] ) ) {
+					return null;
+				}
+				return 'module' === $item['type'] ? $item['title'] : null;
+			},
+			$raw_structure
+		);
+		$existing_module_names = array_filter( $existing_module_names );
+
+		$i             = 0;
+		$raw_structure = array_map(
+			function ( $item ) use ( &$existing_module_names, &$i ) {
+				// Ignore items with improper structure.
+				if ( ! isset( $item['type'], $item['title'] ) ) {
+					return $item;
+				}
+
+				// Ignore items that are not modules or have a title already.
+				if ( 'module' !== $item['type'] || ! empty( $item['title'] ) ) {
+					return $item;
+				}
+
+				do {
+					// translators: Placeholder value is an ordinal number.
+					$module_title = sprintf( __( 'Module %d', 'sensei-lms' ), ++$i );
+				} while ( in_array( $module_title, $existing_module_names, true ) );
+
+				$item['title']           = $module_title;
+				$existing_module_names[] = $module_title;
+
+				return $item;
+			},
+			$raw_structure
+		);
+
+		return $raw_structure;
 	}
 
 	/**
