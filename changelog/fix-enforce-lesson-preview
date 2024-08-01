@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Always allow access to a lesson if the lesson preview is enabled

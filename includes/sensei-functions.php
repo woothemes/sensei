@@ -158,8 +158,7 @@ function sensei_can_user_view_lesson( $lesson_id = null, $user_id = null ) {
 
 	$can_user_view_lesson = ! sensei_is_login_required()
 							|| sensei_all_access( $user_id )
-							|| ( $user_can_view_course_content && $pre_requisite_complete )
-							|| $is_preview_lesson;
+							|| ( $user_can_view_course_content && $pre_requisite_complete );
 
 	/**
 	 * Filter if the user can view lesson and quiz content.
@@ -173,7 +172,9 @@ function sensei_can_user_view_lesson( $lesson_id = null, $user_id = null ) {
 	 * @param {int}  $user_id              User ID.
 	 * @return {bool} Filtered access.
 	 */
-	return apply_filters( 'sensei_can_user_view_lesson', $can_user_view_lesson, $lesson_id, $user_id );
+	$can_user_view_lesson = apply_filters( 'sensei_can_user_view_lesson', $can_user_view_lesson, $lesson_id, $user_id );
+
+	return $can_user_view_lesson || $is_preview_lesson;
 }
 
 if ( ! function_exists( 'sensei_light_or_dark' ) ) {
