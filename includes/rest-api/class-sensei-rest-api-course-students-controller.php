@@ -80,6 +80,7 @@ class Sensei_REST_API_Course_Students_Controller extends \WP_REST_Controller {
 			$user               = new WP_User( $user_id );
 			$result[ $user_id ] = false;
 			if ( $user->exists() ) {
+				$result[ $user_id ] = array();
 				foreach ( $course_ids as $course_id ) {
 					$course_enrolment                 = Sensei_Course_Enrolment::get_course_instance( $course_id );
 					$result[ $user_id ][ $course_id ] = $course_enrolment->enrol( $user_id );
