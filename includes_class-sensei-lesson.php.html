@@ -4837,7 +4837,7 @@ class Sensei_Lesson {
 		 * @return {bool} Whether to show the course sign up notice.
 		 */
 		if ( apply_filters( 'sensei_lesson_show_course_signup_notice', $show_course_signup_notice, $course_id ) ) {
-			$course_link  = '&lt;a href="' . esc_url( Sensei()->lesson->get_take_course_url( $course_id ) ) . '" title="' . esc_attr__( 'Sign Up', 'sensei-lms' ) . '">';
+			$course_link  = '&lt;a href="' . esc_url( (string) Sensei()->lesson->get_take_course_url( $course_id ) ) . '" title="' . esc_attr__( 'Sign Up', 'sensei-lms' ) . '">';
 			$course_link .= esc_html__( 'course', 'sensei-lms' );
 			$course_link .= '&lt;/a>';
 
