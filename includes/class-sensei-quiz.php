@@ -1,7 +1,6 @@
 <?php
 
 use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress_Interface;
-use Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Quiz_Progress_Repository_Factory;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -1335,7 +1334,7 @@ class Sensei_Quiz {
 
 		foreach ( $encoded_feedback as $question_id => $feedback ) {
 
-			$answers_feedback[ $question_id ] = base64_decode( $feedback );
+			$answers_feedback[ $question_id ] = base64_decode( (string) $feedback );
 
 		}
 

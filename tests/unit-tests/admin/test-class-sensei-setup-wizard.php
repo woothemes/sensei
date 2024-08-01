@@ -15,6 +15,13 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 	use Sensei_Test_Redirect_Helpers;
 
 	/**
+	 * The original screen.
+	 *
+	 * @var WP_Screen
+	 */
+	private $original_screen;
+
+	/**
 	 * Set up before the class.
 	 */
 	public static function setUpBeforeClass(): void {
@@ -339,7 +346,9 @@ class Sensei_Setup_Wizard_Test extends WP_UnitTestCase {
 		update_option( 'sensei_activation_redirect', 1 );
 
 		// Act.
+		ob_start();
 		Sensei()->setup_wizard->render_wizard_page();
+		ob_end_clean();
 
 		// Assert.
 		$this->assertFalse( get_option( 'sensei_activation_redirect', false ) );

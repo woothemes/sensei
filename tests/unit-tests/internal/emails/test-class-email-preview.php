@@ -18,6 +18,27 @@ use WPDieException;
 class Email_Preview_Test extends \WP_UnitTestCase {
 	use Sensei_Test_Login_Helpers;
 
+	/**
+	 * Factory instance.
+	 *
+	 * @var Sensei_Factory
+	 */
+	protected $factory;
+
+	/**
+	 * Email_Sender mock.
+	 *
+	 * @var \PHPUnit\Framework\MockObject\MockObject
+	 */
+	protected $email_sender;
+
+	/**
+	 * Sensei_Assets mock.
+	 *
+	 * @var \PHPUnit\Framework\MockObject\MockObject
+	 */
+	protected $assets;
+
 	public function setUp(): void {
 		parent::setUp();
 		$this->factory      = new Sensei_Factory();

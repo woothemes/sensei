@@ -21,6 +21,13 @@ class Sensei_Preview_User_Test extends WP_UnitTestCase {
 	protected $factory;
 
 	/**
+	 * Preview user instance.
+	 *
+	 * @var Sensei_Preview_User
+	 */
+	protected $preview_user;
+
+	/**
 	 * Set up the test.
 	 */
 	public function setUp(): void {
