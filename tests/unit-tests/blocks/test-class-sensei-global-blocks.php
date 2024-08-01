@@ -64,6 +64,10 @@ class Sensei_Global_Blocks_Test extends WP_UnitTestCase {
 		/* Assert */
 		$this->assertTrue( wp_script_is( 'sensei-course-list-filter' ) );
 		$this->assertTrue( wp_style_is( 'sensei-global-blocks-style' ) );
+
+		/* Reset */
+		wp_dequeue_script( 'sensei-course-list-filter' );
+		wp_dequeue_style( 'sensei-global-blocks-style' );
 	}
 
 	/**
@@ -71,8 +75,6 @@ class Sensei_Global_Blocks_Test extends WP_UnitTestCase {
 	 */
 	public function testEnqueueBlockAssets_WhenCalledOnAdmin_NotEnqueueCourseListFilter() {
 		/* Arrange */
-
-		$this->markTestSkipped( 'This test requires WordPress 5.8 or higher.' );
 		set_current_screen( 'edit-post' );
 
 		/* Act */
@@ -80,6 +82,9 @@ class Sensei_Global_Blocks_Test extends WP_UnitTestCase {
 
 		/* Assert */
 		$this->assertFalse( wp_script_is( 'sensei-course-list-filter' ) );
+
+		/* Reset */
+		wp_dequeue_style( 'sensei-global-blocks-style' );
 	}
 
 

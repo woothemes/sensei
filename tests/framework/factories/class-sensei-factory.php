@@ -45,41 +45,64 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 	protected $basic_test_question_ids;
 
 	/**
+	 * Course factory.
+	 *
 	 * @var WP_UnitTest_Factory_For_Course
 	 */
 	public $course;
 
 	/**
+	 * Lesson factory.
+	 *
 	 * @var WP_UnitTest_Factory_For_Lesson
 	 */
 	public $lesson;
 
 	/**
+	 * Quiz factory.
+	 *
 	 * @var WP_UnitTest_Factory_For_Quiz
 	 */
 	public $quiz;
 
 	/**
+	 * Question factory.
+	 *
 	 * @var WP_UnitTest_Factory_For_Question
 	 */
 	public $question;
 
 	/**
+	 * Multiple question factory.
+	 *
 	 * @var WP_UnitTest_Factory_For_Multiple_Question
 	 */
 	public $multiple_question;
 
 	/**
+	 * Module factory.
+	 *
 	 * @var WP_UnitTest_Factory_For_Module
 	 */
 	public $module;
 
 	/**
+	 * Question category factory.
+	 *
 	 * @var WP_UnitTest_Factory_For_Question_Category
 	 */
 	public $question_category;
 
 	/**
+	 * Course category factory.
+	 *
+	 * @var Sensei_UnitTest_Factory_For_Course_Category
+	 */
+	public $course_category;
+
+	/**
+	 * Message factory.
+	 *
 	 * @var WP_UnitTest_Factory_For_Message
 	 */
 	public $message;
