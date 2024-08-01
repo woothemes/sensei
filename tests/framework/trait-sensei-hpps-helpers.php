@@ -6,6 +6,7 @@
  */
 
 // phpcs:disable WordPress.NamingConventions.ValidFunctionName.MethodNameInvalid -- Using PHPUnit conventions.
+// phpcs:disable PSR2.Classes.PropertyDeclaration.Underscore
 
 use Sensei\Internal\Quiz_Submission\Answer\Repositories\Answer_Repository_Factory;
 use Sensei\Internal\Quiz_Submission\Grade\Repositories\Grade_Repository_Factory;
@@ -25,6 +26,48 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 4.20.0
  */
 trait Sensei_HPPS_Helpers {
+	/**
+	 * Course progress repository.
+	 *
+	 * @var \Sensei\Internal\Student_Progress\Course_Progress\Repositories\Course_Progress_Repository_Interface
+	 */
+	private $_course_progress_repository;
+
+	/**
+	 * Lesson progress repository.
+	 *
+	 * @var \Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Lesson_Progress_Repository_Interface
+	 */
+	private $_lesson_progress_repository;
+
+	/**
+	 * Quiz repository.
+	 *
+	 * @var \Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Quiz_Progress_Repository_Interface
+	 */
+	private $_quiz_progress_repository;
+
+	/**
+	 * Submission repository.
+	 *
+	 * @var \Sensei\Internal\Quiz_Submission\Submission\Repositories\Submission_Repository_Interface
+	 */
+	private $_quiz_submission_repository;
+
+	/**
+	 * Answer repository.
+	 *
+	 * @var \Sensei\Internal\Quiz_Submission\Answer\Repositories\Answer_Repository_Interface
+	 */
+	private $_quiz_answer_repository;
+
+	/**
+	 * Grade repository.
+	 *
+	 * @var \Sensei\Internal\Quiz_Submission\Grade\Repositories\Grade_Repository_Interface
+	 */
+	private $_quiz_grade_repository;
+
 	private function enable_hpps_tables_repository() {
 		Sensei()->settings->settings['experimental_progress_storage_repository'] = Progress_Storage_Settings::TABLES_STORAGE;
 

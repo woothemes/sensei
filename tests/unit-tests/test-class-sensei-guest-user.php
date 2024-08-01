@@ -21,6 +21,13 @@ class Sensei_Guest_User_Test extends WP_UnitTestCase {
 	protected $factory;
 
 	/**
+	 * Guest user instance.
+	 *
+	 * @var Sensei_Guest_User
+	 */
+	protected $guest_user;
+
+	/**
 	 * Set up the test.
 	 */
 	public function setUp(): void {

@@ -60,6 +60,14 @@ class Sensei_Course_List_Filter_Block_Test extends WP_UnitTestCase {
 <!-- wp:post-title {"level":1,"isLink":true,"fontSize":"large"} /-->
 <!-- /wp:post-template --></div>
 <!-- /wp:query -->';
+
+	/**
+	 * Course archive
+	 *
+	 * @var Sensei_Unsupported_Theme_Handler_Course_Archive
+	 */
+	private $handler;
+
 	/**
 	 * Set up the test.
 	 */
