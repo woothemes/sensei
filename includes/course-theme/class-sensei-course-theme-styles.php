@@ -48,7 +48,6 @@ class Sensei_Course_Theme_Styles {
 
 		$style = esc_attr( implode( ' ', $colors ) );
 		return self::set_style_attribute( $block_content, $style );
-
 	}
 
 	/**
@@ -78,11 +77,9 @@ class Sensei_Course_Theme_Styles {
 	 * @return array Name-value pairs of CSS variables
 	 */
 	private static function get_colors_as_css_variables( $styles ) {
-
 		if ( empty( $styles ) ) {
 			return [];
 		}
-
 	}
 
 	/**
@@ -139,7 +136,6 @@ class Sensei_Course_Theme_Styles {
 		$colors = self::get_colors( $styles );
 
 		return self::format_css_variables( $colors );
-
 	}
 
 	/**
@@ -190,6 +186,9 @@ class Sensei_Course_Theme_Styles {
 	 * @return string Style property value.
 	 */
 	private static function get_property_value( $value ) {
+		if ( ! is_string( $value ) ) {
+			return '';
+		}
 
 		$prefix     = 'var:';
 		$prefix_len = strlen( $prefix );
