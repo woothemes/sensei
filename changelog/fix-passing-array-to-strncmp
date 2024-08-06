@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Edge case of an error message in learning mode in strncmp function
