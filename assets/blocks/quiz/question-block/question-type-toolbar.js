@@ -1,7 +1,7 @@
 /**
  * WordPress dependencies
  */
-import { Toolbar } from '@wordpress/components';
+import { ToolbarGroup } from '@wordpress/components';
 import { applyFilters } from '@wordpress/hooks';
 import { __ } from '@wordpress/i18n';
 
@@ -20,7 +20,7 @@ import ToolbarDropdown from '../../editor-components/toolbar-dropdown';
  */
 export const QuestionTypeToolbar = ( { value, onSelect, options } ) => {
 	return (
-		<Toolbar className="sensei-lms-question-block__type-selector__toolbar">
+		<ToolbarGroup className="sensei-lms-question-block__type-selector__toolbar">
 			<ToolbarDropdown
 				className="sensei-lms-question-block__type-selector"
 				label={ __( 'Question Type', 'sensei-lms' ) }
@@ -70,6 +70,6 @@ export const QuestionTypeToolbar = ( { value, onSelect, options } ) => {
 					return props;
 				} }
 			/>
-		</Toolbar>
+		</ToolbarGroup>
 	);
 };
