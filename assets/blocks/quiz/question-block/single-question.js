@@ -5,14 +5,23 @@ import { Notice } from '@wordpress/components';
 import { useCallback } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import {
-	PluginPostStatusInfo,
-	PluginPrePublishPanel,
+	PluginPostStatusInfo as DeprecatedPluginPostStatusInfo,
+	PluginPrePublishPanel as DeprecatedPluginPrePublishPanel,
 } from '@wordpress/edit-post';
+import {
+	PluginPostStatusInfo as NewPluginPostStatusInfo,
+	PluginPrePublishPanel as NewPluginPrePublishPanel,
+} from '@wordpress/editor';
 
 /**
  * Internal dependencies
  */
 import { Effect, usePostSavingEffect } from '../../../shared/helpers/blocks';
+
+const PluginPostStatusInfo =
+	NewPluginPostStatusInfo || DeprecatedPluginPostStatusInfo;
+const PluginPrePublishPanel =
+	NewPluginPrePublishPanel || DeprecatedPluginPrePublishPanel;
 
 /**
  * Additional controls for a question block in the single question editor.

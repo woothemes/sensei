@@ -1,7 +1,12 @@
 /**
  * WordPress dependencies
  */
-import { createReduxStore, register, registerStore } from '@wordpress/data';
+import { createReduxStore, register } from '@wordpress/data';
+
+// We register the store in the global scope to avoid registering it multiple times.
+// The reason to be in the global scope is that some times we have different built files using the same source.
+window.senseiStores = window.senseiStores || [];
+const { senseiStores } = window;
 
 /**
  * Compose an action creator with the given start, success and error actions.
@@ -59,11 +64,12 @@ export const createReducerFromActionMap = ( reducers, defaultState ) => {
  * @return {string|Object} Store key.
  */
 export const createStore = ( name, settings ) => {
-	if ( createReduxStore ) {
-		const store = createReduxStore( name, settings );
-		register( store );
-		return store;
+	if ( senseiStores[ name ] ) {
+		return senseiStores[ name ];
 	}
-	registerStore( name, settings );
-	return name;
+
+	const store = createReduxStore( name, settings );
+	register( store );
+	senseiStores[ name ] = store;
+	return store;
 };

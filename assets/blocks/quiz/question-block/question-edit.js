@@ -228,23 +228,21 @@ const QuestionEdit = ( props ) => {
 				getErrorMessages={ getQuestionBlockValidationErrorMessages }
 			/>
 			<BlockControls>
-				<>
-					<QuestionTypeToolbar
-						value={ type }
-						onSelect={ ( nextValue ) =>
-							setAttributes( { type: nextValue } )
-						}
-						options={ questionOptions }
-					/>
-					<QuestionGradeToolbar
-						value={ options.grade }
-						onChange={ ( nextGrade ) =>
-							setAttributes( {
-								options: { ...options, grade: nextGrade },
-							} )
-						}
-					/>
-				</>
+				<QuestionTypeToolbar
+					value={ type }
+					onSelect={ ( nextValue ) =>
+						setAttributes( { type: nextValue } )
+					}
+					options={ questionOptions }
+				/>
+				<QuestionGradeToolbar
+					value={ options.grade }
+					onChange={ ( nextGrade ) =>
+						setAttributes( {
+							options: { ...options, grade: nextGrade },
+						} )
+					}
+				/>
 			</BlockControls>
 			<QuestionSettings controls={ AnswerBlock?.settings } { ...props } />
 		</div>

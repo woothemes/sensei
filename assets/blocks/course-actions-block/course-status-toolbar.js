@@ -1,7 +1,7 @@
 /**
  * WordPress dependencies
  */
-import { Toolbar } from '@wordpress/components';
+import { ToolbarGroup } from '@wordpress/components';
 import { useContext } from '@wordpress/element';
 
 /**
@@ -41,14 +41,14 @@ const CourseStatusToolbar = ( {
 		: setCourseStatus;
 
 	return (
-		<Toolbar>
+		<ToolbarGroup>
 			<ToolbarDropdown
 				options={ CourseStatusOptions }
 				optionsLabel="Course Status"
 				value={ courseStatusValue }
 				onChange={ setCourseStatusCallback }
 			/>
-		</Toolbar>
+		</ToolbarGroup>
 	);
 };
 

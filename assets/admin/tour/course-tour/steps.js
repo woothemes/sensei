@@ -13,6 +13,7 @@ import { store as editorStore } from '@wordpress/editor';
  * Internal dependencies
  */
 import { TourStep } from '../types';
+import { setBlockMeta } from '../../../shared/blocks/block-metadata';
 import { getFirstBlockByName } from '../../../blocks/course-outline/data';
 import {
 	highlightElementsWithBorders,
@@ -48,7 +49,7 @@ function focusOnCourseOutlineBlock() {
 	if ( ! courseOutlineBlock ) {
 		return;
 	}
-	dispatch( editorStore ).selectBlock( courseOutlineBlock.clientId );
+	dispatch( blockEditorStore ).selectBlock( courseOutlineBlock.clientId );
 }
 
 async function ensureLessonBlocksIsInEditor() {
@@ -84,6 +85,40 @@ async function ensureLessonBlocksIsInEditor() {
 	}
 
 	insertLessonBlock( 'Lesson 1' );
+}
+
+/**
+ * Check all modules have titles, if not, assign a default title.
+ */
+function ensureModulesHaveTitles() {
+	const blocks = getCourseOutlineBlock().innerBlocks;
+	const modules = blocks.filter(
+		( block ) => block.name === 'sensei-lms/course-outline-module'
+	);
+	const moduleTitles = modules
+		.map( ( block ) => {
+			if ( block.name !== 'sensei-lms/course-outline-module' ) {
+				return null;
+			}
+			const title = block.attributes?.title?.trim();
+			return title || null;
+		} )
+		.filter( ( value ) => !! value );
+
+	if ( modules.length > 0 ) {
+		let i = 0;
+		modules.forEach( ( module ) => {
+			let title = module.attributes?.title?.trim();
+			if ( title !== '' ) {
+				return;
+			}
+			do {
+				title = __( 'Module', 'sensei-lms' ) + ' ' + ++i;
+			} while ( moduleTitles.includes( title ) );
+			module.attributes.title = title;
+			setBlockMeta( module.clientId, module.attributes );
+		} );
+	}
 }
 
 /**
@@ -209,7 +244,7 @@ function getTourSteps() {
 				heading: __( 'Adding a module', 'sensei-lms' ),
 				descriptions: {
 					desktop: __(
-						'A module is a container for a group of related lessons in a course. Click + to open the inserter. Then click the Module option.',
+						'A module is a container for a group of related lessons in a course. Click + to open the inserter. Then click the Module option and give it a name.',
 						'sensei-lms'
 					),
 					mobile: null,
@@ -512,6 +547,7 @@ function getTourSteps() {
 				);
 
 				if ( ! savedLesson ) {
+					ensureModulesHaveTitles();
 					const { savePost } = dispatch( editorStore );
 					savePost();
 					await waitForElement( savedlessonSelector, 15 );

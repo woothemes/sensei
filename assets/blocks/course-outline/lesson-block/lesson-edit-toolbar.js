@@ -1,7 +1,13 @@
 /**
  * WordPress dependencies
  */
-import { Button, Spinner, Toolbar, ToolbarItem } from '@wordpress/components';
+import {
+	Button,
+	Spinner,
+	ToolbarGroup,
+	ToolbarItem,
+} from '@wordpress/components';
+import { forwardRef } from '@wordpress/element';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { store as editPostStore } from '@wordpress/edit-post';
 import { store as editorStore } from '@wordpress/editor';
@@ -19,14 +25,19 @@ const getLessonURL = ( lessonId ) => `post.php?post=${ lessonId }&action=edit`;
  *
  * @param {Object} props          Component props.
  * @param {number} props.lessonId The lesson ID.
+ * @param {Object} forwardedRef   The forwarded ref.
  */
-export const EditLessonLink = ( { lessonId } ) => (
-	<a
-		href={ getLessonURL( lessonId ) }
-		className="wp-block-sensei-lms-course-outline-lesson__edit"
-	>
-		{ __( 'Edit lesson', 'sensei-lms' ) }
-	</a>
+export const EditLessonLink = forwardRef(
+	( { lessonId, ...props }, forwardedRef ) => (
+		<a
+			ref={ forwardedRef }
+			href={ getLessonURL( lessonId ) }
+			className="wp-block-sensei-lms-course-outline-lesson__edit"
+			{ ...props }
+		>
+			{ __( 'Edit lesson', 'sensei-lms' ) }
+		</a>
+	)
 );
 
 /**
@@ -70,12 +81,18 @@ const LessonEditToolbar = ( { lessonId, lessonTitle } ) => {
 
 	let toolbarItem = savePostLink;
 	if ( lessonId ) {
-		toolbarItem = <EditLessonLink lessonId={ lessonId } />;
+		toolbarItem = (
+			<ToolbarItem as={ EditLessonLink } lessonId={ lessonId } />
+		);
 	} else if ( isSavingPost || isSavingStructure || isSavingMetaBoxes ) {
 		toolbarItem = savingPostIndicator;
 	}
 
-	return <Toolbar className="components-button">{ toolbarItem }</Toolbar>;
+	return (
+		<ToolbarGroup className="components-button">
+			{ toolbarItem }
+		</ToolbarGroup>
+	);
 };
 
 export default LessonEditToolbar;

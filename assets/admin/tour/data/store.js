@@ -1,15 +1,16 @@
 /**
  * WordPress dependencies
  */
-import { createReduxStore, register } from '@wordpress/data';
-/**
- * Internal dependencies
- */
-import { createReducerFromActionMap } from '../../../shared/data/store-helpers';
 import { controls } from '@wordpress/data-controls';
 import apiFetch from '@wordpress/api-fetch';
 
-export const SENSEI_TOUR_STORE = 'sensei/tour';
+/**
+ * Internal dependencies
+ */
+import {
+	createReducerFromActionMap,
+	createStore,
+} from '../../../shared/data/store-helpers';
 
 export const DEFAULT_STATE = {
 	showTour: true,
@@ -80,11 +81,9 @@ export const reducers = {
 	DEFAULT: ( action, state ) => state,
 };
 
-export const store = createReduxStore( SENSEI_TOUR_STORE, {
+export const SENSEI_TOUR_STORE = createStore( 'sensei/tour', {
 	reducer: createReducerFromActionMap( reducers, DEFAULT_STATE ),
 	actions,
 	selectors,
 	controls,
 } );
-
-register( store );

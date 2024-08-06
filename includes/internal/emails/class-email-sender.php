@@ -229,17 +229,17 @@ class Email_Sender {
 	 *
 	 * @internal
 	 *
-	 * @param string $template_body The string.
-	 * @param array  $placeholders  The placeholders.
+	 * @param string $content Content to replace the placeholders in.
+	 * @param array  $placeholders The placeholders.
 	 *
 	 * @return string
 	 */
-	private function replace_placeholders( string $template_body, array $placeholders ): string {
+	private function replace_placeholders( string $content, array $placeholders ): string {
 		foreach ( $placeholders as $placeholder => $value ) {
-			$template_body = str_replace( '[' . $placeholder . ']', $value, $template_body );
+			$content = str_replace( '[' . $placeholder . ']', $value, $content );
 		}
 
-		return $template_body;
+		return $content;
 	}
 
 	/**
@@ -250,14 +250,15 @@ class Email_Sender {
 	 * @return string
 	 */
 	private function load_email_styles(): string {
-		$css_dist_path = Sensei()->assets->dist_path( 'css/email-notifications/email-style.css' );
+		$styles = wp_get_global_stylesheet();
 
+		$css_dist_path = Sensei()->assets->dist_path( 'css/email-notifications/email-style.css' );
 		if ( file_exists( $css_dist_path ) ) {
 			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Local file usage.
-			return file_get_contents( $css_dist_path );
+			$styles .= file_get_contents( $css_dist_path );
 		}
 
-		return '';
+		return $styles;
 	}
 
 	/**
