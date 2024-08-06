@@ -1,4 +1,4 @@
 Significance: patch
 Type: fixed
 
-Edge case of an error message in learning mode in strncmp function
+Prevent lesson loading error in learning mode for themes that are using referenced styles
