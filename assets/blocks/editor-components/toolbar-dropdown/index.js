@@ -7,11 +7,9 @@ import classnames from 'classnames';
  * WordPress dependencies
  */
 import {
-	Button,
-	Dropdown,
 	MenuGroup,
 	MenuItem,
-	NavigableMenu,
+	ToolbarDropdownMenu,
 } from '@wordpress/components';
 import { check } from '@wordpress/icons';
 
@@ -48,10 +46,10 @@ const ToolbarDropdown = ( {
 	const selectedOption = options.find( ( option ) => value === option.value );
 
 	return (
-		<Dropdown
+		<ToolbarDropdownMenu
 			className="sensei-toolbar-dropdown"
 			popoverProps={ {
-				isAlternate: true,
+				variant: 'toolbar',
 				position: 'bottom right left',
 				focusOnMount: true,
 				...popoverProps,
@@ -60,52 +58,45 @@ const ToolbarDropdown = ( {
 					'sensei-toolbar-dropdown__popover'
 				),
 			} }
-			renderToggle={ ( { isOpen, onToggle } ) => (
-				<Button
-					onClick={ onToggle }
-					icon={ icon }
-					aria-expanded={ isOpen }
-					aria-haspopup="true"
-					{ ...toggleProps }
-					children={
-						toggleProps?.children
-							? toggleProps.children( selectedOption )
-							: selectedOption?.label
-					}
-				/>
-			) }
-			renderContent={ ( { onClose } ) => (
-				<NavigableMenu role="menu" stopNavigationEvents>
-					<MenuGroup label={ optionsLabel }>
-						{ options.map( ( option ) => {
-							const isSelected =
-								option.value === selectedOption?.value;
-							const menuItemProps = getMenuItemProps?.( option );
-							return (
-								<MenuItem
-									key={ option.value }
-									role="menuitemradio"
-									isSelected={ isSelected }
-									icon={ isSelected ? check : null }
-									className={ classnames(
-										'sensei-toolbar-dropdown__option',
-										{ 'is-selected': isSelected },
-										menuItemProps?.className
-									) }
-									onClick={ () => {
-										onChange( option.value );
-										onClose();
-									} }
-									children={ option.label }
-									{ ...menuItemProps }
-								/>
-							);
-						} ) }
-					</MenuGroup>
-				</NavigableMenu>
-			) }
+			label={ optionsLabel }
+			icon={ icon ?? null }
+			text={
+				toggleProps?.children
+					? toggleProps.children( selectedOption )
+					: selectedOption?.label
+			}
 			{ ...props }
-		/>
+		>
+			{ ( { onClose } ) => (
+				<MenuGroup label={ optionsLabel }>
+					{ options.map( ( option ) => {
+						const isSelected =
+							option.value === selectedOption?.value;
+						const menuItemProps = getMenuItemProps?.( option );
+
+						return (
+							<MenuItem
+								key={ option.value }
+								role="menuitemradio"
+								isSelected={ isSelected }
+								icon={ isSelected ? check : null }
+								className={ classnames(
+									'sensei-toolbar-dropdown__option',
+									{ 'is-selected': isSelected },
+									menuItemProps?.className
+								) }
+								onClick={ () => {
+									onChange( option.value );
+									onClose();
+								} }
+								children={ option.label }
+								{ ...menuItemProps }
+							/>
+						);
+					} ) }
+				</MenuGroup>
+			) }
+		</ToolbarDropdownMenu>
 	);
 };
 

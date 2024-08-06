@@ -3,13 +3,17 @@
  */
 import { __ } from '@wordpress/i18n';
 import { useEntityProp } from '@wordpress/core-data';
-import { PluginPrePublishPanel } from '@wordpress/edit-post';
+import { PluginPrePublishPanel as DeprecatedPluginPrePublishPanel } from '@wordpress/edit-post';
+import { PluginPrePublishPanel as NewPluginPrePublishPanel } from '@wordpress/editor';
 import { ToggleControl } from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
 import SenseiIcon from '../../icons/logo-tree.svg';
+
+const PluginPrePublishPanel =
+	NewPluginPrePublishPanel || DeprecatedPluginPrePublishPanel;
 
 /**
  * Course pre-publish panel.

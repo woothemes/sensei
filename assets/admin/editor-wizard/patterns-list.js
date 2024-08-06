@@ -137,7 +137,9 @@ const PatternsList = ( { onChoose } ) => {
 						>
 							<div className="sensei-patterns-list__item-preview">
 								<BlockPreview
-									__experimentalPadding={ 30 }
+									additionalStyles={ [
+										{ css: 'body { padding: 30px; }' },
+									] }
 									blocks={ blocks
 										.filter( withoutLessonActions )
 										.map( withBlockExample ) }
