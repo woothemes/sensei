@@ -6,20 +6,17 @@ import { keyBy, merge, isEqual } from 'lodash';
 /**
  * WordPress dependencies
  */
-import {
-	createReduxStore,
-	register,
-	select,
-	dispatch,
-	createRegistrySelector,
-} from '@wordpress/data';
+import { select, dispatch, createRegistrySelector } from '@wordpress/data';
 import { controls, apiFetch } from '@wordpress/data-controls';
 import { __, sprintf } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
  */
-import { createReducerFromActionMap } from '../shared/data/store-helpers';
+import {
+	createStore,
+	createReducerFromActionMap,
+} from '../shared/data/store-helpers';
 import { logEvent } from '../shared/helpers/log-event';
 import '../shared/data/api-fetch-preloaded-once';
 
@@ -357,12 +354,10 @@ const reducer = {
 	DEFAULT: ( action, state ) => state,
 };
 
-export const EXTENSIONS_STORE = createReduxStore( 'sensei/extensions', {
+export const EXTENSIONS_STORE = createStore( 'sensei/extensions', {
 	reducer: createReducerFromActionMap( reducer, DEFAULT_STATE ),
 	actions,
 	selectors,
 	resolvers,
 	controls,
 } );
-
-register( EXTENSIONS_STORE );

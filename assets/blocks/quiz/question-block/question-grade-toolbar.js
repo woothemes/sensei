@@ -1,7 +1,7 @@
 /**
  * WordPress dependencies
  */
-import { ToolbarGroup } from '@wordpress/components';
+import { ToolbarGroup, ToolbarItem } from '@wordpress/components';
 /**
  * Internal dependencies
  */
@@ -18,7 +18,11 @@ export const QuestionGradeToolbar = ( { value, onChange } ) => {
 	return (
 		<>
 			<ToolbarGroup className="sensei-lms-question-block__grade-toolbar">
-				<QuestionGradeControl value={ value } onChange={ onChange } />
+				<ToolbarItem
+					as={ QuestionGradeControl }
+					value={ value }
+					onChange={ onChange }
+				/>
 			</ToolbarGroup>
 		</>
 	);

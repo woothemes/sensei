@@ -54,6 +54,7 @@
     "memize": "1.1.0",
     "qrcode.react": "3.1.0",
     "react-animate-height": "2.0.23",
+    "rememo": "4.0.2",
     "terser-webpack-plugin": "5.3.1",
     "uuid": "7.0.3",
     "whatwg-fetch": "3.6.2"
