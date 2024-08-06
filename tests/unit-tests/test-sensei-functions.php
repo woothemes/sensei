@@ -131,11 +131,11 @@ class Sensei_Functions_Test extends WP_UnitTestCase {
 		$has_checks = false;
 		$filter     = function ( $can_view_lesson, $lesson_id, $user_id, $checks ) use ( &$has_checks ) {
 			$has_checks = is_array( $checks ) && isset(
-				$checks[ 'login_not_required' ],
-				$checks[ 'user_has_all_access' ],
-				$checks[ 'user_can_view_course_content' ],
-				$checks[ 'pre_requisite_complete' ],
-				$checks[ 'is_preview_lesson' ]
+				$checks['login_not_required'],
+				$checks['user_has_all_access'],
+				$checks['user_can_view_course_content'],
+				$checks['pre_requisite_complete'],
+				$checks['is_preview_lesson']
 			);
 		};
 		add_filter( 'sensei_can_user_view_lesson', $filter, 10, 4 );
