@@ -151,7 +151,10 @@ class Sensei_Course_Theme_Styles {
 			if ( $postfix ) {
 				$variable = $variable . $postfix;
 			}
-			if ( $value ) {
+			if (
+				$value &&
+				is_string( $value )
+			) {
 				$css[] = sprintf( '%s: %s;', $variable, self::get_property_value( $value ) );
 			}
 		}
@@ -186,10 +189,6 @@ class Sensei_Course_Theme_Styles {
 	 * @return string Style property value.
 	 */
 	private static function get_property_value( $value ) {
-		if ( ! is_string( $value ) ) {
-			return '';
-		}
-
 		$prefix     = 'var:';
 		$prefix_len = strlen( $prefix );
 		$token_in   = '|';
