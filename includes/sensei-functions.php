@@ -156,14 +156,17 @@ function sensei_can_user_view_lesson( $lesson_id = null, $user_id = null ) {
 		$pre_requisite_complete = true;
 	};
 
-	$can_user_view_lesson = ! sensei_is_login_required()
-							|| sensei_all_access( $user_id )
+	$login_not_required  = ! sensei_is_login_required();
+	$user_has_all_access = sensei_all_access( $user_id );
+
+	$can_user_view_lesson = $login_not_required
+							|| $user_has_all_access
 							|| ( $user_can_view_course_content && $pre_requisite_complete )
 							|| $is_preview_lesson;
 
 	$checks = array(
-		'login_not_required'           => ! sensei_is_login_required(),
-		'user_has_all_access'          => sensei_all_access( $user_id ),
+		'login_not_required'           => $login_not_required,
+		'user_has_all_access'          => $user_has_all_access,
 		'user_can_view_course_content' => $user_can_view_course_content,
 		'pre_requisite_complete'       => $pre_requisite_complete,
 		'is_preview_lesson'            => $is_preview_lesson,
