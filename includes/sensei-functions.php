@@ -161,19 +161,29 @@ function sensei_can_user_view_lesson( $lesson_id = null, $user_id = null ) {
 							|| ( $user_can_view_course_content && $pre_requisite_complete )
 							|| $is_preview_lesson;
 
+	$checks = array(
+		'login_not_required'           => ! sensei_is_login_required(),
+		'user_has_all_access'          => sensei_all_access( $user_id ),
+		'user_can_view_course_content' => $user_can_view_course_content,
+		'pre_requisite_complete'       => $pre_requisite_complete,
+		'is_preview_lesson'            => $is_preview_lesson,
+	);
+
 	/**
 	 * Filter if the user can view lesson and quiz content.
 	 *
 	 * @since 1.9.0
+	 * @since $$next-version$$ Added $checks parameter.
 	 *
 	 * @hook sensei_can_user_view_lesson
 	 *
-	 * @param {bool} $can_user_view_lesson True if they can view lesson/quiz content.
-	 * @param {int}  $lesson_id            Lesson post ID.
-	 * @param {int}  $user_id              User ID.
+	 * @param {bool}  $can_user_view_lesson True if they can view lesson/quiz content.
+	 * @param {int}   $lesson_id            Lesson post ID.
+	 * @param {int}   $user_id              User ID.
+	 * $param {array} $checks               Array of checks that were made to determine access.
 	 * @return {bool} Filtered access.
 	 */
-	return apply_filters( 'sensei_can_user_view_lesson', $can_user_view_lesson, $lesson_id, $user_id );
+	return apply_filters( 'sensei_can_user_view_lesson', $can_user_view_lesson, $lesson_id, $user_id, $checks );
 }
 
 if ( ! function_exists( 'sensei_light_or_dark' ) ) {
