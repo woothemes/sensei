@@ -69,7 +69,7 @@ class Email_Post_Type {
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.24.2
 	 *
 	 * @param array  $editor_settings The editor settings.
 	 * @param object $editor_context  The editor context.

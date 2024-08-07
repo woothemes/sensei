@@ -3,7 +3,7 @@
  * Sensei REST API: Sensei_REST_API_Sensei_Emails_Controller class.
  *
  * @package sensei-lms
- * @since   $$next-version$$
+ * @since   4.24.2
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * A REST controller for Sensei Emails CPT.
  *
- * @since $$next-version$$
+ * @since 4.24.2
  *
  * @see WP_REST_Posts_Controller
  */
