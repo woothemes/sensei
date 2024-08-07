@@ -140,6 +140,23 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 
 == Changelog ==
 
+### 4.24.2 - 2024-08-08
+#### Security
+- Improve email templates security
+
+#### Changed
+- Pass `checks` argument to `sensei_can_user_view_lesson` filter [#7657](https://github.com/Automattic/sensei/pull/7657)
+- "Course Started" email is now "Course Enrolled" [#7661](https://github.com/Automattic/sensei/pull/7661)
+
+#### Fixed
+- Deprecation notices on PHP 8.2 [#7650](https://github.com/Automattic/sensei/pull/7650)
+- Custom styles for emails in preview and in sent messages [#7595](https://github.com/Automattic/sensei/pull/7595)
+- Keep current status for a question when it is updated [#7603](https://github.com/Automattic/sensei/pull/7603)
+- Prevent lesson loading error in Learning Mode for themes that are using referenced styles [#7658](https://github.com/Automattic/sensei/pull/7658)
+- Remove limit from report export [#7647](https://github.com/Automattic/sensei/pull/7647)
+- Set default names for modules without titles when saving course in the course tour [#7652](https://github.com/Automattic/sensei/pull/7652)
+- Replace "Continue to next lesson" with "Back to lesson" CTA in quiz when lesson is last in course [#7642](https://github.com/Automattic/sensei/pull/7642)
+
 ### 4.24.1 - 2024-06-13
 #### Security
 - Improve security for lessons and modules ordering
@@ -164,16 +181,3 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 #### Fixed
 - Add VideoPress block compabitility for the video settings on courses [#7592](https://github.com/Automattic/sensei/pull/7592)
 - Fix preview email button and links [#7590](https://github.com/Automattic/sensei/pull/7590)
-
-### 4.23.1 - 2024-04-15
-#### Added
-- WPML: Setting to disable Sensei slugs translation for better compatibility [#7569](https://github.com/Automattic/sensei/pull/7569)
-- WPML: Share student progress and quiz submission across translations [#7492](https://github.com/Automattic/sensei/pull/7492)
-- WPML: Show user courses for different languages using `sensei_user_courses` shortcode [#7583](https://github.com/Automattic/sensei/pull/7583)
-
-#### Changed
-- Open setup wizard if necessary when navigating through relevant pages in WP admin [#7581](https://github.com/Automattic/sensei/pull/7581)
-
-#### Fixed
-- Usage of question categories in translated quizzes [#7559](https://github.com/Automattic/sensei/pull/7559)
-- Lessons being automatically published when course is updated [#7582](https://github.com/Automattic/sensei/pull/7582)
