@@ -69,8 +69,8 @@ class Email_Seeder_Data {
 			],
 			'student_starts_course'       => [
 				'types'       => [ 'teacher' ],
-				'subject'     => __( '[student:displayname] started [course:name]', 'sensei-lms' ),
-				'description' => __( 'Course Started', 'sensei-lms' ),
+				'subject'     => __( '[student:displayname] enrolled in [course:name]', 'sensei-lms' ),
+				'description' => __( 'Course Enrolled', 'sensei-lms' ),
 				'content'     => '<!-- wp:pattern {"slug":"sensei-lms/student-starts-course"} /-->',
 			],
 			'student_completes_course'    => [
