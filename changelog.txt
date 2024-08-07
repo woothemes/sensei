@@ -1,5 +1,22 @@
 *** Changelog ***
 
+## 4.24.2 - 2024-08-08
+### Security
+- Improve email templates security
+
+### Changed
+- Pass `checks` argument to `sensei_can_user_view_lesson` filter [#7657](https://github.com/Automattic/sensei/pull/7657)
+- "Course Started" email is now "Course Enrolled" [#7661](https://github.com/Automattic/sensei/pull/7661)
+
+### Fixed
+- Deprecation notices on PHP 8.2 [#7650](https://github.com/Automattic/sensei/pull/7650)
+- Custom styles for emails in preview and in sent messages [#7595](https://github.com/Automattic/sensei/pull/7595)
+- Keep current status for a question when it is updated [#7603](https://github.com/Automattic/sensei/pull/7603)
+- Prevent lesson loading error in Learning Mode for themes that are using referenced styles [#7658](https://github.com/Automattic/sensei/pull/7658)
+- Remove limit from report export [#7647](https://github.com/Automattic/sensei/pull/7647)
+- Set default names for modules without titles when saving course in the course tour [#7652](https://github.com/Automattic/sensei/pull/7652)
+- Replace "Continue to next lesson" with "Back to lesson" CTA in quiz when lesson is last in course [#7642](https://github.com/Automattic/sensei/pull/7642)
+
 ## 4.24.1 - 2024-06-13
 ### Security
 - Improve security for lessons and modules ordering
