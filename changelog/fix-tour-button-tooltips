@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Let the tooltip for buttons be visible: fix z-index for tour container
