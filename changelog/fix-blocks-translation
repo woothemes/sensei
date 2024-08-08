@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Register blocks to make their translations available in the editor
