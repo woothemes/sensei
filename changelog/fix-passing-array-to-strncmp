@@ -1,4 +1,0 @@
-Significance: patch
-Type: fixed
-
-Prevent lesson loading error in learning mode for themes that are using referenced styles

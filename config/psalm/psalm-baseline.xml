@@ -4364,9 +4364,6 @@
     <DocblockTypeContradiction occurrences="1">
       <code>is_wp_error( $result )</code>
     </DocblockTypeContradiction>
-    <InvalidAttribute occurrences="1">
-      <code>\ReturnTypeWillChange</code>
-    </InvalidAttribute>
     <InvalidScalarArgument occurrences="1">
       <code>$timestamp</code>
     </InvalidScalarArgument>
@@ -4380,9 +4377,6 @@
       <code>false</code>
       <code>false</code>
     </FalsableReturnStatement>
-    <InvalidAttribute occurrences="1">
-      <code>\ReturnTypeWillChange</code>
-    </InvalidAttribute>
     <InvalidFalsableReturnType occurrences="1">
       <code>array</code>
     </InvalidFalsableReturnType>
@@ -5378,6 +5372,21 @@
     </PossiblyNullArgument>
     <PropertyNotSetInConstructor occurrences="1">
       <code>Sensei_REST_API_Send_Message_Controller</code>
+    </PropertyNotSetInConstructor>
+  </file>
+  <file src="includes/rest-api/class-sensei-rest-api-sensei-emails-controller.php">
+    <InvalidReturnStatement occurrences="1">
+      <code>$parent_check</code>
+    </InvalidReturnStatement>
+    <InvalidReturnType occurrences="1">
+      <code>true|WP_Error</code>
+    </InvalidReturnType>
+    <PropertyNotSetInConstructor occurrences="5">
+      <code>Sensei_REST_API_Sensei_Emails_Controller</code>
+      <code>Sensei_REST_API_Sensei_Emails_Controller</code>
+      <code>Sensei_REST_API_Sensei_Emails_Controller</code>
+      <code>Sensei_REST_API_Sensei_Emails_Controller</code>
+      <code>Sensei_REST_API_Sensei_Emails_Controller</code>
     </PropertyNotSetInConstructor>
   </file>
   <file src="includes/rest-api/class-sensei-rest-api-setup-wizard-controller.php">
