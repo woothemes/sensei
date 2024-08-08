@@ -167,6 +167,8 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 - Contact teacher form not displaying correctly in Learning Mode [#7610](https://github.com/Automattic/sensei/pull/7610)
 - Register Sensei LMS custom post types without delay [#7607](https://github.com/Automattic/sensei/pull/7607)
 - Support "0" or other falsy values as an answer for a quiz question [#7614](https://github.com/Automattic/sensei/pull/7614)
+- Register blocks to make their translations available in the editor [#7643](https://github.com/Automattic/sensei/pull/7643)
+- Tour modal tooltip visibility [#7653](https://github.com/Automattic/sensei/pull/7653)
 
 ### 4.24.0 - 2024-04-25
 #### Security

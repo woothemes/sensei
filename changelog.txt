@@ -16,6 +16,8 @@
 - Remove limit from report export [#7647](https://github.com/Automattic/sensei/pull/7647)
 - Set default names for modules without titles when saving course in the course tour [#7652](https://github.com/Automattic/sensei/pull/7652)
 - Replace "Continue to next lesson" with "Back to lesson" CTA in quiz when lesson is last in course [#7642](https://github.com/Automattic/sensei/pull/7642)
+- Register blocks to make their translations available in the editor [#7643](https://github.com/Automattic/sensei/pull/7643)
+- Tour modal tooltip visibility [#7653](https://github.com/Automattic/sensei/pull/7653)
 
 ## 4.24.1 - 2024-06-13
 ### Security
