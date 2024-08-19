@@ -2917,8 +2917,9 @@ class Sensei_Utils {
 	public static function output_query_params_as_inputs( array $excluded = [], string $url = '', bool $echo = true ) {
 		// phpcs:ignore WordPress.Security.NonceVerification -- The nonce should be checked before calling this method.
 		$query_params = $_GET;
+
 		if ( $url ) {
-			parse_str( wp_parse_url( $url, PHP_URL_QUERY ), $query_params );
+			parse_str( (string) wp_parse_url( $url, PHP_URL_QUERY ), $query_params );
 		}
 
 		$output = '';
