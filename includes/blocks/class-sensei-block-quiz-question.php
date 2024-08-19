@@ -50,8 +50,7 @@ class Sensei_Block_Quiz_Question {
 	 *
 	 * @return string The block HTML.
 	 */
-	public function render_quiz_question( array $attributes, string $content ): string {
-		// phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
+	public function render_quiz_question( array $attributes, string $content ): string { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
 		_deprecated_function( __METHOD__, '4.24.2', '__return_empty_string' );
 
 		return '';
