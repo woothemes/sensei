@@ -24,6 +24,7 @@ class Course_Navigation {
 		'not-started' => 'circle',
 		'in-progress' => 'half-filled-circle',
 		'ungraded'    => 'half-filled-circle',
+		'complete'    => 'check-filled-circle',
 		'completed'   => 'check-filled-circle',
 		'failed'      => 'half-filled-circle',
 		'locked'      => 'lock',
@@ -95,7 +96,7 @@ class Course_Navigation {
 		$modules_html = implode(
 			'',
 			array_map(
-				function( $item ) {
+				function ( $item ) {
 					if ( 'module' === $item['type'] ) {
 						return $this->render_module( $item );
 					}
@@ -108,7 +109,7 @@ class Course_Navigation {
 		$lessons_html = implode(
 			'',
 			array_map(
-				function( $item ) {
+				function ( $item ) {
 					if ( 'lesson' === $item['type'] ) {
 						return $this->render_lesson( $item );
 					}
@@ -164,7 +165,7 @@ class Course_Navigation {
 		$lessons_html = implode(
 			'',
 			array_map(
-				function( $lesson ) {
+				function ( $lesson ) {
 					return $this->render_lesson( $lesson );
 				},
 				$lessons
@@ -175,7 +176,7 @@ class Course_Navigation {
 		$has_current_lesson = count(
 			array_filter(
 				$lessons,
-				function( $lesson ) use ( $current_lesson_id ) {
+				function ( $lesson ) use ( $current_lesson_id ) {
 					return $current_lesson_id === $lesson['id'];
 				}
 			)
@@ -186,7 +187,7 @@ class Course_Navigation {
 		$quiz_count   = count(
 			array_filter(
 				$lessons,
-				function( $lesson ) {
+				function ( $lesson ) {
 					return \Sensei_Lesson::lesson_quiz_has_questions( $lesson['id'] );
 				}
 			)
