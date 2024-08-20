@@ -112,6 +112,51 @@ class Sensei_Analysis_Course_List_Table_Test extends WP_UnitTestCase {
 		self::assertSame( $expected, $this->export_items( $table->items ) );
 	}
 
+	public function testGenerateReport_LessonView_ReturnsCorrectNumberOfRows() {
+		/* Arrange. */
+		$course_id   = $this->factory->course->create();
+		$lesson_args = [
+			'meta_input' => [
+				'_lesson_course' => $course_id,
+			],
+		];
+
+		$lesson1_id = $this->factory->lesson->create( $lesson_args );
+		$lesson2_id = $this->factory->lesson->create( $lesson_args );
+		$lesson3_id = $this->factory->lesson->create( $lesson_args );
+
+		$_GET['view'] = 'lesson';
+
+		/* Act. */
+		$table       = new Sensei_Analysis_Course_List_Table( $course_id );
+		$export_data = $table->generate_report( 'course-name-lessons-overview' );
+
+		/* Assert. */
+		self::assertSame( 4, count( $export_data ) ); // Header row + 3 lessons.
+	}
+
+	public function testGenerateReport_UserView_ReturnsCorrectNumberOfRows() {
+		/* Arrange. */
+		$course_id = $this->factory->course->create();
+
+		$user1_id = $this->factory->user->create();
+		$user2_id = $this->factory->user->create();
+		$user3_id = $this->factory->user->create();
+
+		$activity1_id = Sensei_Utils::start_user_on_course( $user1_id, $course_id );
+		$activity2_id = Sensei_Utils::start_user_on_course( $user2_id, $course_id );
+		$activity3_id = Sensei_Utils::start_user_on_course( $user3_id, $course_id );
+
+		$_GET['view'] = 'user';
+
+		/* Act. */
+		$table       = new Sensei_Analysis_Course_List_Table( $course_id );
+		$export_data = $table->generate_report( 'course-name-users-overview' );
+
+		/* Assert. */
+		self::assertSame( 4, count( $export_data ) ); // Header row + 3 students.
+	}
+
 	public function testTableFooter_WhenCalledWithNoData_NotDisplayTheExportButton() {
 		/* Arrange. */
 		$list_table = new Sensei_Analysis_Course_List_Table();
