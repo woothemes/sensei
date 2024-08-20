@@ -347,13 +347,13 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 		switch ( $this->view ) {
 			case 'user':
 				$args['number'] = '';
-				$this->items = $this->get_course_statuses( $args );
+				$this->items    = $this->get_course_statuses( $args );
 
 				break;
 			case 'lesson':
 			default:
 				$args['number'] = -1;
-				$this->items = $this->get_lessons( $args );
+				$this->items    = $this->get_lessons( $args );
 
 				break;
 		}
