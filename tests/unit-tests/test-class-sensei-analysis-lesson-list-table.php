@@ -25,11 +25,13 @@ class Sensei_Analysis_Lesson_List_Table_Test extends WP_UnitTestCase {
 	public function testGenerateReport_StudentsByLesson_ReturnsCorrectNumberOfRows() {
 		/* Arrange. */
 		$course_id = $this->factory->course->create();
-		$lesson_id = $this->factory->lesson->create( [
-			'meta_input' => [
-				'_lesson_course' => $course_id,
-			],
-		] );
+		$lesson_id = $this->factory->lesson->create(
+			[
+				'meta_input' => [
+					'_lesson_course' => $course_id,
+				],
+			]
+		);
 
 		$user1_id = $this->factory->user->create();
 		$user2_id = $this->factory->user->create();
