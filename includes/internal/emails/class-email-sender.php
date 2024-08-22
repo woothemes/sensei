@@ -236,7 +236,7 @@ class Email_Sender {
 	 */
 	private function replace_placeholders( string $content, array $placeholders ): string {
 		foreach ( $placeholders as $placeholder => $value ) {
-			// Strip out URL protocol if necessary. Temp workaround for https://github.com/Automattic/sensei/issues/7621.
+			// Strip out URL protocol if necessary. Partial solution for https://github.com/Automattic/sensei/issues/7621.
 			$content = preg_replace( '~(https?://)?\[' . $placeholder . '\]~', $value, $content );
 		}
 
