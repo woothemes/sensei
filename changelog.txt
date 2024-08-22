@@ -1,5 +1,13 @@
 *** Changelog ***
 
+## 4.24.3 - 2024-08-22
+### Fixed
+- Ensure quiz description is displayed to the student [#7669](https://github.com/Automattic/sensei/pull/7669)
+- Incorrect URL for edited emails [#7671](https://github.com/Automattic/sensei/pull/7671)
+- Missing lesson status icon for "complete" status [#7667](https://github.com/Automattic/sensei/pull/7667)
+- PHP deprecation notice when opening site editor [#7668](https://github.com/Automattic/sensei/pull/7668)
+- Some reports not exporting all rows [#7670](https://github.com/Automattic/sensei/pull/7670)
+
 ## 4.24.2 - 2024-08-08
 ### Security
 - Improve email templates security
