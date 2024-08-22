@@ -328,7 +328,6 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 		$this->search = $search;
 
 		$args = array(
-			'number'  => -1,
 			'offset'  => 0,
 			'orderby' => $orderby,
 			'order'   => $order,
@@ -347,12 +346,15 @@ class Sensei_Analysis_Course_List_Table extends Sensei_List_Table {
 
 		switch ( $this->view ) {
 			case 'user':
-				$this->items = $this->get_course_statuses( $args );
-				break;
+				$args['number'] = '';
+				$this->items    = $this->get_course_statuses( $args );
 
+				break;
 			case 'lesson':
 			default:
-				$this->items = $this->get_lessons( $args );
+				$args['number'] = -1;
+				$this->items    = $this->get_lessons( $args );
+
 				break;
 		}
 
