@@ -140,6 +140,14 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 
 == Changelog ==
 
+### 4.24.3 - 2024-08-22
+#### Fixed
+- Ensure quiz description is displayed to the student [#7669](https://github.com/Automattic/sensei/pull/7669)
+- Incorrect URL for edited emails [#7671](https://github.com/Automattic/sensei/pull/7671)
+- Missing lesson status icon for "complete" status [#7667](https://github.com/Automattic/sensei/pull/7667)
+- PHP deprecation notice when opening site editor [#7668](https://github.com/Automattic/sensei/pull/7668)
+- Some reports not exporting all rows [#7670](https://github.com/Automattic/sensei/pull/7670)
+
 ### 4.24.2 - 2024-08-08
 #### Security
 - Improve email templates security
@@ -156,6 +164,8 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 - Remove limit from report export [#7647](https://github.com/Automattic/sensei/pull/7647)
 - Set default names for modules without titles when saving course in the course tour [#7652](https://github.com/Automattic/sensei/pull/7652)
 - Replace "Continue to next lesson" with "Back to lesson" CTA in quiz when lesson is last in course [#7642](https://github.com/Automattic/sensei/pull/7642)
+- Register blocks to make their translations available in the editor [#7643](https://github.com/Automattic/sensei/pull/7643)
+- Tour modal tooltip visibility [#7653](https://github.com/Automattic/sensei/pull/7653)
 
 ### 4.24.1 - 2024-06-13
 #### Security
@@ -167,19 +177,3 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 - Contact teacher form not displaying correctly in Learning Mode [#7610](https://github.com/Automattic/sensei/pull/7610)
 - Register Sensei LMS custom post types without delay [#7607](https://github.com/Automattic/sensei/pull/7607)
 - Support "0" or other falsy values as an answer for a quiz question [#7614](https://github.com/Automattic/sensei/pull/7614)
-- Register blocks to make their translations available in the editor [#7643](https://github.com/Automattic/sensei/pull/7643)
-- Tour modal tooltip visibility [#7653](https://github.com/Automattic/sensei/pull/7653)
-
-### 4.24.0 - 2024-04-25
-#### Security
-- Prevent unauthenticated flushing of rewrite rules [#7596](https://github.com/Automattic/sensei/pull/7596)
-
-#### Added
-- User profile settings for unsubscribing from emails [#7586](https://github.com/Automattic/sensei/pull/7586)
-
-#### Changed
-- Let buttons get their styles from the theme [#7587](https://github.com/Automattic/sensei/pull/7587)
-
-#### Fixed
-- Add VideoPress block compabitility for the video settings on courses [#7592](https://github.com/Automattic/sensei/pull/7592)
-- Fix preview email button and links [#7590](https://github.com/Automattic/sensei/pull/7590)
