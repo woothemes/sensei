@@ -28,7 +28,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<!-- /wp:paragraph -->
 
 		<!-- wp:paragraph {"style":{"typography":{"fontSize":"16px"},"spacing":{"margin":{"top":"24px","bottom":"0px"}},"color":{"text":"#101517"}}} -->
-		<p class="has-text-color" style="color:#101517;margin-top:24px;margin-bottom:0px;font-size:16px"><strong><?php echo esc_html__( 'Your Grade', 'sensei-lms' ); ?></strong></p>
+		<p class="has-text-color" style="color:#101517;margin-top:24px;margin-bottom:0px;font-size:16px"><strong><?php echo esc_html__( 'Grade', 'sensei-lms' ); ?></strong></p>
 		<!-- /wp:paragraph -->
 
 		<!-- wp:paragraph {"style":{"typography":{"fontSize":"24px","lineHeight":"1"},"spacing":{"margin":{"top":"0px","bottom":"40px"}},"color":{"text":"#101517"}}} -->
