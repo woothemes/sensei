@@ -1,10 +1,17 @@
 <?php
 
 /**
- * Class Quiz_Actions_Test
+ * This file contains the Quiz_Actions_Test class.
  *
- * @package Sensei
+ * @package sensei
  */
+
+ use Sensei\Blocks\Course_Theme\Quiz_Actions;
+
+ /**
+  * Tests for Quiz_Actions class.
+  * @covers Sensei\Blocks\Course_Theme\Quiz_Actions
+  */
 class Quiz_Actions_Test extends WP_UnitTestCase {
 
 	use Sensei_Course_Enrolment_Test_Helpers;
@@ -87,9 +94,9 @@ class Quiz_Actions_Test extends WP_UnitTestCase {
 		Sensei_Quiz::start_quiz_questions_loop();
 
 		/* Act */
-		$result_for_other_pages               = ( new \Sensei\Blocks\Course_Theme\Quiz_Actions() )->render();
+		$result_for_other_pages               = ( new Quiz_Actions() )->render();
 		$sensei_question_loop['current_page'] = $sensei_question_loop['total_pages'];
-		$result_for_last_page                 = ( new \Sensei\Blocks\Course_Theme\Quiz_Actions() )->render();
+		$result_for_last_page                 = ( new Quiz_Actions() )->render();
 
 		/* Assert */
 		$this->assertStringContainsString( 'sensei-item-no-display', $result_for_other_pages );
