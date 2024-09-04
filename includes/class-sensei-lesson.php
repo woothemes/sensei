@@ -5061,8 +5061,6 @@ class Sensei_Lesson {
 	 * @return bool
 	 */
 	public static function should_show_lesson_actions( int $lesson_id, int $user_id = 0 ): bool {
-		$show_actions = true;
-
 		$user_id = empty( $user_id ) ? get_current_user_id() : $user_id;
 
 		$lesson_prerequisite = (int) get_post_meta( $lesson_id, '_lesson_prerequisite', true );
@@ -5071,12 +5069,12 @@ class Sensei_Lesson {
 
 			// If the user hasn't completed the prerequisites then hide the current actions.
 			// (If the user is either the lesson creator or admin, show actions).
-			$show_actions = Sensei_Utils::user_completed_lesson( $lesson_prerequisite, $user_id )
+			return Sensei_Utils::user_completed_lesson( $lesson_prerequisite, $user_id )
 				|| Sensei()->lesson->is_lesson_author( $lesson_id, $user_id )
 				|| current_user_can( 'manage_options' );
 		}
 
-		return apply_filter( 'sensei_should_show_lesson_actions', $show_actions );
+		return true;
 	}
 
 	/**
