@@ -87,7 +87,7 @@ abstract class Sensei_Unsupported_Theme_Handler_Page_Imitator {
 		$wp_query->posts = array( $post );
 		// On taxonomy pages the queried_object must remain a WP_Term object.
 		if ( ! is_tax() ) {
-			$wp_query->queried_object    = $post;
+			$wp_query->queried_object = $post;
 		}
 
 		$wp_the_query = $wp_query;
