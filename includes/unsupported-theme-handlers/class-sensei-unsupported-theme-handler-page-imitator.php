@@ -88,8 +88,8 @@ abstract class Sensei_Unsupported_Theme_Handler_Page_Imitator {
 		// On taxonomy pages the queried_object must remain a WP_Term object.
 		if ( ! is_tax() ) {
 			$wp_query->queried_object    = $post;
-			$wp_query->queried_object_id = $post->ID;
 		}
+
 		$wp_the_query = $wp_query;
 		// phpcs:enable WordPress.WP.GlobalVariablesOverride.Prohibited
 
@@ -99,7 +99,6 @@ abstract class Sensei_Unsupported_Theme_Handler_Page_Imitator {
 		$wp_query->is_page           = true;
 		$wp_query->is_single         = true;
 		$wp_query->is_singular       = true;
-		$wp_query->queried_object_id = null;
 		$wp_query->is_archive        = false;
 		$wp_query->max_num_pages     = 0;
 
