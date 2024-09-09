@@ -94,13 +94,13 @@ abstract class Sensei_Unsupported_Theme_Handler_Page_Imitator {
 		// phpcs:enable WordPress.WP.GlobalVariablesOverride.Prohibited
 
 		// Prevent comments form from appearing.
-		$wp_query->post_count        = 1;
-		$wp_query->is_404            = false;
-		$wp_query->is_page           = true;
-		$wp_query->is_single         = true;
-		$wp_query->is_singular       = true;
-		$wp_query->is_archive        = false;
-		$wp_query->max_num_pages     = 0;
+		$wp_query->post_count    = 1;
+		$wp_query->is_404        = false;
+		$wp_query->is_page       = true;
+		$wp_query->is_single     = true;
+		$wp_query->is_singular   = true;
+		$wp_query->is_archive    = false;
+		$wp_query->max_num_pages = 0;
 
 		Sensei_Unsupported_Theme_Handler_Utils::disable_comments();
 
