@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Fix "Unexpected end tag : p in Entity" warning in the site editor
