@@ -33,7 +33,10 @@ class Sensei_Course_Completed_Actions_Block {
 	 * @return string Block HTML.
 	 */
 	public function update_more_courses_button_url( $block_content, $block ): string {
-		if ( 'core/button' !== $block['blockName'] ) {
+		if (
+			! isset( $block['blockName'] )
+			|| 'core/button' !== $block['blockName']
+		) {
 			return $block_content;
 		}
 
