@@ -253,4 +253,23 @@ class Sensei_Class_PostTypes extends WP_UnitTestCase {
 		Sensei()->post_types->fire_scheduled_initial_publish_actions();
 		$this->assertEquals( 1, did_action( 'sensei_course_initial_publish' ) );
 	}
+
+	public function testExcludePostTypesFromRestSearch_WhenHasPostTypes_RemovesExcludedPostTypes() {
+		/* Arrange. */
+		$post_types = [
+			'lesson',
+			'sensei_message',
+			'sensei_email',
+		];
+
+		/* Act. */
+		$args = Sensei()->post_types->exclude_post_types_from_rest_search(
+			[
+				'post_type' => $post_types,
+			]
+		);
+
+		/* Assert. */
+		$this->assertEquals( [ 'lesson' ], $args['post_type'] );
+	}
 }

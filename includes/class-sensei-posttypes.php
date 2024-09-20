@@ -1,4 +1,7 @@
 <?php
+
+use Sensei\Internal\Emails\Email_Post_Type;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
@@ -111,6 +114,7 @@ class Sensei_PostTypes {
 
 		// REST API functionality.
 		add_action( 'rest_api_init', [ $this, 'setup_rest_api' ] );
+		add_filter( 'rest_post_search_query', [ $this, 'exclude_post_types_from_rest_search' ] );
 
 		// Add protections on feeds for certain CPTs.
 		add_action( 'wp', [ $this, 'protect_feeds' ] );
@@ -175,6 +179,28 @@ class Sensei_PostTypes {
 
 		// Hide post content for students who aren't enrolled.
 		add_filter( 'post_password_required', [ $this, 'lesson_is_protected' ], 10, 2 );
+	}
+
+	/**
+	 * Exclude post types from the REST API search.
+	 *
+	 * @since $$next-version$$
+	 * @access private
+	 *
+	 * @param array $args The query args.
+	 * @return array The modified query args.
+	 */
+	public function exclude_post_types_from_rest_search( $args ) {
+		$excluded_post_types = [
+			'sensei_message',
+			Email_Post_Type::POST_TYPE,
+		];
+
+		if ( isset( $args['post_type'] ) ) {
+			$args['post_type'] = array_diff( (array) $args['post_type'], $excluded_post_types );
+		}
+
+		return $args;
 	}
 
 	/**
