@@ -25,7 +25,7 @@
     "@automattic/color-studio": "2.5.0",
     "@automattic/components": "2.0.1",
     "@automattic/tour-kit": "1.1.1",
-    "@wordpress/api-fetch": "wp-5.9",
+    "@wordpress/api-fetch": "wp-6.7",
     "@wordpress/base-styles": "wp-5.9",
     "@wordpress/block-editor": "wp-5.9",
     "@wordpress/blocks": "wp-5.9",
