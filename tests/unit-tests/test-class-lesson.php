@@ -1381,7 +1381,7 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		$result = Sensei_Lesson::should_show_lesson_actions( $lesson_id, $user_id );
 
 		/* Assert */
-		self::assertFalse( $result2, 'Lesson actions should not be shown because filter is set to false here' );
+		self::assertFalse( $result, 'Lesson actions should not be shown because filter is set to false here' );
 	}
 
 	public function testFooterQuizCallToAction_WhenCalled_OutputsButton(): void {
