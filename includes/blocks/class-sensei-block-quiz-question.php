@@ -26,18 +26,16 @@ class Sensei_Block_Quiz_Question {
 			],
 			Sensei()->assets->src_path( 'blocks/quiz/question-block' )
 		);
+
 		Sensei_Blocks::register_sensei_block(
 			'sensei-lms/question-description',
-			[
-				'render_callback' => '__return_empty_string',
-			],
+			[],
 			Sensei()->assets->src_path( 'blocks/quiz/question-description-block' )
 		);
+
 		Sensei_Blocks::register_sensei_block(
 			'sensei-lms/question-answers',
-			[
-				'render_callback' => '__return_empty_string',
-			],
+			[],
 			Sensei()->assets->src_path( 'blocks/quiz/question-answers-block' )
 		);
 	}
@@ -45,7 +43,7 @@ class Sensei_Block_Quiz_Question {
 	/**
 	 * Renders the block as an empty string.
 	 *
-	 * @deprecated $$next-version$$
+	 * @deprecated 4.24.2
 	 *
 	 * @param array  $attributes The block attributes.
 	 * @param string $content    The block content.
@@ -53,7 +51,7 @@ class Sensei_Block_Quiz_Question {
 	 * @return string The block HTML.
 	 */
 	public function render_quiz_question( array $attributes, string $content ): string { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
-		_deprecated_function( __METHOD__, '$$next-version$$', '__return_empty_string' );
+		_deprecated_function( __METHOD__, '4.24.2', '__return_empty_string' );
 
 		return '';
 	}

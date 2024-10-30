@@ -69,7 +69,7 @@ class Email_Post_Type {
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 4.24.2
 	 *
 	 * @param array  $editor_settings The editor settings.
 	 * @param object $editor_context  The editor context.
@@ -150,7 +150,7 @@ class Email_Post_Type {
 		register_post_type(
 			self::POST_TYPE,
 			[
-				'labels'              => [
+				'labels'                => [
 					'name'               => __( 'Emails', 'sensei-lms' ),
 					'singular_name'      => __( 'Email', 'sensei-lms' ),
 					'add_new'            => __( 'Add New', 'sensei-lms' ),
@@ -165,16 +165,17 @@ class Email_Post_Type {
 					'menu_name'          => __( 'Emails', 'sensei-lms' ),
 					'name_admin_bar'     => __( 'Email', 'sensei-lms' ),
 				],
-				'public'              => true,
-				'exclude_from_search' => true,
-				'publicly_queryable'  => false,
-				'show_in_nav_menus'   => false,
-				'show_ui'             => true,
-				'show_in_menu'        => false,
-				'show_in_rest'        => true, // Enables the Gutenberg editor.
-				'hierarchical'        => false,
-				'rewrite'             => false,
-				'supports'            => [ 'title', 'editor', 'author', 'revisions' ],
+				'public'                => true,
+				'exclude_from_search'   => true,
+				'publicly_queryable'    => false,
+				'show_in_nav_menus'     => false,
+				'show_ui'               => true,
+				'show_in_menu'          => false,
+				'show_in_rest'          => true, // Enables the Gutenberg editor.
+				'hierarchical'          => false,
+				'rewrite'               => false,
+				'supports'              => [ 'title', 'editor', 'author', 'revisions' ],
+				'rest_controller_class' => 'Sensei_REST_API_Sensei_Emails_Controller',
 			]
 		);
 	}
