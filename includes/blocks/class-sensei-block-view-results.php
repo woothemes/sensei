@@ -73,7 +73,8 @@ class Sensei_Block_View_Results {
 		}
 
 		$results_link = Sensei_Course::get_view_results_link( $course_id );
-		parse_str( wp_parse_url( $results_link, PHP_URL_QUERY ), $results_link_query_params );
+
+		parse_str( (string) wp_parse_url( $results_link, PHP_URL_QUERY ), $results_link_query_params );
 
 		$form_inputs = '';
 		foreach ( $results_link_query_params as $name => $value ) {
