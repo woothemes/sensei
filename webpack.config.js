@@ -82,7 +82,6 @@ const files = [
 	'blocks/quiz/index.js',
 	'blocks/quiz/ordering-promo/index.js',
 	'blocks/quiz/quiz.editor.scss',
-	'blocks/quiz/style.scss',
 	'blocks/shared.js',
 	'blocks/shared-style.scss',
 	'blocks/shared-style-editor.scss',

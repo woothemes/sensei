@@ -7,7 +7,6 @@ use Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Quiz_Progress_Re
 use Sensei\Internal\Student_Progress\Quiz_Progress\Repositories\Tables_Based_Quiz_Progress_Repository;
 
 class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
-	use Sensei_Test_Login_Helpers;
 
 	use Sensei_Test_Redirect_Helpers;
 
@@ -2539,49 +2538,5 @@ class Sensei_Class_Quiz_Test extends WP_UnitTestCase {
 
 		/* Reset */
 		Sensei()->quiz_progress_repository = $quiz_progress_repository;
-	}
-
-	public function testEnqueueStyles_WhenNoPageSet_DoesNotEnqueueStyles() {
-		/* Act */
-		Sensei()->quiz->enqueue_styles();
-
-		/* Assert */
-		$this->assertFalse( wp_style_is( 'sensei-single-quiz-style' ) );
-	}
-
-	public function testEnqueueStyles_WhenOnPagesOtherThanQuiz_DoesNotEnqueueStyles() {
-		/* Arrange */
-		$lesson_id = $this->factory->lesson->create();
-
-		/* Act */
-		$this->go_to( get_permalink( $lesson_id ) );
-		Sensei()->quiz->enqueue_styles();
-
-		/* Assert */
-		$this->assertFalse( wp_style_is( 'sensei-single-quiz-style' ) );
-	}
-
-	public function testConstructor_WhenInAdminScreens_DoesNotHookEnqueueStyles() {
-		/* Arrange */
-		$this->login_as_admin();
-
-		/* Act */
-		set_current_screen( 'edit.php' );
-		Sensei()->quiz->enqueue_styles();
-
-		/* Assert */
-		$this->assertFalse( wp_style_is( 'sensei-single-quiz-style' ) );
-	}
-
-	public function testEnqueueStyles_WhenOnQuizPage_EnqueueStyles() {
-		/* Arrange */
-		$quiz_id = $this->factory->quiz->create();
-
-		/* Act */
-		$this->go_to( get_permalink( $quiz_id ) );
-		Sensei()->quiz->enqueue_styles();
-
-		/* Assert */
-		$this->assertTrue( wp_style_is( 'sensei-single-quiz-style' ) );
 	}
 }
