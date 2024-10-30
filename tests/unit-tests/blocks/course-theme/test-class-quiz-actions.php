@@ -100,7 +100,7 @@ class Quiz_Actions_Test extends WP_UnitTestCase {
 		$result_for_last_page                 = ( new Quiz_Actions() )->render();
 
 		/* Assert */
-		$this->assertStringContainsString( 'sensei-item-no-display', $result_for_other_pages );
-		$this->assertStringNotContainsString( 'sensei-item-no-display', $result_for_last_page );
+		$this->assertStringContainsString( 'sensei-quiz-action--hidden', $result_for_other_pages );
+		$this->assertStringNotContainsString( 'sensei-quiz-action--hidden', $result_for_last_page );
 	}
 }
