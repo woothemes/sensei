@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>Filter: sensei_lesson_progress_delete_for_lesson_lesson_id - Sensei LMS Hook Docs</title>
+	<title>Filter: sensei_lesson_show_actions - Sensei LMS Hook Docs</title>
 
 	<script src="scripts/prettify/prettify.js"> </script>
 	<script src="scripts/prettify/lang-css.js"> </script>
@@ -21,7 +21,7 @@
 <div id="main">
 
 	
-	<h1 class="page-title">Filter: sensei_lesson_progress_delete_for_lesson_lesson_id</h1>
+	<h1 class="page-title">Filter: sensei_lesson_show_actions</h1>
 	
 
 	
@@ -43,14 +43,14 @@
 
     
 
-    <h4 class="name" id="sensei_lesson_progress_delete_for_lesson_lesson_id">apply_filters( 'sensei_lesson_progress_delete_for_lesson_lesson_id', <span class="signature">$lesson_id )</span><span class="type-signature"> &rarr; {int}</span></h4>
+    <h4 class="name" id="sensei_lesson_show_actions">apply_filters( 'sensei_lesson_show_actions', <span class="signature">$show_actions, $lesson_id, $user_id )</span><span class="type-signature"> &rarr; {bool}</span></h4>
 
     
 
 
 
 <div class="description">
-    <p>Filter lesson id for lesson progress deletion.</p>
+    <p>Filters if the lesson actions should be shown.</p>
 </div>
 
 
@@ -84,13 +84,13 @@
 
         <tr>
             
-                <td class="name"><code>$lesson_id</code></td>
+                <td class="name"><code>$show_actions</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">int</span>
+<span class="param-type">bool</span>
 
 
             
@@ -100,163 +100,9 @@
 
             
 
-            <td class="description last"><p>The lesson ID.</p></td>
+            <td class="description last"><p>Flag if the lesson actions should be shown.</p></td>
         </tr>
 
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-    <dt class="tag-since">Since:</dt>
-    <dd class="tag-since"><ul class="dummy"><li>4.23.1</li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="includes_internal_student-progress_lesson-progress_repositories_class-comments-based-lesson-progress-repository.php.html">includes/internal/student-progress/lesson-progress/repositories/class-comments-based-lesson-progress-repository.php</a>, <a href="includes_internal_student-progress_lesson-progress_repositories_class-comments-based-lesson-progress-repository.php.html#line212">line 212</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    <p>Filtered lesson ID.</p>
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">int</span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-    
-    </div>
-
-    
-</article>
-
-</section>
-
-
-
-
-
-
-
-<section>
-
-<header>
-    <h2></h2>
-    
-</header>
-
-<article>
-    <div class="container-overview">
-    
-        
-
-    
-
-    <h4 class="name" id="sensei_lesson_progress_delete_for_lesson_lesson_id">apply_filters( 'sensei_lesson_progress_delete_for_lesson_lesson_id', <span class="signature">$lesson_id )</span><span class="type-signature"> &rarr; {int}</span></h4>
-
-    
-
-
-
-<div class="description">
-    <p>Filter lesson id for lesson progress deletion.</p>
-</div>
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
     
 
         <tr>
@@ -277,7 +123,30 @@
 
             
 
-            <td class="description last"><p>The lesson ID.</p></td>
+            <td class="description last"><p>The lesson id.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>$user_id</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The user id.</p></td>
         </tr>
 
     
@@ -295,7 +164,7 @@
 
     
     <dt class="tag-since">Since:</dt>
-    <dd class="tag-since"><ul class="dummy"><li>4.23.1</li></ul></dd>
+    <dd class="tag-since"><ul class="dummy"><li>$$next-version$$</li></ul></dd>
     
 
     
@@ -321,7 +190,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="includes_internal_student-progress_lesson-progress_repositories_class-tables-based-lesson-progress-repository.php.html">includes/internal/student-progress/lesson-progress/repositories/class-tables-based-lesson-progress-repository.php</a>, <a href="includes_internal_student-progress_lesson-progress_repositories_class-tables-based-lesson-progress-repository.php.html#line268">line 268</a>
+        <a href="includes_class-sensei-lesson.php.html">includes/class-sensei-lesson.php</a>, <a href="includes_class-sensei-lesson.php.html#line5079">line 5079</a>
     </li></ul></dd>
     
 
@@ -348,7 +217,7 @@
 
         
 <div class="param-desc">
-    <p>Filtered lesson ID.</p>
+    <p>Filtered flag if the lesson actions should be shown.</p>
 </div>
 
 
@@ -359,7 +228,7 @@
     </dt>
     <dd>
         
-<span class="param-type">int</span>
+<span class="param-type">bool</span>
 
 
     </dd>
