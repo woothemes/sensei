@@ -494,7 +494,7 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 		global $wp_version;
 
 		// Account for the string change introduced in https://core.trac.wordpress.org/ticket/61535
-		$minutes_text = version_compare( $wp_version, '6.6.1', '<=' ) ? 'mins' : 'minutes';
+		$minutes_text = version_compare( $wp_version, '6.6.2', '<=' ) ? 'mins' : 'minutes';
 
 		return [
 			'days'    => [ ( 5 * 24 * 60 * 60 ), '5 days ago' ],
