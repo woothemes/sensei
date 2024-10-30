@@ -92,7 +92,7 @@ $sensei_next_question_count  = min( $sensei_question_loop['total'] - $sensei_que
 				</div>
 			<?php endif ?>
 			<?php if ( $sensei_is_quiz_available && ! $sensei_is_quiz_completed ) : ?>
-				<div class="sensei-quiz-action wp-block-button <?php echo esc_attr( $sensei_question_loop['current_page'] < $sensei_question_loop['total_pages'] ? 'sensei-item-no-display' : '' ); ?>">
+				<div class="sensei-quiz-action<?php echo esc_attr( $sensei_question_loop['current_page'] < $sensei_question_loop['total_pages'] ? '--hidden' : '' ); ?> wp-block-button">
 					<button
 						type="submit"
 						name="quiz_complete"
