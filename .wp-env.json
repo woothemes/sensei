@@ -1,5 +1,5 @@
 {
-	"core": null,
+	"core": 'WordPress/WordPress#master',
 	"plugins": [ "." ],
 	"themes": ["Automattic/themes/course#trunk"],
     "config": {
