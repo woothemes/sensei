@@ -703,32 +703,32 @@ class Sensei_Learner_Management {
 
 		if ( 'course' === $post_type ) {
 			/**
-			 * Filter the teacher IDs that have permission to manage students in a given course.
+			 * Filter the user IDs that have permission to manage students in a given course.
 			 *
 			 * @since $$next-version$$
 			 *
-			 * @hook sensei_learners_allowed_teacher_ids_for_course
+			 * @hook sensei_learners_allowed_user_ids_for_course
 			 *
-			 * @param {int[]} $teacher_ids  Teacher IDs that have permission to manage students in a given course.
-			 *                              Defaults to post author.
-			 * @param {int}   $post_id      Course ID.
-			 * @return {int[]} Filtered teacher IDs that have permission to manage students in a given course.
+			 * @param {int[]} $user_ids User IDs that have permission to manage students in a given course.
+			 *                          Defaults to post author.
+			 * @param {int}   $post_id  Course ID.
+			 * @return {int[]} Filtered user IDs that have permission to manage students in a given course.
 			 */
-			$allowed_ids = apply_filters( 'sensei_learners_allowed_teacher_ids_for_course', [ $post_author ], $post_id );
+			$allowed_ids = apply_filters( 'sensei_learners_allowed_user_ids_for_course', [ $post_author ], $post_id );
 		} else if ( 'lesson' === $post_type ) {
 			/**
-			 * Filter the teacher IDs that have permission to manage students in a given lesson.
+			 * Filter the user IDs that have permission to manage students in a given lesson.
 			 *
 			 * @since $$next-version$$
 			 *
-			 * @hook sensei_learners_allowed_teacher_ids_for_lesson
+			 * @hook sensei_learners_allowed_user_ids_for_lesson
 			 *
-			 * @param {int[]} $teacher_ids  Teacher IDs that have permission to manage students in a given lesson.
-			 *                              Defaults to post author.
-			 * @param {int}   $post_id      Lesson ID.
-			 * @return {int[]} Filtered teacher IDs that have permission to manage students in a given lesson.
+			 * @param {int[]} $user_ids Users IDs that have permission to manage students in a given lesson.
+			 *                          Defaults to post author.
+			 * @param {int}   $post_id  Lesson ID.
+			 * @return {int[]} Filtered user IDs that have permission to manage students in a given lesson.
 			 */
-			$allowed_ids = apply_filters( 'sensei_learners_allowed_teacher_ids_for_lesson', [ $post_author ], $post_id );
+			$allowed_ids = apply_filters( 'sensei_learners_allowed_user_ids_for_lesson', [ $post_author ], $post_id );
 		}
 
 		if ( current_user_can( 'manage_sensei' ) || in_array( get_current_user_id(), $allowed_ids, true ) ) {
