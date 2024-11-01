@@ -482,7 +482,7 @@ class Sensei_Learner_Management {
 			exit( '' );
 		}
 
-		$post_type     = get_post_type( $post );
+		$post_type     = (string) get_post_type( $post );
 		$can_edit_date = $this->can_user_manage_students( $post_id, $post_type, intval( $post->post_author ) );
 
 		if ( ! $can_edit_date ) {
@@ -646,7 +646,7 @@ class Sensei_Learner_Management {
 			exit;
 		}
 
-		$post_type            = get_post_type( $post );
+		$post_type            = (string) get_post_type( $post );
 		$can_manage_enrolment = $this->can_user_manage_students( $course_id, $post_type, intval( $post->post_author ) );
 
 		if ( ! $can_manage_enrolment ) {
@@ -815,7 +815,7 @@ class Sensei_Learner_Management {
 		$post_type = $_POST['add_post_type'];
 		$user_ids  = array_map( 'intval', $_POST['add_user_id'] );
 		$course_id = intval( $_POST['add_course_id'] );
-		$lesson_id = isset( $_POST['add_lesson_id'] ) ? intval( $_POST['add_lesson_id'] ) : '';
+		$lesson_id = intval( $_POST['add_lesson_id'] );
 		$post_id   = 'course' === $post_type ? $course_id : $lesson_id;
 		$course    = get_post( $course_id );
 		$results   = [];
