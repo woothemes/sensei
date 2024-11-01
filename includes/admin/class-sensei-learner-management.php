@@ -697,7 +697,7 @@ class Sensei_Learner_Management {
 	 *
 	 * @return bool true if the current user can manage a student's course or lesson.
 	 */
-	private function can_user_manage_students( int $post_id, string $post_type, int $post_author ) : boolean {
+	private function can_user_manage_students( int $post_id, string $post_type, int $post_author ) : bool {
 		$can_manage_student = false;
 		$allowed_ids        = [];
 
