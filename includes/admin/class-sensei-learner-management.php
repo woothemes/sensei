@@ -485,7 +485,7 @@ class Sensei_Learner_Management {
 		$post_type = get_post_type( $post_id );
 
 		if ( 'lesson' === $post_type ) {
-			$can_edit_date = $this->can_user_manage_students( Sensei()->lesson->get_course_id( $post_id ), intval( $post->post_author ) );
+			$can_edit_date = $this->can_user_manage_students( (int) Sensei()->lesson->get_course_id( $post_id ), intval( $post->post_author ) );
 		} else {
 			$can_edit_date = $this->can_user_manage_students( $post_id, intval( $post->post_author ) );
 		}
@@ -567,7 +567,7 @@ class Sensei_Learner_Management {
 		$post_type       = $action_data['post_type'] ? sanitize_text_field( $action_data['post_type'] ) : '';
 
 		if ( 'lesson' === $post_type ) {
-			$can_remove_user = $this->can_user_manage_students( Sensei()->lesson->get_course_id( $post_id ), intval( $post->post_author ) );
+			$can_remove_user = $this->can_user_manage_students( (int) Sensei()->lesson->get_course_id( $post_id ), intval( $post->post_author ) );
 		} else {
 			$can_remove_user = $this->can_user_manage_students( $post_id, intval( $post->post_author ) );
 		}
