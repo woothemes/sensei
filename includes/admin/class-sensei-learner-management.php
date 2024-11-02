@@ -482,8 +482,13 @@ class Sensei_Learner_Management {
 			exit( '' );
 		}
 
-		$post_type     = (string) get_post_type( $post );
-		$can_edit_date = $this->can_user_manage_students( $post_id, $post_type, intval( $post->post_author ) );
+		$post_type = get_post_type( $post_id );
+
+		if ( 'lesson' === $post_type ) {
+			$can_edit_date = $this->can_user_manage_students( Sensei()->lesson->get_course_id( $post_id ), intval( $post->post_author ) );
+		} else {
+			$can_edit_date = $this->can_user_manage_students( $post_id, intval( $post->post_author ) );
+		}
 
 		if ( ! $can_edit_date ) {
 			exit( '' );
@@ -557,9 +562,15 @@ class Sensei_Learner_Management {
 			exit( '' );
 		}
 
+		$can_remove_user = false;
 		$post_id         = $action_data['post_id'] ? intval( $action_data['post_id'] ) : 0;
 		$post_type       = $action_data['post_type'] ? sanitize_text_field( $action_data['post_type'] ) : '';
-		$can_remove_user = $this->can_user_manage_students( $post_id, $post_type, intval( $post->post_author ) );
+
+		if ( 'lesson' === $post_type ) {
+			$can_remove_user = $this->can_user_manage_students( Sensei()->lesson->get_course_id( $post_id ), intval( $post->post_author ) );
+		} else {
+			$can_remove_user = $this->can_user_manage_students( $post_id, intval( $post->post_author ) );
+		}
 
 		if ( ! $can_remove_user ) {
 			exit( '' );
@@ -646,8 +657,7 @@ class Sensei_Learner_Management {
 			exit;
 		}
 
-		$post_type            = (string) get_post_type( $post );
-		$can_manage_enrolment = $this->can_user_manage_students( $course_id, $post_type, intval( $post->post_author ) );
+		$can_manage_enrolment = $this->can_user_manage_students( $course_id, intval( $post->post_author ) );
 
 		if ( ! $can_manage_enrolment ) {
 			wp_safe_redirect( esc_url_raw( $failed_redirect_url ) );
@@ -689,47 +699,30 @@ class Sensei_Learner_Management {
 	}
 
 	/**
-	 * Check if a user can manage a student's course or lesson.
+	 * Check if a user can manage a student's course.
 	 *
-	 * @param int    $post_id     Course or lesson ID.
-	 * @param string $post_type   Post type.
-	 * @param int    $post_author Author ID for the course or lesson.
+	 * @param int $course_id   Course ID.
+	 * @param int $post_author Author ID for the course (i.e. teacher ID).
 	 *
-	 * @return bool true if the current user can manage a student's course or lesson.
+	 * @return bool true if the current user can manage a student's course.
 	 */
-	private function can_user_manage_students( int $post_id, string $post_type, int $post_author ): bool {
-		$can_manage_student = false;
+	private function can_user_manage_students( int $course_id, int $post_author ): bool {
 		$allowed_ids        = [];
+		$can_manage_student = false;
 
-		if ( 'course' === $post_type ) {
-			/**
-			 * Filter the user IDs that have permission to manage students in a given course.
-			 *
-			 * @since $$next-version$$
-			 *
-			 * @hook sensei_learners_allowed_user_ids_for_course
-			 *
-			 * @param {int[]} $user_ids User IDs that have permission to manage students in a given course.
-			 *                          Defaults to post author.
-			 * @param {int}   $post_id  Course ID.
-			 * @return {int[]} Filtered user IDs that have permission to manage students in a given course.
-			 */
-			$allowed_ids = apply_filters( 'sensei_learners_allowed_user_ids_for_course', [ $post_author ], $post_id );
-		} elseif ( 'lesson' === $post_type ) {
-			/**
-			 * Filter the user IDs that have permission to manage students in a given lesson.
-			 *
-			 * @since $$next-version$$
-			 *
-			 * @hook sensei_learners_allowed_user_ids_for_lesson
-			 *
-			 * @param {int[]} $user_ids Users IDs that have permission to manage students in a given lesson.
-			 *                          Defaults to post author.
-			 * @param {int}   $post_id  Lesson ID.
-			 * @return {int[]} Filtered user IDs that have permission to manage students in a given lesson.
-			 */
-			$allowed_ids = apply_filters( 'sensei_learners_allowed_user_ids_for_lesson', [ $post_author ], $post_id );
-		}
+		/**
+		 * Filter the user IDs that have permission to manage students in a given course.
+		 *
+		 * @since $$next-version$$
+		 *
+		 * @hook sensei_learners_allowed_user_ids_for_course
+		 *
+		 * @param {int[]} $user_ids  User IDs that have permission to manage students in a given course.
+		 *                           Defaults to post author.
+		 * @param {int}   $course_id Course ID.
+		 * @return {int[]} Filtered user IDs that have permission to manage students in a given course.
+		 */
+		$allowed_ids = apply_filters( 'sensei_learners_allowed_user_ids', [ $post_author ], $course_id );
 
 		if ( current_user_can( 'manage_sensei' ) || in_array( get_current_user_id(), $allowed_ids, true ) ) {
 			$can_manage_student = true;
@@ -816,11 +809,10 @@ class Sensei_Learner_Management {
 		$user_ids  = array_map( 'intval', $_POST['add_user_id'] );
 		$course_id = intval( $_POST['add_course_id'] );
 		$lesson_id = intval( $_POST['add_lesson_id'] );
-		$post_id   = 'course' === $post_type ? $course_id : $lesson_id;
 		$course    = get_post( $course_id );
 		$results   = [];
 
-		if ( ! $course || ! $this->can_user_manage_students( $post_id, $post_type, intval( $course->post_author ) ) ) {
+		if ( ! $course || ! $this->can_user_manage_students( $course_id, intval( $course->post_author ) ) ) {
 			return $result;
 		}
 
