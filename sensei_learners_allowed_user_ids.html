@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>Filter: sensei_analysis_course_{view}_columns - Sensei LMS Hook Docs</title>
+	<title>Filter: sensei_learners_allowed_user_ids - Sensei LMS Hook Docs</title>
 
 	<script src="scripts/prettify/prettify.js"> </script>
 	<script src="scripts/prettify/lang-css.js"> </script>
@@ -21,7 +21,7 @@
 <div id="main">
 
 	
-	<h1 class="page-title">Filter: sensei_analysis_course_{view}_columns</h1>
+	<h1 class="page-title">Filter: sensei_learners_allowed_user_ids</h1>
 	
 
 	
@@ -43,15 +43,14 @@
 
     
 
-    <h4 class="name" id="sensei_analysis_course_{view}_columns">apply_filters( 'sensei_analysis_course_{view}_columns', <span class="signature">$columns, $this )</span><span class="type-signature"> &rarr; {array}</span></h4>
+    <h4 class="name" id="sensei_learners_allowed_user_ids">apply_filters( 'sensei_learners_allowed_user_ids', <span class="signature">$user_ids, $course_id )</span><span class="type-signature"> &rarr; {Array.&lt;int>}</span></h4>
 
     
 
 
 
 <div class="description">
-    <p>Filter the columns that are going to be used in the Course Analysis list table.
-Backwards compatible filter. Use sensei_analysis_course_columns instead.</p>
+    <p>Filter the user IDs that have permission to manage students in a given course.</p>
 </div>
 
 
@@ -85,13 +84,13 @@ Backwards compatible filter. Use sensei_analysis_course_columns instead.</p>
 
         <tr>
             
-                <td class="name"><code>$columns</code></td>
+                <td class="name"><code>$user_ids</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">array</span>
+<span class="param-type">Array.&lt;int></span>
 
 
             
@@ -101,20 +100,21 @@ Backwards compatible filter. Use sensei_analysis_course_columns instead.</p>
 
             
 
-            <td class="description last"><p>The array of columns to use in the table.</p></td>
+            <td class="description last"><p>User IDs that have permission to manage students in a given course.
+Defaults to post author.</p></td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>$this</code></td>
+                <td class="name"><code>$course_id</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Sensei_Analysis_Course_List_Table</span>
+<span class="param-type">int</span>
 
 
             
@@ -124,7 +124,7 @@ Backwards compatible filter. Use sensei_analysis_course_columns instead.</p>
 
             
 
-            <td class="description last"><p>The current instance of the class.</p></td>
+            <td class="description last"><p>Course ID.</p></td>
         </tr>
 
     
@@ -140,6 +140,9 @@ Backwards compatible filter. Use sensei_analysis_course_columns instead.</p>
 
     
 
+    
+    <dt class="tag-since">Since:</dt>
+    <dd class="tag-since"><ul class="dummy"><li>$$next-version$$</li></ul></dd>
     
 
     
@@ -165,7 +168,7 @@ Backwards compatible filter. Use sensei_analysis_course_columns instead.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="includes_class-sensei-analysis-course-list-table.php.html">includes/class-sensei-analysis-course-list-table.php</a>, <a href="includes_class-sensei-analysis-course-list-table.php.html#line137">line 137</a>
+        <a href="includes_admin_class-sensei-learner-management.php.html">includes/admin/class-sensei-learner-management.php</a>, <a href="includes_admin_class-sensei-learner-management.php.html#line713">line 713</a>
     </li></ul></dd>
     
 
@@ -192,7 +195,7 @@ Backwards compatible filter. Use sensei_analysis_course_columns instead.</p>
 
         
 <div class="param-desc">
-    <p>$columns The array of columns to use with the table.</p>
+    <p>Filtered user IDs that have permission to manage students in a given course.</p>
 </div>
 
 
@@ -203,7 +206,7 @@ Backwards compatible filter. Use sensei_analysis_course_columns instead.</p>
     </dt>
     <dd>
         
-<span class="param-type">array</span>
+<span class="param-type">Array.&lt;int></span>
 
 
     </dd>
