@@ -910,11 +910,11 @@ class Sensei_PostTypes {
 	/**
 	 * Get the singular, plural and menu label names for the post types.
 	 *
-	 * @param string $post_type The post type.
+	 * @param string|null $post_type The post type.
 	 *
-	 * @return string[]
+	 * @return array
 	 */
-	private function get_main_post_type_labels( $post_type ) {
+	private function get_main_post_type_labels( $post_type = null ) {
 		$labels = array(
 			'course'            => array(
 				'singular' => __( 'Course', 'sensei-lms' ),
@@ -948,7 +948,7 @@ class Sensei_PostTypes {
 			),
 		);
 
-		return $labels[ $post_type ];
+		return $post_type ? $labels[ $post_type ] : $labels;
 	}
 
 	/**

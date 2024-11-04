@@ -58,15 +58,6 @@ class Sensei_Lesson {
 	private $lesson_id_updating;
 
 	/**
-	 * Message to display on the legacy quiz meta boxes.
-	 *
-	 * @since 3.9.1
-	 *
-	 * @var string
-	 */
-	private $legacy_quiz_message;
-
-	/**
 	 * Constructor.
 	 *
 	 * @since  1.0.0
@@ -1245,7 +1236,7 @@ class Sensei_Lesson {
 	}
 
 	/**
-	 * Get the legazy quiz message.
+	 * Get the message to display on the legacy quiz meta boxes.
 	 *
 	 * @return string
 	 */

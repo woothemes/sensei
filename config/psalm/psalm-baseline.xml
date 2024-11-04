@@ -1789,9 +1789,8 @@
       <code>$user_id</code>
       <code>$which</code>
     </MissingParamType>
-    <MissingPropertyType occurrences="3">
+    <MissingPropertyType occurrences="2">
       <code>$file</code>
-      <code>$name</code>
       <code>$page_slug</code>
     </MissingPropertyType>
     <PossiblyFalseArgument occurrences="1">
@@ -2422,18 +2421,6 @@
       <code>get_queried_object()-&gt;ID</code>
       <code>get_queried_object()-&gt;post_type</code>
     </PossiblyNullPropertyFetch>
-    <PropertyNotSetInConstructor occurrences="10">
-      <code>$course</code>
-      <code>$lesson</code>
-      <code>$messages</code>
-      <code>$question</code>
-      <code>$quiz</code>
-      <code>WooThemes_Sensei_PostTypes</code>
-      <code>WooThemes_Sensei_PostTypes</code>
-      <code>WooThemes_Sensei_PostTypes</code>
-      <code>WooThemes_Sensei_PostTypes</code>
-      <code>WooThemes_Sensei_PostTypes</code>
-    </PropertyNotSetInConstructor>
     <RedundantConditionGivenDocblockType occurrences="1">
       <code>$post instanceof WP_Post</code>
     </RedundantConditionGivenDocblockType>
@@ -4181,11 +4168,9 @@
     <InvalidGlobal occurrences="1">
       <code>global $sensei_email_data;</code>
     </InvalidGlobal>
-    <MissingPropertyType occurrences="6">
-      <code>$heading</code>
+    <MissingPropertyType occurrences="4">
       <code>$learner</code>
       <code>$recipient</code>
-      <code>$subject</code>
       <code>$teacher</code>
       <code>$template</code>
     </MissingPropertyType>
@@ -4432,8 +4417,7 @@
       <code>$post</code>
       <code>$post</code>
     </ParamNameMismatch>
-    <PossiblyNullArgument occurrences="2">
-      <code>get_edit_post_link( $post )</code>
+    <PossiblyNullArgument occurrences="1">
       <code>get_edit_post_link( $post-&gt;ID )</code>
     </PossiblyNullArgument>
     <PropertyNotSetInConstructor occurrences="4">
@@ -4970,13 +4954,6 @@
     </TypeDoesNotContainType>
   </file>
   <file src="includes/rest-api/class-sensei-rest-api-course-progress-controller.php">
-    <InvalidClass occurrences="1">
-      <code>WP_HTTP</code>
-    </InvalidClass>
-    <PossiblyInvalidArrayAssignment occurrences="2">
-      <code>$result[ $student_id ][ $course_id ]</code>
-      <code>$result[ $student_id ][ $course_id ]</code>
-    </PossiblyInvalidArrayAssignment>
     <PossiblyNullArgument occurrences="1">
       <code>$edit_course_cap</code>
     </PossiblyNullArgument>
@@ -5013,8 +4990,7 @@
       <code>WP_HTTP</code>
       <code>WP_HTTP</code>
     </InvalidClass>
-    <PossiblyInvalidArrayAssignment occurrences="2">
-      <code>$result[ $user_id ][ $course_id ]</code>
+    <PossiblyInvalidArrayAssignment occurrences="1">
       <code>$result[ $user_id ][ $course_id ]</code>
     </PossiblyInvalidArrayAssignment>
     <PossiblyNullArgument occurrences="1">
@@ -5249,12 +5225,6 @@
     </UndefinedPropertyFetch>
   </file>
   <file src="includes/rest-api/class-sensei-rest-api-question-helpers-trait.php">
-    <ArgumentTypeCoercion occurrences="1">
-      <code>$post_args</code>
-    </ArgumentTypeCoercion>
-    <InvalidArgument occurrences="1">
-      <code>$post_args</code>
-    </InvalidArgument>
     <PossibleRawObjectIteration occurrences="1">
       <code>$question_categories</code>
     </PossibleRawObjectIteration>
