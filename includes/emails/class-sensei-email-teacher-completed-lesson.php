@@ -31,25 +31,6 @@ if ( ! class_exists( 'Sensei_Email_Teacher_Completed_Lesson', false ) ) :
 		}
 
 		/**
-		 * Get the subject.
-		 *
-		 * @return string
-		 */
-		function get_subject() {
-			// translators: Placeholder is the blog name.
-			return apply_filters( 'sensei_email_subject', sprintf( __( '[%1$s] Your student has completed a lesson', 'sensei-lms' ), get_bloginfo( 'name' ) ), $this->template );
-		}
-
-		/**
-		 * Get the heading.
-		 *
-		 * @return string
-		 */
-		function get_heading() {
-			return apply_filters( 'sensei_email_heading', __( 'Your student has completed a lesson', 'sensei-lms' ), $this->template );
-		}
-
-		/**
 		 * trigger function.
 		 *
 		 * @param int $learner_id
@@ -91,6 +72,25 @@ if ( ! class_exists( 'Sensei_Email_Teacher_Completed_Lesson', false ) ) :
 
 			// Send mail
 			Sensei()->emails->send( $this->recipient, $this->get_subject(), Sensei()->emails->get_content( $this->template ) );
+		}
+
+		/**
+		 * Get the subject.
+		 *
+		 * @return string
+		 */
+		private function get_subject() {
+			// translators: Placeholder is the blog name.
+			return (string) apply_filters( 'sensei_email_subject', sprintf( __( '[%1$s] Your student has completed a lesson', 'sensei-lms' ), get_bloginfo( 'name' ) ), $this->template );
+		}
+
+		/**
+		 * Get the heading.
+		 *
+		 * @return string
+		 */
+		private function get_heading() {
+			return (string) apply_filters( 'sensei_email_heading', __( 'Your student has completed a lesson', 'sensei-lms' ), $this->template );
 		}
 	}
 
