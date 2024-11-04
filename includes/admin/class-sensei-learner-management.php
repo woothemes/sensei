@@ -715,7 +715,7 @@ class Sensei_Learner_Management {
 		 *
 		 * @since $$next-version$$
 		 *
-		 * @hook sensei_learners_allowed_user_ids_for_course
+		 * @hook sensei_learners_allowed_user_ids
 		 *
 		 * @param {int[]} $user_ids  User IDs that have permission to manage students in a given course.
 		 *                           Defaults to post author.
