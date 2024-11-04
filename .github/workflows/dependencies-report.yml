@@ -8,7 +8,7 @@ jobs:
         runs-on: ubuntu-latest
         name: Build trunk for Dependencies Report
         steps:
-            -   uses: actions/checkout@v3
+            -   uses: actions/checkout@v4
                 with:
                     ref: trunk
             -   shell: bash
@@ -16,7 +16,7 @@ jobs:
                 id: trunk-commit
                 run: |
                     echo "commit=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
-            -   uses: actions/cache@v3
+            -   uses: actions/cache@v4
                 id: dist-cache
                 with:
                     path: ${{ github.workspace }}/assets/dist
@@ -27,7 +27,7 @@ jobs:
                 if: steps.dist-cache.outputs.cache-hit != 'true'
                 run: |
                     echo "dir=$(npm config get cache)" >> $GITHUB_OUTPUT
-            -   uses: actions/cache@v3
+            -   uses: actions/cache@v4
                 if: steps.dist-cache.outputs.cache-hit != 'true'
                 with:
                     path: ${{ steps.npm-cache.outputs.dir }}
@@ -53,12 +53,12 @@ jobs:
         name: WordPress Dependencies Report
         runs-on: ubuntu-latest
         steps:
-            -   uses: actions/checkout@v3
+            -   uses: actions/checkout@v4
             -   name: Get npm cache directory
                 id: npm-cache
                 run: |
                     echo "dir=$(npm config get cache)" >> $GITHUB_OUTPUT
-            -   uses: actions/cache@v3
+            -   uses: actions/cache@v4
                 with:
                     path: ${{ steps.npm-cache.outputs.dir }}
                     key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
