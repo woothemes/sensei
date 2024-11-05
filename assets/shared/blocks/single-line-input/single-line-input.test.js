@@ -5,6 +5,11 @@ import { render, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 /**
+ * WordPress dependencies
+ */
+import { BACKSPACE, ENTER } from '@wordpress/keycodes';
+
+/**
  * Internal dependencies
  */
 import SingleLineInput from './index';
@@ -49,7 +54,7 @@ describe( '<SingleLineInput />', () => {
 		expect( onChangeMock ).toHaveBeenLastCalledWith( 'input line' );
 	} );
 
-	it( 'Calls onRemove on backspace with an empty title', async () => {
+	it( 'Calls onRemove on backspace with an empty title', () => {
 		const onRemoveMock = jest.fn();
 		const { getByRole } = render(
 			<SingleLineInput
@@ -59,18 +64,26 @@ describe( '<SingleLineInput />', () => {
 			/>
 		);
 
-		await userEvent.type( getByRole( 'textbox' ), '{backspace}' );
+		fireEvent.keyDown( getByRole( 'textbox' ), {
+			key: 'Backspace',
+			code: 'Backspace',
+			keyCode: BACKSPACE,
+		} );
 
 		expect( onRemoveMock ).toHaveBeenCalledTimes( 1 );
 	} );
 
-	it( 'Calls onEnter on enter', async () => {
+	it( 'Calls onEnter on enter', () => {
 		const onEnterMock = jest.fn();
 		const { getByRole } = render(
 			<SingleLineInput onEnter={ onEnterMock } onChange={ jest.fn() } />
 		);
 
-		await userEvent.type( getByRole( 'textbox' ), 'Title{enter}' );
+		fireEvent.keyDown( getByRole( 'textbox' ), {
+			key: 'Enter',
+			code: 'Enter',
+			keyCode: ENTER,
+		} );
 
 		expect( onEnterMock ).toHaveBeenCalledTimes( 1 );
 	} );
