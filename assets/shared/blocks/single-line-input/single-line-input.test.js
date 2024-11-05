@@ -38,18 +38,18 @@ describe( '<SingleLineInput />', () => {
 		expect( onChangeMock ).toBeCalledWith( 'changed' );
 	} );
 
-	it( 'Should not allow line breaks', () => {
+	it( 'Should not allow line breaks', async () => {
 		const onChangeMock = jest.fn();
 		const { getByRole } = render(
 			<SingleLineInput onChange={ onChangeMock } />
 		);
 
-		userEvent.type( getByRole( 'textbox' ), 'input {enter}line' );
+		await userEvent.type( getByRole( 'textbox' ), 'input {enter}line' );
 
 		expect( onChangeMock ).toHaveBeenLastCalledWith( 'input line' );
 	} );
 
-	it( 'Calls onRemove on backspace with an empty title', () => {
+	it( 'Calls onRemove on backspace with an empty title', async () => {
 		const onRemoveMock = jest.fn();
 		const { getByRole } = render(
 			<SingleLineInput
@@ -59,18 +59,18 @@ describe( '<SingleLineInput />', () => {
 			/>
 		);
 
-		userEvent.type( getByRole( 'textbox' ), '{backspace}' );
+		await userEvent.type( getByRole( 'textbox' ), '{backspace}' );
 
 		expect( onRemoveMock ).toHaveBeenCalledTimes( 1 );
 	} );
 
-	it( 'Calls onEnter on enter', () => {
+	it( 'Calls onEnter on enter', async () => {
 		const onEnterMock = jest.fn();
 		const { getByRole } = render(
 			<SingleLineInput onEnter={ onEnterMock } onChange={ jest.fn() } />
 		);
 
-		userEvent.type( getByRole( 'textbox' ), 'Title{enter}' );
+		await userEvent.type( getByRole( 'textbox' ), 'Title{enter}' );
 
 		expect( onEnterMock ).toHaveBeenCalledTimes( 1 );
 	} );
