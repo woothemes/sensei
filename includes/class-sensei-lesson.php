@@ -58,15 +58,6 @@ class Sensei_Lesson {
 	private $lesson_id_updating;
 
 	/**
-	 * Message to display on the legacy quiz meta boxes.
-	 *
-	 * @since 3.9.1
-	 *
-	 * @var string
-	 */
-	private $legacy_quiz_message;
-
-	/**
 	 * Constructor.
 	 *
 	 * @since  1.0.0
@@ -81,18 +72,6 @@ class Sensei_Lesson {
 		$this->question_order = '';
 
 		$this->allowed_html = Sensei_Wp_Kses::get_default_wp_kses_allowed_html();
-
-		$this->legacy_quiz_message = '<p><em>' .
-			sprintf(
-				// translators: %1$s is a link to the quiz documentation, %2$s is a link to a support article about the WordPress editor.
-				__(
-					'*Note that this functionality has been moved to the <a href="%1$s">quiz block</a> and will not be supported going forward. Please consider switching to the <a href="%2$s">block editor</a>.</em>',
-					'sensei-lms'
-				),
-				'https://senseilms.com/lesson/quizzes/',
-				'https://wordpress.org/support/article/wordpress-editor/'
-			) .
-		'</em></p>';
 
 		// Admin actions.
 		if ( is_admin() ) {
@@ -1256,9 +1235,28 @@ class Sensei_Lesson {
 		);
 	}
 
+	/**
+	 * Get the message to display on the legacy quiz meta boxes.
+	 *
+	 * @return string
+	 */
+	private function get_legacy_quiz_message() {
+		return '<p><em>' .
+			sprintf(
+				// translators: %1$s is a link to the quiz documentation, %2$s is a link to a support article about the WordPress editor.
+				__(
+					'*Note that this functionality has been moved to the <a href="%1$s">quiz block</a> and will not be supported going forward. Please consider switching to the <a href="%2$s">block editor</a>.</em>',
+					'sensei-lms'
+				),
+				'https://senseilms.com/lesson/quizzes/',
+				'https://wordpress.org/support/article/wordpress-editor/'
+			) .
+		'</em></p>';
+	}
+
 	public function quiz_panel( $quiz_id = 0 ) {
 		$html  = wp_nonce_field( 'sensei-save-post-meta', 'woo_' . $this->token . '_nonce', true, false );
-		$html .= $this->legacy_quiz_message;
+		$html .= $this->get_legacy_quiz_message();
 		$html .= '<div id="add-quiz-main">';
 		if ( 0 == $quiz_id ) {
 			$html .= '<p>';
@@ -2462,7 +2460,7 @@ class Sensei_Lesson {
 	public function lesson_quiz_settings_meta_box_content() {
 		global $post;
 
-		$html = $this->legacy_quiz_message;
+		$html = $this->get_legacy_quiz_message();
 
 		// Get quiz panel
 		$quiz_id   = 0;
