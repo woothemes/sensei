@@ -25,15 +25,6 @@ export const StudentActionMenu = ( {
 	studentName,
 	studentDisplayName,
 } ) => {
-	const [ action, setAction ] = useState( '' );
-	const [ isModalOpen, setModalOpen ] = useState( false );
-	const closeModal = ( needsReload ) => {
-		if ( needsReload ) {
-			window.location.reload();
-		}
-		setModalOpen( false );
-	};
-
 	const defaultControls = [
 		{
 			title: __( 'Add to Course', 'sensei-lms' ),
@@ -57,6 +48,17 @@ export const StudentActionMenu = ( {
 		},
 	];
 
+	const [ action, setAction ] = useState( '' );
+	const [ controls, setControls ] = useState( defaultControls );
+	const [ isModalOpen, setModalOpen ] = useState( false );
+
+	const closeModal = ( needsReload ) => {
+		if ( needsReload ) {
+			window.location.reload();
+		}
+		setModalOpen( false );
+	};
+
 	/**
 	 * Filters controls for the single student action menu.
 	 *
@@ -68,7 +70,7 @@ export const StudentActionMenu = ( {
 	 *
 	 * @return {Array} Filtered controls.
 	 */
-	const controls = applyFilters(
+	applyFilters(
 		'senseiStudentActionMenuControls',
 		defaultControls,
 		setAction,
