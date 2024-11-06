@@ -2,9 +2,9 @@
  * WordPress dependencies
  */
 import { DropdownMenu } from '@wordpress/components';
-import { render, useState } from '@wordpress/element';
+import { render, useEffect, useState } from '@wordpress/element';
 import { moreVertical } from '@wordpress/icons';
-import { applyFilters } from '@wordpress/hooks';
+import { applyFilters, applyFiltersAsync } from '@wordpress/hooks';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -70,12 +70,20 @@ export const StudentActionMenu = ( {
 	 *
 	 * @return {Array} Filtered controls.
 	 */
-	applyFilters(
-		'senseiStudentActionMenuControls',
-		defaultControls,
-		setAction,
-		setModalOpen
-	);
+	useEffect( () => {
+		async function getMenuControls() {
+			const response = await applyFiltersAsync(
+				'senseiStudentActionMenuControls',
+				defaultControls,
+				setAction,
+				setModalOpen
+			);
+
+			setControls( response );
+		}
+
+		getMenuControls();
+	}, [ defaultControls ] );
 
 	const addToCourse = () => {
 		setAction( 'add' );
