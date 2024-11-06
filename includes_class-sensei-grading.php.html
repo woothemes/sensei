@@ -48,7 +48,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Sensei_Grading {
 
-	public $name;
 	public $file;
 	public $page_slug;
 
@@ -60,7 +59,6 @@ class Sensei_Grading {
 	 * @param $file
 	 */
 	public function __construct( $file ) {
-		$this->name      = __( 'Grading', 'sensei-lms' );
 		$this->file      = $file;
 		$this->page_slug = 'sensei_grading';
 
@@ -82,6 +80,32 @@ class Sensei_Grading {
 			add_action( 'wp_ajax_get_lessons_dropdown', array( $this, 'get_lessons_dropdown' ) );
 			add_action( 'wp_ajax_get_redirect_url', array( $this, 'get_redirect_url' ) );
 		}
+	}
+
+	/**
+	 * Graceful fallback for deprecated properties.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param string $key The key to get.
+	 *
+	 * @return mixed
+	 */
+	public function __get( $key ) {
+		if ( 'name' === $key ) {
+			_doing_it_wrong( __CLASS__ . '->name', 'The "name" property is deprecated. Use get_name() instead.', '$$next-version$$' );
+
+			return $this->get_name();
+		}
+	}
+
+	/**
+	 * Get the name of the screen.
+	 *
+	 * @return string
+	 */
+	public function get_name() {
+		return __( 'Grading', 'sensei-lms' );
 	}
 
 	/**
@@ -425,7 +449,7 @@ class Sensei_Grading {
 	 * @return void
 	 */
 	public function grading_default_nav() {
-		$title = esc_html( $this->name );
+		$title = esc_html( $this->get_name() );
 
 		if ( isset( $_GET['course_id'] ) ) {
 			$course_id = intval( $_GET['course_id'] );
@@ -465,7 +489,7 @@ class Sensei_Grading {
 	 * @return void
 	 */
 	public function grading_user_quiz_nav() {
-		$title = esc_html( $this->name );
+		$title = esc_html( $this->get_name() );
 
 		if ( isset( $_GET['quiz_id'] ) ) {
 			$quiz_id   = intval( $_GET['quiz_id'] );
