@@ -25,29 +25,26 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Sensei_Learner_Management {
 	/**
-	 * Name of the menu/page.
-	 *
-	 * @var string $name
-	 */
-	public $name;
-	/**
 	 * Main plugin file name.
 	 *
 	 * @var string $file
 	 */
 	public $file;
+
 	/**
 	 * Menu slug name.
 	 *
 	 * @var string $page_slug
 	 */
 	public $page_slug;
+
 	/**
 	 * Reference to the class responsible for Bulk Learner Actions.
 	 *
 	 * @var Sensei_Learners_Admin_Bulk_Actions_Controller $bulk_actions_controller
 	 */
 	public $bulk_actions_controller;
+
 	/**
 	 * Per page screen option ID.
 	 *
@@ -63,7 +60,6 @@ class Sensei_Learner_Management {
 	 * @param string $file Main plugin file name.
 	 */
 	public function __construct( $file ) {
-		$this->name      = __( 'Students', 'sensei-lms' );
 		$this->file      = $file;
 		$this->page_slug = 'sensei_learners';
 
@@ -99,6 +95,22 @@ class Sensei_Learner_Management {
 		}
 	}
 
+	/**
+	 * Graceful fallback for deprecated properties.
+	 *
+	 * @since $$next-version$$
+	 *
+	 * @param string $key The key to get.
+	 *
+	 * @return mixed
+	 */
+	public function __get( $key ) {
+		if ( 'name' === $key ) {
+			_doing_it_wrong( __CLASS__ . '->name', 'The "name" property is deprecated. Use get_name() instead.', '$$next-version$$' );
+
+			return $this->get_name();
+		}
+	}
 
 	/**
 	 * Add custom navigation to the admin pages.
@@ -148,8 +160,8 @@ class Sensei_Learner_Management {
 		if ( current_user_can( 'manage_sensei_grades' ) ) {
 			$learners_page = add_submenu_page(
 				'sensei',
-				$this->name,
-				$this->name,
+				$this->get_name(),
+				$this->get_name(),
 				'manage_sensei_grades',
 				$this->page_slug,
 				array( $this, 'learners_page' )
@@ -274,7 +286,6 @@ class Sensei_Learner_Management {
 		foreach ( $classes_to_load as $class_file ) {
 			Sensei()->load_class( $class_file );
 		}
-
 	}
 
 	/**
@@ -320,7 +331,6 @@ class Sensei_Learner_Management {
 		} else {
 			require __DIR__ . '/views/html-admin-page-students-main.php';
 		}
-
 	}
 
 	/**
@@ -340,7 +350,6 @@ class Sensei_Learner_Management {
 		 * @hook sensei_learners_after_headers
 		 */
 		do_action( 'sensei_learners_after_headers' );
-
 	}
 
 	/**
@@ -972,9 +981,8 @@ class Sensei_Learner_Management {
 	 * @return string Name of the menu/page.
 	 */
 	public function get_name() {
-		return $this->name;
+		return __( 'Students', 'sensei-lms' );
 	}
-
 }
 
 /**

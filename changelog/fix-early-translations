@@ -1,0 +1,4 @@
+Significance: patch
+Type: fixed
+
+Fix loading some translations too early which generates a warning on WP 6.7
