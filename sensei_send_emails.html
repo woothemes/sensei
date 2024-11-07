@@ -43,7 +43,7 @@
 
     
 
-    <h4 class="name" id="sensei_send_emails">apply_filters( 'sensei_send_emails', <span class="signature">$send_email, $to, $subject, $message, $identifier )</span><span class="type-signature"> &rarr; {bool}</span></h4>
+    <h4 class="name" id="sensei_send_emails">apply_filters( 'sensei_send_emails', <span class="signature">$send_email, $to, $subject, $message, $identifier, $replacements )</span><span class="type-signature"> &rarr; {bool}</span></h4>
 
     
 
@@ -193,6 +193,29 @@
             
 
             <td class="description last"><p>Unique identifier of the email, not for legacy emails.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>$replacements</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">array</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The replacements values for the email, not for legacy emails.</p></td>
         </tr>
 
     
