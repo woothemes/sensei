@@ -105,7 +105,7 @@ export const StudentActionMenu = ( {
 			setAction,
 			setModalOpen
 		).then( ( response ) => {
-			setControls( [ ...response ] );
+			setControls( response );
 		} );
 	}, [ defaultControls ] );
 
