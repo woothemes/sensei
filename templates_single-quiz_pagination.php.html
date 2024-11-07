@@ -123,8 +123,9 @@ $sensei_next_question_count  = min( $sensei_question_loop['total'] - $sensei_que
 						&lt;?php echo esc_attr( _n( 'Next Question', 'Next Questions', $sensei_next_question_count, 'sensei-lms' ) ); ?>
 					&lt;/button>
 				&lt;/div>
-			&lt;?php elseif ( $sensei_is_quiz_available &amp;&amp; ! $sensei_is_quiz_completed ) : ?>
-				&lt;div class="sensei-quiz-action wp-block-button">
+			&lt;?php endif ?>
+			&lt;?php if ( $sensei_is_quiz_available &amp;&amp; ! $sensei_is_quiz_completed ) : ?>
+				&lt;div class="sensei-quiz-action&lt;?php echo esc_attr( $sensei_question_loop['current_page'] &lt; $sensei_question_loop['total_pages'] ? '--hidden' : '' ); ?> wp-block-button">
 					&lt;button
 						type="submit"
 						name="quiz_complete"
