@@ -176,7 +176,7 @@ class Sensei_Emails {
 		// Set content type
 		$this->_content_type = $content_type;
 
-		// Filters for the email
+		// Filters for the email.
 		add_filter( 'wp_mail_from', array( $this, 'get_from_address' ) );
 		add_filter( 'wp_mail_from_name', array( $this, 'get_from_name' ) );
 		add_filter( 'wp_mail_content_type', array( $this, 'get_content_type' ) );
@@ -189,20 +189,22 @@ class Sensei_Emails {
 		 *
 		 * @hook sensei_send_emails
 		 *
-		 * @param {bool} $send_email Whether to send the email or not.
-		 * @param {mixed} $to The email address(es) to send the email to.
-		 * @param {mixed} $subject The subject of the email.
-		 * @param {mixed} $message The message of the email.
-		 * @param {string} $identifier Unique identifier of the email, not for legacy emails.
+		 * @param {bool}   $send_email   Whether to send the email or not.
+		 * @param {mixed}  $to           The email address(es) to send the email to.
+		 * @param {mixed}  $subject      The subject of the email.
+		 * @param {mixed}  $message      The message of the email.
+		 * @param {string} $identifier   Unique identifier of the email, not for legacy emails.
+		 * @param {array}  $replacements The replacements values for the email, not for legacy emails.
+		 *
 		 * @return {bool} Whether to send the email or not.
 		 */
-		if ( apply_filters( 'sensei_send_emails', true, $to, $subject, $message, 'legacy-email' ) ) {
+		if ( apply_filters( 'sensei_send_emails', true, $to, $subject, $message, 'legacy-email', [] ) ) {
 
 			wp_mail( $to, $subject, $message, $headers, $attachments );
 
 		}
 
-		// Unhook filters
+		// Unhook filters.
 		remove_filter( 'wp_mail_from', array( $this, 'get_from_address' ) );
 		remove_filter( 'wp_mail_from_name', array( $this, 'get_from_name' ) );
 		remove_filter( 'wp_mail_content_type', array( $this, 'get_content_type' ) );
