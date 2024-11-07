@@ -1358,6 +1358,32 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		self::assertFalse( $result );
 	}
 
+	public function testShouldShowLessonActions_WhenHookNotSetAndHasNoPreRequisite_ReturnsTrue(): void {
+		/* Arrange */
+		$user_id   = $this->factory->user->create();
+		$lesson_id = $this->factory->lesson->create();
+
+		/* Act */
+		$result = Sensei_Lesson::should_show_lesson_actions( $lesson_id, $user_id );
+
+		/* Assert */
+		self::assertTrue( $result, 'Lesson actions should be shown because there is no filter or prerequisite' );
+	}
+
+	public function testShouldShowLessonActions_WhenHookSetToFalse_ReturnsFalse(): void {
+		/* Arrange */
+		$user_id   = $this->factory->user->create();
+		$lesson_id = $this->factory->lesson->create();
+
+		add_filter( 'sensei_lesson_show_actions', '__return_false' );
+
+		/* Act */
+		$result = Sensei_Lesson::should_show_lesson_actions( $lesson_id, $user_id );
+
+		/* Assert */
+		self::assertFalse( $result, 'Lesson actions should not be shown because filter is set to false here' );
+	}
+
 	public function testFooterQuizCallToAction_WhenCalled_OutputsButton(): void {
 		/* Arrange */
 		$course = $this->factory->get_course_with_lessons();

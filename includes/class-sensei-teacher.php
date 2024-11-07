@@ -838,7 +838,19 @@ class Sensei_Teacher {
 			return $learners_sql;
 		}
 
-		$teacher_course_ids = $this->get_teacher_courses( get_current_user_id(), true );
+		/**
+		 * Filter the course IDs associated with a given teacher.
+		 *
+		 * @since $$next-version$$
+		 *
+		 * @hook sensei_teacher_course_ids
+		 *
+		 * @param {int[]} $course_ids Course IDs for which the current user is the teacher.
+		 * @param {int}   $teacher_id Teacher ID.
+		 * @return {int[]} Filtered course IDs associated with a given teacher.
+		 */
+		$teacher_course_ids = apply_filters( 'sensei_teacher_course_ids', $this->get_teacher_courses( get_current_user_id(), true ), get_current_user_id() );
+
 		if ( ! $teacher_course_ids ) {
 			$teacher_course_ids = [ 0 ]; // Show no learners.
 		}

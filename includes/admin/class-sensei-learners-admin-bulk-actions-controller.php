@@ -21,13 +21,6 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 	const REMOVE_PROGRESS                         = 'remove_progress';
 
 	/**
-	 * The available bulk actions.
-	 *
-	 * @var array|null
-	 */
-	private $known_bulk_actions;
-
-	/**
 	 * The page slug.
 	 *
 	 * @var string
@@ -56,19 +49,12 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 	private $learner;
 
 	/**
-	 * The name of the page
-	 *
-	 * @var string
-	 */
-	private $name;
-
-	/**
 	 * Get the name of the page.
 	 *
 	 * @return string|void
 	 */
 	public function get_name() {
-		return $this->name;
+		return __( 'Bulk Student Actions', 'sensei-lms' );
 	}
 
 	/**
@@ -117,15 +103,8 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 	public function __construct( $management, $learner ) {
 		$this->learner_management = $management;
 		$this->learner            = $learner;
-		$this->name               = __( 'Bulk Student Actions', 'sensei-lms' );
 		$this->page_slug          = $management->page_slug;
 		$this->view               = 'sensei_learner_admin';
-
-		$this->known_bulk_actions = [
-			self::ENROL_RESTORE_ENROLMENT => __( 'Add to Course', 'sensei-lms' ),
-			self::REMOVE_ENROLMENT        => __( 'Remove from Course', 'sensei-lms' ),
-			self::REMOVE_PROGRESS         => __( 'Reset Progress', 'sensei-lms' ),
-		];
 
 		if ( is_admin() ) {
 			$this->register_hooks();
@@ -190,7 +169,11 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 	 * @return array
 	 */
 	public function get_known_bulk_actions() {
-		$known_bulk_actions = $this->known_bulk_actions;
+		$known_bulk_actions = [
+			self::ENROL_RESTORE_ENROLMENT => __( 'Add to Course', 'sensei-lms' ),
+			self::REMOVE_ENROLMENT        => __( 'Remove from Course', 'sensei-lms' ),
+			self::REMOVE_PROGRESS         => __( 'Reset Progress', 'sensei-lms' ),
+		];
 
 		/**
 		 * Filter the known bulk actions.

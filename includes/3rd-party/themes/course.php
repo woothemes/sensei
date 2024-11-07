@@ -12,7 +12,7 @@ function sensei_load_learning_mode_style_for_course_theme() {
 	$course_id       = Sensei_Utils::get_current_course();
 	$is_course_theme = 'course' === wp_get_theme()->get_template();
 
-	if ( empty( $course_id ) || ! $is_course_theme ) {
+	if ( empty( $course_id ) || ! $is_course_theme || 'course' === get_post_type() ) {
 		return false;
 	}
 

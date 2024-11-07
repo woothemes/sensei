@@ -1,0 +1,4 @@
+Significance: minor
+Type: development
+
+Added a hook to conditionally render the lesson actions in the frontend
