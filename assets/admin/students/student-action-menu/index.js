@@ -2,9 +2,15 @@
  * WordPress dependencies
  */
 import { DropdownMenu } from '@wordpress/components';
-import { render, useEffect, useState } from '@wordpress/element';
+import {
+	render,
+	useEffect,
+	useState,
+	useMemo,
+	useCallback,
+} from '@wordpress/element';
 import { moreVertical } from '@wordpress/icons';
-import { applyFilters, applyFiltersAsync } from '@wordpress/hooks';
+import { applyFilters } from '@wordpress/hooks';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -25,80 +31,83 @@ export const StudentActionMenu = ( {
 	studentName,
 	studentDisplayName,
 } ) => {
-	const defaultControls = [
-		{
-			title: __( 'Add to Course', 'sensei-lms' ),
-			onClick: () => addToCourse(),
-		},
-		{
-			title: __( 'Remove from Course', 'sensei-lms' ),
-			onClick: () => removeFromCourse(),
-		},
-		{
-			title: __( 'Reset Progress', 'sensei-lms' ),
-			onClick: () => resetProgress(),
-		},
-		{
-			title: __( 'Grading', 'sensei-lms' ),
-			onClick: () =>
-				window.open(
-					`admin.php?page=sensei_grading&view=ungraded&s=${ studentName }`,
-					'_self'
-				),
-		},
-	];
-
 	const [ action, setAction ] = useState( '' );
-	const [ controls, setControls ] = useState( defaultControls );
 	const [ isModalOpen, setModalOpen ] = useState( false );
 
-	const closeModal = ( needsReload ) => {
-		if ( needsReload ) {
-			window.location.reload();
-		}
-		setModalOpen( false );
-	};
-
-	/**
-	 * Filters controls for the single student action menu.
-	 *
-	 * @since 4.11.0
-	 *
-	 * @param {Array}    controls     Controls for the single student action menu.
-	 * @param {Function} setAction    Selected action.
-	 * @param {Function} setModalOpen The callback to run when the modal is closed.
-	 *
-	 * @return {Array} Filtered controls.
-	 */
-	useEffect( () => {
-		async function getMenuControls() {
-			const response = await applyFiltersAsync(
-				'senseiStudentActionMenuControls',
-				defaultControls,
-				setAction,
-				setModalOpen
-			);
-
-			setControls( response );
-		}
-
-		getMenuControls();
-	}, [ defaultControls ] );
-
-	const addToCourse = () => {
+	const addToCourse = useCallback( () => {
 		setAction( 'add' );
 		setModalOpen( true );
-	};
+	}, [ setAction, setModalOpen ] );
 
-	const removeFromCourse = () => {
+	const removeFromCourse = useCallback( () => {
 		setAction( 'remove' );
 		setModalOpen( true );
-	};
+	}, [ setAction, setModalOpen ] );
 
-	const resetProgress = () => {
+	const resetProgress = useCallback( () => {
 		setAction( 'reset-progress' );
 		setModalOpen( true );
-	};
+	}, [ setAction, setModalOpen ] );
+
+	const defaultControls = useMemo(
+		() => [
+			{
+				title: __( 'Add to Course', 'sensei-lms' ),
+				onClick: () => addToCourse(),
+			},
+			{
+				title: __( 'Remove from Course', 'sensei-lms' ),
+				onClick: () => removeFromCourse(),
+			},
+			{
+				title: __( 'Reset Progress', 'sensei-lms' ),
+				onClick: () => resetProgress(),
+			},
+			{
+				title: __( 'Grading', 'sensei-lms' ),
+				onClick: () =>
+					window.open(
+						`admin.php?page=sensei_grading&view=ungraded&s=${ studentName }`,
+						'_self'
+					),
+			},
+		],
+		[ studentName, addToCourse, removeFromCourse, resetProgress ]
+	);
+
+	const [ controls, setControls ] = useState( defaultControls );
+
+	const closeModal = useCallback(
+		( needsReload ) => {
+			if ( needsReload ) {
+				window.location.reload();
+			}
+			setModalOpen( false );
+		},
+		[ setModalOpen ]
+	);
+
+	useEffect( () => {
+		/**
+		 * Filters controls for the single student action menu.
+		 *
+		 * @since 4.11.0
+		 *
+		 * @param {Array}    controls     Controls for the single student action menu.
+		 * @param {Function} setAction    Selected action.
+		 * @param {Function} setModalOpen The callback to run when the modal is closed.
+		 *
+		 * @return {Array} Filtered controls.
+		 */
+		applyFilters(
+			'senseiStudentActionMenuControls',
+			[ ...defaultControls ],
+			setAction,
+			setModalOpen
+		).then( ( response ) => {
+			setControls( [ ...response ] );
+		} );
+	}, [ defaultControls ] );
 
 	const defaultStudentModal = (
 		<StudentModal
