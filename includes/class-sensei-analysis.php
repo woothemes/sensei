@@ -77,7 +77,7 @@ class Sensei_Analysis {
 	/**
 	 * Get the screen name.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.24.4
 	 *
 	 * @return string
 	 */

@@ -132,7 +132,7 @@ class Sensei_PostTypes {
 	/**
 	 * Graceful fallback for deprecated properties.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.24.4
 	 *
 	 * @param string $key The key to get.
 	 *
@@ -184,7 +184,7 @@ class Sensei_PostTypes {
 	/**
 	 * Exclude post types from the REST API search.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.24.4
 	 * @access private
 	 *
 	 * @param array $args The query args.

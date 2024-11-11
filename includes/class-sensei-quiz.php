@@ -113,7 +113,7 @@ class Sensei_Quiz {
 	 *
 	 * @internal
 	 *
-	 * @since  $$next-version$$
+	 * @since  4.24.4
 	 * @return void
 	 */
 	public function enqueue_styles() {
