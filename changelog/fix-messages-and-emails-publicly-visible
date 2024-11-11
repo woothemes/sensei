@@ -1,4 +1,0 @@
-Significance: patch
-Type: security
-
-Fix messages and emails being accessible using the REST API search

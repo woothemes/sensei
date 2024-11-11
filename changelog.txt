@@ -1,5 +1,24 @@
 *** Changelog ***
 
+## 4.24.4 - 2024-11-12
+### Security
+- Messages and emails accessible using the search REST API
+
+### Added
+- Allow additional users to manage students [#7700](https://github.com/Automattic/sensei/pull/7700)
+
+### Fixed
+- Horizontal scroll on Course page when using Course theme [#7705](https://github.com/Automattic/sensei/pull/7705)
+- Loading some translations too early which generates a warning on WP 6.7 [#7701](https://github.com/Automattic/sensei/pull/7701)
+- PHP deprecation notice in View Results block [#7680](https://github.com/Automattic/sensei/pull/7680)
+- Hello elementor theme throwing 404 when rendering the Courses archive page [#7683](https://github.com/Automattic/sensei/pull/7683)
+- Label on course complete email received by the teacher [#7672](https://github.com/Automattic/sensei/pull/7672)
+- Timed quiz not stopping when time ends [#7675](https://github.com/Automattic/sensei/pull/7675)
+
+### Development
+- Added a hook to conditionally render the lesson actions in the frontend [#7677](https://github.com/Automattic/sensei/pull/7677)
+- Filter course IDs associated with a given teacher [#7702](https://github.com/Automattic/sensei/pull/7702)
+
 ## 4.24.3 - 2024-08-22
 ### Fixed
 - Ensure quiz description is displayed to the student [#7669](https://github.com/Automattic/sensei/pull/7669)
