@@ -140,6 +140,25 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 
 == Changelog ==
 
+### 4.24.4 - 2024-11-12
+#### Security
+- Messages and emails accessible using the search REST API
+
+#### Added
+- Allow additional users to manage students [#7700](https://github.com/Automattic/sensei/pull/7700)
+
+#### Fixed
+- Horizontal scroll on Course page when using Course theme [#7705](https://github.com/Automattic/sensei/pull/7705)
+- Loading some translations too early which generates a warning on WP 6.7 [#7701](https://github.com/Automattic/sensei/pull/7701)
+- PHP deprecation notice in View Results block [#7680](https://github.com/Automattic/sensei/pull/7680)
+- Hello elementor theme throwing 404 when rendering the Courses archive page [#7683](https://github.com/Automattic/sensei/pull/7683)
+- Label on course complete email received by the teacher [#7672](https://github.com/Automattic/sensei/pull/7672)
+- Timed quiz not stopping when time ends [#7675](https://github.com/Automattic/sensei/pull/7675)
+
+#### Development
+- Added a hook to conditionally render the lesson actions in the frontend [#7677](https://github.com/Automattic/sensei/pull/7677)
+- Filter course IDs associated with a given teacher [#7702](https://github.com/Automattic/sensei/pull/7702)
+
 ### 4.24.3 - 2024-08-22
 #### Fixed
 - Ensure quiz description is displayed to the student [#7669](https://github.com/Automattic/sensei/pull/7669)
@@ -166,14 +185,3 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 - Replace "Continue to next lesson" with "Back to lesson" CTA in quiz when lesson is last in course [#7642](https://github.com/Automattic/sensei/pull/7642)
 - Register blocks to make their translations available in the editor [#7643](https://github.com/Automattic/sensei/pull/7643)
 - Tour modal tooltip visibility [#7653](https://github.com/Automattic/sensei/pull/7653)
-
-### 4.24.1 - 2024-06-13
-#### Security
-- Improve security for lessons and modules ordering
-
-#### Fixed
-- Avoid creating a new translation if it exists already [#7609](https://github.com/Automattic/sensei/pull/7609)
-- Change some taxonomy capabilities to fix some behaviors [#7613](https://github.com/Automattic/sensei/pull/7613)
-- Contact teacher form not displaying correctly in Learning Mode [#7610](https://github.com/Automattic/sensei/pull/7610)
-- Register Sensei LMS custom post types without delay [#7607](https://github.com/Automattic/sensei/pull/7607)
-- Support "0" or other falsy values as an answer for a quiz question [#7614](https://github.com/Automattic/sensei/pull/7614)
