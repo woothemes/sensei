@@ -98,7 +98,7 @@ class Sensei_Learner_Management {
 	/**
 	 * Graceful fallback for deprecated properties.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.24.4
 	 *
 	 * @param string $key The key to get.
 	 *
@@ -722,7 +722,7 @@ class Sensei_Learner_Management {
 		/**
 		 * Filter the user IDs that have permission to manage students in a given course.
 		 *
-		 * @since $$next-version$$
+		 * @since 4.24.4
 		 *
 		 * @hook sensei_learners_allowed_user_ids
 		 *

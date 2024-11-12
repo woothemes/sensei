@@ -841,7 +841,7 @@ class Sensei_Teacher {
 		/**
 		 * Filter the course IDs associated with a given teacher.
 		 *
-		 * @since $$next-version$$
+		 * @since 4.24.4
 		 *
 		 * @hook sensei_teacher_course_ids
 		 *

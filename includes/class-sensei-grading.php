@@ -52,7 +52,7 @@ class Sensei_Grading {
 	/**
 	 * Graceful fallback for deprecated properties.
 	 *
-	 * @since $$next-version$$
+	 * @since 4.24.4
 	 *
 	 * @param string $key The key to get.
 	 *
