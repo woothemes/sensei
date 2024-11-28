@@ -511,6 +511,10 @@ class Sensei_Main {
 	 * @since 1.9.0
 	 */
 	protected function init() {
+		// Localization.
+		add_action( 'update_option_WPLANG', array( $this, 'maybe_initiate_rewrite_rules_flush_after_language_change' ), 10, 2 );
+		add_action( 'upgrader_process_complete', array( $this, 'maybe_initiate_rewrite_rules_flush_on_translation_update' ), 10, 2 );
+
 		$this->initialize_cache_groups();
 		$this->initialize_global_objects();
 		$this->initialize_cli();
@@ -523,14 +527,11 @@ class Sensei_Main {
 	 * @internal
 	 *
 	 * @since 4.20.2
-	 * @deprecated $$next-version$$
 	 *
 	 * @param mixed $old_value Old value.
 	 * @param mixed $new_value New value.
 	 */
 	public function maybe_initiate_rewrite_rules_flush_after_language_change( $old_value, $new_value ) {
-		_deprecated_function( __METHOD__, '$$next-version$$' );
-
 		if ( $old_value !== $new_value ) {
 			$this->initiate_rewrite_rules_flush();
 		}
@@ -542,14 +543,11 @@ class Sensei_Main {
 	 * @internal
 	 *
 	 * @since 4.20.2
-	 * @deprecated $$next-version$$
 	 *
 	 * @param WP_Upgrader $upgrader_object Upgrader object.
 	 * @param array       $options Options.
 	 */
 	public function maybe_initiate_rewrite_rules_flush_on_translation_update( $upgrader_object, $options ) {
-		_deprecated_function( __METHOD__, '$$next-version$$' );
-
 		if ( 'translation' === $options['type'] ) {
 			$this->initiate_rewrite_rules_flush();
 		}
