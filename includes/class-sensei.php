@@ -511,10 +511,7 @@ class Sensei_Main {
 	 * @since 1.9.0
 	 */
 	protected function init() {
-
-		// Localisation.
-		$this->load_plugin_textdomain();
-		add_action( 'init', array( $this, 'load_localisation' ), 0 );
+		// Localization.
 		add_action( 'update_option_WPLANG', array( $this, 'maybe_initiate_rewrite_rules_flush_after_language_change' ), 10, 2 );
 		add_action( 'upgrader_process_complete', array( $this, 'maybe_initiate_rewrite_rules_flush_on_translation_update' ), 10, 2 );
 
@@ -986,9 +983,10 @@ class Sensei_Main {
 	 *
 	 * @access public
 	 * @since  1.0.0
-	 * @return void
+	 * @deprecated $$next-version$$
 	 */
 	public function load_localisation() {
+		_deprecated_function( __METHOD__, '$$next-version$$' );
 
 		load_plugin_textdomain( 'sensei-lms', false, dirname( plugin_basename( $this->main_plugin_file_name ) ) . '/lang/' );
 	}
@@ -998,9 +996,11 @@ class Sensei_Main {
 	 *
 	 * @access  public
 	 * @since   1.0.0
-	 * @return  void
+	 * @deprecated $$next-version$$
 	 */
 	public function load_plugin_textdomain() {
+		_deprecated_function( __METHOD__, '$$next-version$$' );
+
 		$domain = 'sensei-lms';
 
 		if ( is_admin() ) {
