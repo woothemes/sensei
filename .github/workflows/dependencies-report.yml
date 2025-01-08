@@ -8,6 +8,9 @@ jobs:
         runs-on: ubuntu-latest
         name: Build trunk for Dependencies Report
         steps:
+            -   uses: actions/setup-node@v4
+                with:
+                    node-version: 18
             -   uses: actions/checkout@v4
                 with:
                     ref: trunk
@@ -53,6 +56,9 @@ jobs:
         name: WordPress Dependencies Report
         runs-on: ubuntu-latest
         steps:
+            -   uses: actions/setup-node@v4
+                with:
+                    node-version: 18
             -   uses: actions/checkout@v4
             -   name: Get npm cache directory
                 id: npm-cache
