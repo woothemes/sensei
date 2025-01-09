@@ -92,7 +92,8 @@ export default class CoursesPage extends PostType {
 		this.wizardModal = new WizardModal( wizardLocator );
 
 		this.createCourseButton = page.locator(
-			'a.page-title-action[href$="post-new.php?post_type=course"]:has-text("New Course"):visible'
+			'a.page-title-action[href$="post-new.php?post_type=course"]',
+			{ hasText: /^New Course$/ }
 		);
 
 		this.courseOutlineBlock = new CourseOutline( page );
