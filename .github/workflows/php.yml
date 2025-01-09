@@ -86,7 +86,7 @@ jobs:
             - name: Install SVN
               run: |
                   sudo apt update
-                  sudo apt -y install subversion
+                  sudo apt install subversion
             - name: Checkout code
               uses: actions/checkout@v4
 
