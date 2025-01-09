@@ -903,7 +903,7 @@ class Sensei_Main {
 		add_action( 'after_setup_theme', array( $this, 'ensure_post_thumbnails_support' ) );
 		add_action( 'after_setup_theme', array( $this, 'sensei_load_template_functions' ) );
 
-		add_filter( 'the_content_feed', array( $this, 'maybe_hide_content_in_feed' ) );
+		add_filter( 'the_content_feed', array( $this, 'maybe_remove_feed_content' ) );
 		add_filter( 'wp_count_comments', array( $this, 'sensei_count_comments' ), 999, 2 );
 
 		add_action( 'body_class', array( $this, 'body_class' ) );
