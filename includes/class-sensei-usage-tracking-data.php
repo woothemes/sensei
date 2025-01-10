@@ -794,7 +794,7 @@ class Sensei_Usage_Tracking_Data {
 			// Get modules for this course.
 			$module_count = wp_count_terms(
 				array(
-					'object_ids' => $course,
+					'object_ids' => (int) $course,
 					'taxonomy'   => 'module',
 				)
 			);
@@ -831,7 +831,7 @@ class Sensei_Usage_Tracking_Data {
 			// Get modules for this course.
 			$module_count = wp_count_terms(
 				array(
-					'object_ids' => $courses[ $i ],
+					'object_ids' => (int) $courses[ $i ],
 					'taxonomy'   => 'module',
 				)
 			);
