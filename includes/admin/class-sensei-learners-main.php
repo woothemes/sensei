@@ -36,7 +36,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 	private $lesson_id;
 
 	/**
-	 * The current view of learner management. Possible values are 'lessons', 'courses' and 'learners'.
+	 * The current view of learner management. Possible values are 'lessons' and 'learners'.
 	 *
 	 * @var string
 	 */
@@ -96,10 +96,10 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 			wp_die( esc_html__( 'Invalid lesson', 'sensei-lms' ), 404 );
 		}
 
-		if ( isset( $_GET['view'] ) && in_array( $_GET['view'], array( 'courses', 'lessons', 'learners' ), true ) ) {
+		if ( isset( $_GET['view'] ) && in_array( $_GET['view'], array( 'lessons', 'learners' ), true ) ) {
 			$this->view = sanitize_text_field( wp_unslash( $_GET['view'] ) );
 		} else {
-			$this->view = 'courses';
+			$this->view = '';
 		}
 
 		$this->enrolment_status = 'all';
@@ -180,16 +180,8 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 					'updated'      => __( 'Last Updated', 'sensei-lms' ),
 				);
 				break;
-
-			case 'courses':
-			default:
-				$columns = array(
-					'title'        => __( 'Course', 'sensei-lms' ),
-					'num_learners' => __( '# Students', 'sensei-lms' ),
-					'updated'      => __( 'Last Updated', 'sensei-lms' ),
-				);
-				break;
 		}
+
 		$columns['actions'] = '';
 
 		// Backwards compatible.
@@ -240,6 +232,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 				);
 				break;
 		}
+
 		// Backwards compatible.
 		if ( 'learners' === $this->view ) {
 			$columns = apply_filters_deprecated(
@@ -333,14 +326,6 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 					$orderby = 'post_modified';
 				}
 				$this->items = $this->get_lessons( compact( 'per_page', 'offset', 'orderby', 'order', 'search' ) );
-
-				break;
-
-			default:
-				if ( empty( $orderby ) ) {
-					$orderby = 'post_modified';
-				}
-				$this->items = $this->get_courses( compact( 'per_page', 'offset', 'orderby', 'order', 'category', 'search' ) );
 
 				break;
 		}
@@ -683,61 +668,6 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 				$escaped_column_data = Sensei_Wp_Kses::wp_kses_array( $column_data );
 
 				break;
-			case 'courses':
-			default:
-				$course_learners = Sensei_Utils::sensei_check_for_activity(
-					apply_filters(
-						'sensei_learners_course_learners',
-						array(
-							'post_id' => $item->ID,
-							'type'    => 'sensei_course_status',
-							'status'  => 'any',
-						)
-					)
-				);
-				$title           = get_the_title( $item );
-				// translators: Placeholder is the item title/name.
-				$a_title = sprintf( __( 'Edit &#8220;%s&#8221;', 'sensei-lms' ), $title );
-
-				$grading_action = ' <a class="button" href="' . esc_url(
-					add_query_arg(
-						array(
-							'page'      => 'sensei_grading',
-							'course_id' => $item->ID,
-						),
-						admin_url( 'admin.php' )
-					)
-				) . '">' . esc_html__( 'Grading', 'sensei-lms' ) . '</a>';
-
-				$column_data = apply_filters(
-					'sensei_learners_main_column_data',
-					array(
-						'title'        =>
-							'<strong>' .
-								'<a class="row-title" href="' . esc_url(
-									add_query_arg(
-										array(
-											'page'      => 'sensei_learners',
-											'course_id' => $item->ID,
-											'view'      => 'learners',
-										),
-										admin_url( 'admin.php' )
-									)
-								) . '" title="' . esc_attr( $a_title ) . '">' .
-									esc_html( $title ) .
-								'</a>' .
-							'</strong>',
-						'num_learners' => esc_html( $course_learners ),
-						'updated'      => esc_html( $item->post_modified ),
-						'actions'      =>
-							'<div class="student-action-menu" data-course-id="' . esc_attr( $item->ID ) . '"></div>',
-					),
-					$item
-				);
-
-				$escaped_column_data = Sensei_Wp_Kses::wp_kses_array( $column_data );
-
-				break;
 		}
 
 		return $escaped_column_data;
@@ -1013,12 +943,6 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 			case 'lessons':
 				$text = __( 'No lessons found.', 'sensei-lms' );
 				break;
-
-			case 'courses':
-			case 'default':
-			default:
-				$text = __( 'No courses found.', 'sensei-lms' );
-				break;
 		}
 		/**
 		 * Filter the text displayed when no items are found.
@@ -1048,30 +972,6 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 		 */
 		do_action( 'sensei_learners_before_dropdown_filters' );
 
-		// Display Course Categories only on default view.
-		if ( 'courses' === $this->view ) {
-
-			$selected_cat = 0;
-			// phpcs:disable WordPress.Security.NonceVerification -- No data are modified.
-			if ( isset( $_GET['course_cat'] ) && '' !== sanitize_text_field( wp_unslash( $_GET['course_cat'] ) ) ) {
-				$selected_cat = (int) $_GET['course_cat'];
-			}
-			// phpcs:enable
-
-			$cats = get_terms( 'course-category', array( 'hide_empty' => false ) );
-
-			echo '<div class="select-box">' . "\n";
-			echo '<select id="course-category-options" data-placeholder="' . esc_attr__( 'Course Category', 'sensei-lms' ) . '" name="learners_course_cat" class="chosen_select widefat">' . "\n";
-			echo '<option value="0">' . esc_html__( 'All Course Categories', 'sensei-lms' ) . '</option>' . "\n";
-
-			foreach ( $cats as $cat ) {
-				echo '<option value="' . esc_attr( $cat->term_id ) . '"' . selected( $cat->term_id, $selected_cat, false ) . '>' . esc_html( $cat->name ) . '</option>' . "\n";
-			}
-
-			echo '</select>' . "\n";
-
-			echo '</div>' . "\n";
-		}
 		echo '</div><!-- /.learners-selects -->';
 	}
 
@@ -1315,10 +1215,6 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 
 			case 'lessons':
 				$text = __( 'Search Lessons', 'sensei-lms' );
-				break;
-
-			default:
-				$text = __( 'Search Courses', 'sensei-lms' );
 				break;
 		}
 
