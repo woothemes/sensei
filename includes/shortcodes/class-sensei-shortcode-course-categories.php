@@ -134,9 +134,7 @@ class Sensei_Shortcode_Course_Categories implements Sensei_Shortcode_Interface {
 		if ( is_wp_error( $terms ) ) {
 			$this->sensei_course_taxonomy_terms = array();
 		} else {
-			$terms = (array) $terms;
-
-			$this->sensei_course_taxonomy_terms = $terms;
+			$this->sensei_course_taxonomy_terms = (array) $terms;
 		}
 	}
 
