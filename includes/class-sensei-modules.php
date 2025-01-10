@@ -2298,18 +2298,17 @@ class Sensei_Core_Modules {
 		_deprecated_function( __METHOD__, '$$next-version$$' );
 
 		$terms = get_terms(
-			array( 'module' ),
 			array(
-				'name__like' => $term_name,
 				'hide_empty' => false,
+				'name__like' => $term_name,
+				'taxonomy'   => 'module',
 			)
 		);
 
 		$owners = array();
+
 		if ( empty( $terms ) ) {
-
 			return $owners;
-
 		}
 
 		// setup the admin user
