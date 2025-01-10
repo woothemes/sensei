@@ -114,7 +114,6 @@ class Sensei_Shortcode_Course_Categories implements Sensei_Shortcode_Interface {
 
 	/**
 	 * Create the messages query .
-	 *
 	 */
 	public function setup_course_categories() {
 		$args = array(
