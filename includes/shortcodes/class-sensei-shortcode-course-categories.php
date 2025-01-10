@@ -118,7 +118,6 @@ class Sensei_Shortcode_Course_Categories implements Sensei_Shortcode_Interface {
 	 * @return mixed
 	 */
 	public function setup_course_categories() {
-
 		$args = array(
 			'orderby'    => $this->orderby,
 			'order'      => $this->order,
@@ -128,10 +127,10 @@ class Sensei_Shortcode_Course_Categories implements Sensei_Shortcode_Interface {
 			'parent'     => $this->parent,
 			'hide_empty' => $this->hide_empty,
 			'fields'     => 'all',
+			'taxonomy'   => 'course-category',
 		);
 
-		$this->sensei_course_taxonomy_terms = get_terms( 'course-category', $args );
-
+		$this->sensei_course_taxonomy_terms = get_terms( $args );
 	}
 
 	/**

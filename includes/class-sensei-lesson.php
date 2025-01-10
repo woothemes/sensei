@@ -1697,12 +1697,14 @@ class Sensei_Lesson {
 	}
 
 	public function quiz_panel_add( $context = 'quiz' ) {
-
-		$html = '<div id="add-new-question">';
-
-			$question_types = Sensei()->question->question_types();
-
-			$question_cats = get_terms( 'question-category', array( 'hide_empty' => false ) );
+		$question_types = Sensei()->question->question_types();
+		$question_cats  = get_terms(
+			array(
+				'hide_empty' => false,
+				'taxonomy'   => 'question-category',
+			)
+		);
+		$html           = '<div id="add-new-question">';
 
 		if ( 'quiz' == $context ) {
 			$html     .= '<h2 class="nav-tab-wrapper add-question-tabs">';
