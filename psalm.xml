@@ -11,7 +11,6 @@
 			<directory name="config" />
 			<directory name="includes/internal/emails/views" />
 			<directory name="sample-data" />
-			<directory name="third-party" />
 			<directory name="vendor" />
 			<directory name="vendor-bin" />
 			<directory name="widgets" />
