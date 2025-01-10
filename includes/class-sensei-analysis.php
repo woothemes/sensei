@@ -1022,7 +1022,7 @@ class Sensei_Analysis {
 		foreach ( $report_data as $row ) {
 			fputcsv( $fp, $row );
 		}
-		fclose( $fp );
+		fclose( $fp ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
 	}
 
 	/**
