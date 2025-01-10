@@ -161,6 +161,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 	 * @return array $columns, the array of columns to use with the table
 	 */
 	public function get_columns() {
+		$columns = array();
 
 		switch ( $this->view ) {
 			case 'learners':
@@ -935,6 +936,8 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 	 * @return void
 	 */
 	public function no_items() {
+		$text = '';
+
 		switch ( $this->view ) {
 			case 'learners':
 				$text = __( 'No students found.', 'sensei-lms' );
@@ -1207,6 +1210,7 @@ class Sensei_Learners_Main extends Sensei_List_Table {
 	 * @return string $text
 	 */
 	public function search_button() {
+		$text = '';
 
 		switch ( $this->view ) {
 			case 'learners':
