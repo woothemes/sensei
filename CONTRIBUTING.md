@@ -51,7 +51,7 @@ Before submitting a pull request, make sure that your changes follow the followi
 
 ## Composer
 
-- Because of possible conflicts, all required composer packages should be `scoped`. Scoping is done by copying the package to the `third-party` folder and changing its namespace to `Sensei\ThirdParty\...`.  To do so, first, add the package as a dev dependency - `composer require --dev vendor/package`. Then, edit `config/scoper.inc.php` to include the new package. Keep in mind that some packages may have their dependencies, so add those as well. Finally, run `composer dump-autoload` which will initialize the scoping process.
+- Because of possible conflicts, all required composer packages should be `scoped`. Scoping is done by copying the package to the `vendor/sensei-lms/third-party-libs` folder and changing its namespace to `Sensei\ThirdParty\...`.  To do so, first, add the package as a dev dependency - `composer require --dev vendor/package`. Then, edit `config/scoper.inc.php` to include the new package. Keep in mind that some packages may have their dependencies, so add those as well. Finally, run `composer dump-autoload` which will initialize the scoping process.
 
 ## JavaScript and CSS
 
