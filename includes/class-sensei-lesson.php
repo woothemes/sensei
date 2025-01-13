@@ -3969,7 +3969,7 @@ class Sensei_Lesson {
 				 * @param {string} $html HTML for the lesson placeholder image.
 				 * @return {string} HTML for the lesson placeholder image.
 				 */
-				$img_element = apply_filters( 'sensei_lesson_placeholder_image_url', '<img src="//via.placeholder.com/' . esc_url( $width ) . 'x' . esc_url( $height ) . '" class="woo-image thumbnail alignleft" />' );
+				$img_element = apply_filters( 'sensei_lesson_placeholder_image_url', '<img src="' . esc_url( Sensei()->assets->get_image( 'placeholder.png' ) ) . '" width="' . $width . '" height="' . $height . '" class="woo-image thumbnail alignleft" />' );
 
 			}
 		}
