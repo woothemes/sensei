@@ -474,8 +474,14 @@ class Sensei_Question {
 			$output .= $type_options;
 			$output .= '</select>';
 
-			// Question category
-			$cats = get_terms( 'question-category', array( 'hide_empty' => false ) );
+			// Question category.
+			$cats = get_terms(
+				array(
+					'hide_empty' => false,
+					'taxonomy'   => 'question-category',
+				)
+			);
+
 			if ( ! empty( $cats ) && ! is_wp_error( $cats ) ) {
 				$selected    = isset( $_GET['question_cat'] ) ? $_GET['question_cat'] : '';
 				$cat_options = '<option value="">' . esc_html__( 'All categories', 'sensei-lms' ) . '</option>';

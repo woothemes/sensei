@@ -2289,25 +2289,26 @@ class Sensei_Core_Modules {
 	 * Will return the admin user author could not be determined.
 	 *
 	 * @since 1.8.0
+	 * @deprecated $$next-version$$
 	 *
 	 * @param string $term_name
 	 * @return array $owners { type WP_User }. Empty array if none if found.
 	 */
 	public static function get_term_authors( $term_name ) {
+		_deprecated_function( __METHOD__, '$$next-version$$' );
 
 		$terms = get_terms(
-			array( 'module' ),
 			array(
-				'name__like' => $term_name,
 				'hide_empty' => false,
+				'name__like' => $term_name,
+				'taxonomy'   => 'module',
 			)
 		);
 
 		$owners = array();
+
 		if ( empty( $terms ) ) {
-
 			return $owners;
-
 		}
 
 		// setup the admin user

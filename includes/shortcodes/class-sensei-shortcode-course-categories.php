@@ -59,14 +59,14 @@ class Sensei_Shortcode_Course_Categories implements Sensei_Shortcode_Interface {
 	/**
 	 * Include categories.
 	 *
-	 * @var array
+	 * @var int[]
 	 */
 	public $include;
 
 	/**
 	 * Exclude categories.
 	 *
-	 * @var array
+	 * @var int[]
 	 */
 	public $exclude;
 
@@ -79,7 +79,7 @@ class Sensei_Shortcode_Course_Categories implements Sensei_Shortcode_Interface {
 
 
 	/**
-	 * @var array list of taxonomy terms.
+	 * @var WP_Term[] List of taxonomy terms.
 	 */
 	protected $sensei_course_taxonomy_terms;
 
@@ -113,12 +113,9 @@ class Sensei_Shortcode_Course_Categories implements Sensei_Shortcode_Interface {
 	}
 
 	/**
-	 * create the messages query .
-	 *
-	 * @return mixed
+	 * Create the messages query .
 	 */
 	public function setup_course_categories() {
-
 		$args = array(
 			'orderby'    => $this->orderby,
 			'order'      => $this->order,
@@ -128,10 +125,16 @@ class Sensei_Shortcode_Course_Categories implements Sensei_Shortcode_Interface {
 			'parent'     => $this->parent,
 			'hide_empty' => $this->hide_empty,
 			'fields'     => 'all',
+			'taxonomy'   => 'course-category',
 		);
 
-		$this->sensei_course_taxonomy_terms = get_terms( 'course-category', $args );
+		$terms = get_terms( $args );
 
+		if ( is_wp_error( $terms ) ) {
+			$this->sensei_course_taxonomy_terms = array();
+		} else {
+			$this->sensei_course_taxonomy_terms = (array) $terms;
+		}
 	}
 
 	/**
@@ -140,27 +143,23 @@ class Sensei_Shortcode_Course_Categories implements Sensei_Shortcode_Interface {
 	 * @return string $content
 	 */
 	public function render() {
-
 		if ( empty( $this->sensei_course_taxonomy_terms ) ) {
-
 			return __( 'No course categories found.', 'sensei-lms' );
-
 		}
 
 		$terms_html = '';
 
-		// set the wp_query to the current messages query
+		// Set the wp_query to the current messages query.
 		$terms_html .= '<ul class="sensei course-categories">';
-		foreach ( $this->sensei_course_taxonomy_terms as $category ) {
 
+		foreach ( $this->sensei_course_taxonomy_terms as $category ) {
 			$category_link = '<a href="' . get_term_link( $category ) . '">' . $category->name . '</a>';
 			$terms_html   .= '<li class="sensei course-category" >' . $category_link . '</li>';
-
 		}
+
 		$terms_html .= '</ul>';
 
 		return $terms_html;
-
 	}
 
 	/**
@@ -169,41 +168,31 @@ class Sensei_Shortcode_Course_Categories implements Sensei_Shortcode_Interface {
 	 * @since 1.9.0
 	 *
 	 * @param array $category_ids
-	 * @return array
+	 * @return int[]
 	 */
 	public function generate_term_ids( $categories = array() ) {
-
 		$cat_ids = array();
 
 		if ( is_array( $categories ) ) {
 			foreach ( $categories as $cat ) {
-
 				if ( ! is_numeric( $cat ) ) {
-
 					// try the slug
 					$term = get_term_by( 'slug', $cat, 'course-category' );
 
 					// if the slug didn't work try the name
 					if ( ! $term ) {
-
 						$term = get_term_by( 'name', $cat, 'course-category' );
-
 					}
 
 					if ( $term ) {
 						$cat_ids[] = $term->term_id;
 					}
 				} else {
-
-					$cat_ids[] = $cat;
-
+					$cat_ids[] = (int) $cat;
 				}
 			}
 		}
 
 		return $cat_ids;
-
 	}
-
 }
-
