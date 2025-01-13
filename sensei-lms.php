@@ -6,7 +6,7 @@
  * Version: 4.24.4
  * Author: Automattic
  * Author URI: https://automattic.com
- * License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+ * License: GPLv2 or later
  * Requires at least: 6.5
  * Tested up to: 6.7
  * Requires PHP: 7.4
