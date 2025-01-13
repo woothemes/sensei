@@ -187,9 +187,6 @@
     <InvalidArgument occurrences="1">
       <code>'course-category'</code>
     </InvalidArgument>
-    <PossibleRawObjectIteration occurrences="1">
-      <code>$cats</code>
-    </PossibleRawObjectIteration>
     <PossiblyFalseArgument occurrences="6">
       <code>$name</code>
       <code>$post_id</code>
@@ -201,9 +198,6 @@
     <PossiblyFalseReference occurrences="1">
       <code>is_enrolled</code>
     </PossiblyFalseReference>
-    <PossiblyInvalidIterator occurrences="1">
-      <code>$cats</code>
-    </PossiblyInvalidIterator>
     <PossiblyInvalidMethodCall occurrences="1">
       <code>get_provider_results</code>
     </PossiblyInvalidMethodCall>
