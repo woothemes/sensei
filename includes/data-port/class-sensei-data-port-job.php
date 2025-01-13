@@ -212,7 +212,7 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 	public function get_logs() {
 		usort(
 			$this->logs,
-			function( $first_log, $second_log ) {
+			function ( $first_log, $second_log ) {
 
 				// Get the type ordering and compare the two logs based on that.
 				$log_order                = $this->get_log_type_order();
@@ -514,7 +514,7 @@ abstract class Sensei_Data_Port_Job implements Sensei_Background_Job_Interface, 
 		$move_new_file = @copy( $tmp_file, $file_save_path );
 
 		if ( 0 === strpos( $tmp_file, sys_get_temp_dir() ) ) {
-			unlink( $tmp_file );
+			wp_delete_file( $tmp_file );
 		}
 
 		if ( ! $move_new_file || ! file_exists( $file_save_path ) ) {
