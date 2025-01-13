@@ -333,60 +333,6 @@
       <code>output</code>
     </UndefinedInterfaceMethod>
   </file>
-  <file src="includes/admin/class-senseilms-plugin-updater.php">
-    <ArgumentTypeCoercion occurrences="1">
-      <code>'\SenseiLMS_Licensing\SenseiLMS_Plugin_Updater'</code>
-    </ArgumentTypeCoercion>
-    <InvalidReturnStatement occurrences="1">
-      <code>$res</code>
-    </InvalidReturnStatement>
-    <InvalidReturnType occurrences="1">
-      <code>false|object</code>
-    </InvalidReturnType>
-    <PossiblyInvalidPropertyFetch occurrences="18">
-      <code>$remote-&gt;author</code>
-      <code>$remote-&gt;banners</code>
-      <code>$remote-&gt;download_url</code>
-      <code>$remote-&gt;download_url</code>
-      <code>$remote-&gt;icons</code>
-      <code>$remote-&gt;last_updated</code>
-      <code>$remote-&gt;name</code>
-      <code>$remote-&gt;requires</code>
-      <code>$remote-&gt;requires</code>
-      <code>$remote-&gt;requires_php</code>
-      <code>$remote-&gt;requires_php</code>
-      <code>$remote-&gt;sections</code>
-      <code>$remote-&gt;slug</code>
-      <code>$remote-&gt;slug</code>
-      <code>$remote-&gt;tested</code>
-      <code>$remote-&gt;tested</code>
-      <code>$remote-&gt;version</code>
-      <code>$remote-&gt;version</code>
-    </PossiblyInvalidPropertyFetch>
-    <UndefinedClass occurrences="1">
-      <code>\SenseiLMS_Licensing\License_Manager</code>
-    </UndefinedClass>
-    <UndefinedPropertyFetch occurrences="18">
-      <code>$remote-&gt;author</code>
-      <code>$remote-&gt;banners</code>
-      <code>$remote-&gt;download_url</code>
-      <code>$remote-&gt;download_url</code>
-      <code>$remote-&gt;icons</code>
-      <code>$remote-&gt;last_updated</code>
-      <code>$remote-&gt;name</code>
-      <code>$remote-&gt;requires</code>
-      <code>$remote-&gt;requires</code>
-      <code>$remote-&gt;requires_php</code>
-      <code>$remote-&gt;requires_php</code>
-      <code>$remote-&gt;sections</code>
-      <code>$remote-&gt;slug</code>
-      <code>$remote-&gt;slug</code>
-      <code>$remote-&gt;tested</code>
-      <code>$remote-&gt;tested</code>
-      <code>$remote-&gt;version</code>
-      <code>$remote-&gt;version</code>
-    </UndefinedPropertyFetch>
-  </file>
   <file src="includes/admin/content-duplicators/class-course-lessons-duplicator.php">
     <PossiblyInvalidArgument occurrences="1">
       <code>$lesson</code>
