@@ -195,7 +195,7 @@ class Sensei_Question {
 
 			case 'question-type':
 				$question_types = $this->question_types();
-				$question_type  = strip_tags( get_the_term_list( $id, 'question-type', '', ', ', '' ) );
+				$question_type  = wp_strip_all_tags( get_the_term_list( $id, 'question-type', '', ', ', '' ) );
 				$output         = '&mdash;';
 
 				if ( isset( $question_types[ $question_type ] ) ) {
@@ -206,7 +206,7 @@ class Sensei_Question {
 				break;
 
 			case 'question-category':
-				$output = strip_tags( get_the_term_list( $id, 'question-category', '', ', ', '' ) );
+				$output = wp_strip_all_tags( get_the_term_list( $id, 'question-category', '', ', ', '' ) );
 				if ( ! $output ) {
 					$output = '&mdash;';
 				}

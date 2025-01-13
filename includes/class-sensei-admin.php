@@ -939,7 +939,7 @@ class Sensei_Admin {
 					$html .= 'name="' . esc_attr( $field['id'] ) . '" ';
 					$html .= 'placeholder="' . esc_attr( $field['placeholder'] ) . '" ';
 					$html .= disabled( $field['disabled'], true, false );
-					$html .= '>' . strip_tags( $data ) . '</textarea><br/>' . "\n";
+					$html .= '>' . wp_strip_all_tags( $data ) . '</textarea><br/>' . "\n";
 					break;
 
 				case 'checkbox':
