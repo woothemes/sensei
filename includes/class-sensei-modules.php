@@ -731,8 +731,8 @@ class Sensei_Core_Modules {
 			}
 		}
 
-		// Encode and return results for processing & selection
-		echo json_encode( $found_courses );
+		// Encode and return results for processing & selection.
+		echo wp_json_encode( $found_courses );
 		die();
 	}
 
