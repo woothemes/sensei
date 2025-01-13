@@ -87,7 +87,6 @@ const files = [
 	'blocks/shared-style.scss',
 	'blocks/shared-style-editor.scss',
 	'blocks/frontend.js',
-	'blocks/core-pattern-polyfill/core-pattern-polyfill.js',
 	'blocks/email-editor.js',
 	'css/email-notifications/email-editor-style.scss',
 	'css/email-notifications/email-style.scss',
