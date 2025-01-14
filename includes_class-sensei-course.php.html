@@ -1573,7 +1573,7 @@ class Sensei_Course {
 					 * @param {int}    $height    Requested image height.
 					 * @return {string} Course image HTML.
 					 */
-					$img_html         = apply_filters( 'sensei_course_placeholder_image_url', '&lt;img src="//via.placeholder.com/' . $width . 'x' . $height . '" class="' . esc_attr( $classes ) . '" />', $course_id, $width, $height );
+					$img_html         = apply_filters( 'sensei_course_placeholder_image_url', '&lt;img src="' . esc_url( Sensei()->assets->get_image( 'placeholder.png' ) ) . '" width="' . $width . '" height="' . $height . '" class="' . esc_attr( $classes ) . '" />', $course_id, $width, $height );
 					$used_placeholder = true;
 
 				}
