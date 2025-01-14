@@ -2016,7 +2016,7 @@ class Sensei_Lesson {
 
 		$question_type = Sensei()->question->get_question_type( $question_id );
 
-		$question_cat_list = strip_tags( get_the_term_list( $question_id, 'question-category', '', ', ', '' ) );
+		$question_cat_list = wp_strip_all_tags( get_the_term_list( $question_id, 'question-category', '', ', ', '' ) );
 
 		$html .= '<tr class="' . esc_attr( $existing_class ) . '">
 					<td class="cb"><input type="checkbox" value="' . esc_attr( $question_id ) . '" class="existing-item" /></td>
