@@ -524,12 +524,9 @@ class Sensei_Learner_Management {
 		if ( false === $date ) {
 			exit( '' );
 		}
-		$mysql_date = date( 'Y-m-d H:i:s', $date->getTimestamp() );
-		if ( false === $mysql_date ) {
-			exit( '' );
-		}
 
-		$updated = (bool) update_comment_meta( $comment_id, 'start', $mysql_date, $date_started );
+		$formatted_date = gmdate( 'Y-m-d H:i:s', $date->getTimestamp() );
+		$updated        = (bool) update_comment_meta( $comment_id, 'start', $formatted_date, $date_started );
 
 		/**
 		 * Filter sensei_learners_learner_updated
@@ -549,7 +546,7 @@ class Sensei_Learner_Management {
 			exit( '' );
 		}
 
-		exit( esc_html( $mysql_date ) );
+		exit( esc_html( $formatted_date ) );
 	}
 
 	/**
