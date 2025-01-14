@@ -526,7 +526,7 @@ class Sensei_Learner_Management {
 		}
 
 		$formatted_date = gmdate( 'Y-m-d H:i:s', $date->getTimestamp() );
-		$updated    = (bool) update_comment_meta( $comment_id, 'start', $formatted_date, $date_started );
+		$updated        = (bool) update_comment_meta( $comment_id, 'start', $formatted_date, $date_started );
 
 		/**
 		 * Filter sensei_learners_learner_updated
