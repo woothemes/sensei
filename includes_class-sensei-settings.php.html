@@ -1046,7 +1046,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 
 			if ( isset( $matches[1] ) ) {
 				$id                = $matches[1];
-				$page_items[ $id ] = trim( strip_tags( $v ) );
+				$page_items[ $id ] = trim( wp_strip_all_tags( $v ) );
 			}
 		}
 
