@@ -524,7 +524,9 @@ class Sensei_Learner_Management {
 		if ( false === $date ) {
 			exit( '' );
 		}
-		$mysql_date = date( 'Y-m-d H:i:s', $date->getTimestamp() );
+
+		$mysql_date = gmdate( 'Y-m-d H:i:s', $date->getTimestamp() );
+
 		if ( false === $mysql_date ) {
 			exit( '' );
 		}
