@@ -526,12 +526,7 @@ class Sensei_Learner_Management {
 		}
 
 		$mysql_date = gmdate( 'Y-m-d H:i:s', $date->getTimestamp() );
-
-		if ( false === $mysql_date ) {
-			exit( '' );
-		}
-
-		$updated = (bool) update_comment_meta( $comment_id, 'start', $mysql_date, $date_started );
+		$updated    = (bool) update_comment_meta( $comment_id, 'start', $mysql_date, $date_started );
 
 		/**
 		 * Filter sensei_learners_learner_updated
