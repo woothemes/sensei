@@ -258,10 +258,11 @@ abstract class Sensei_Export_Task
 		$type     = $this->get_content_type();
 		$date     = gmdate( 'Y-m-d' );
 		$filename = sanitize_file_name( get_bloginfo( 'name' ) . '-' . ucwords( $type ) . 's-' . $date . '.csv' );
+
 		$this->get_job()->save_file( $type, $tmp_file, $filename );
+
 		if ( file_exists( $tmp_file ) ) {
-			unlink( $tmp_file );
+			wp_delete_file( $tmp_file );
 		}
 	}
-
 }
