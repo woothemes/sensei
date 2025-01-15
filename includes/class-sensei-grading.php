@@ -60,7 +60,7 @@ class Sensei_Grading {
 	 */
 	public function __get( $key ) {
 		if ( 'name' === $key ) {
-			_doing_it_wrong( __CLASS__ . '->name', 'The "name" property is deprecated. Use get_name() instead.', '$$next-version$$' );
+			_doing_it_wrong( __CLASS__ . '->name', 'The "name" property is deprecated. Use get_name() instead.', '4.24.5' );
 
 			return $this->get_name();
 		}

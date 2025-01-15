@@ -982,10 +982,10 @@ class Sensei_Main {
 	 *
 	 * @access public
 	 * @since  1.0.0
-	 * @deprecated $$next-version$$
+	 * @deprecated 4.24.5
 	 */
 	public function load_localisation() {
-		_deprecated_function( __METHOD__, '$$next-version$$' );
+		_deprecated_function( __METHOD__, '4.24.5' );
 
 		load_plugin_textdomain( 'sensei-lms', false, dirname( plugin_basename( $this->main_plugin_file_name ) ) . '/lang/' );
 	}
@@ -995,10 +995,10 @@ class Sensei_Main {
 	 *
 	 * @access  public
 	 * @since   1.0.0
-	 * @deprecated $$next-version$$
+	 * @deprecated 4.24.5
 	 */
 	public function load_plugin_textdomain() {
-		_deprecated_function( __METHOD__, '$$next-version$$' );
+		_deprecated_function( __METHOD__, '4.24.5' );
 
 		$domain = 'sensei-lms';
 
