@@ -105,7 +105,24 @@ class Sensei_Blocks_Initializer_Test extends WP_UnitTestCase {
 		$initializer_mock->maybe_initialize_blocks();
 	}
 
-	public function testMaybeInitializeBlocks_WhenInAdminOnNewPostScreenAndHasCorrectPostType_InitializesBlocks() {
+	public function testMaybeInitializeBlocks_WhenInAdminOnNewPostScreen_InitializesBlocks() {
+		/* Arrange */
+		$initializer_mock = $this->getMockForAbstractClass( Sensei_Blocks_Initializer::class );
+
+		set_current_screen( 'post' );
+
+		global $pagenow;
+		$pagenow = 'post-new.php';
+
+		/* Assert */
+		$initializer_mock->expects( $this->once() )
+			->method( 'initialize_blocks' );
+
+		/* Act */
+		$initializer_mock->maybe_initialize_blocks();
+	}
+
+	public function testMaybeInitializeBlocks_WhenInAdminOnNewCourseScreenAndHasCorrectPostType_InitializesBlocks() {
 		/* Arrange */
 		$initializer_mock = $this->getMockForAbstractClass( Sensei_Blocks_Initializer::class, [ [ 'course' ] ] );
 
