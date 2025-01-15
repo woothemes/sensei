@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import debounce from 'lodash/debounce';
+import { debounce } from 'lodash';
 
 /**
  * Track how much space the WordPress admin bar takes up at the top of the screen.
