@@ -195,7 +195,7 @@ class Sensei_Question {
 
 			case 'question-type':
 				$question_types = $this->question_types();
-				$question_type  = strip_tags( get_the_term_list( $id, 'question-type', '', ', ', '' ) );
+				$question_type  = wp_strip_all_tags( get_the_term_list( $id, 'question-type', '', ', ', '' ) );
 				$output         = '&mdash;';
 
 				if ( isset( $question_types[ $question_type ] ) ) {
@@ -206,7 +206,7 @@ class Sensei_Question {
 				break;
 
 			case 'question-category':
-				$output = strip_tags( get_the_term_list( $id, 'question-category', '', ', ', '' ) );
+				$output = wp_strip_all_tags( get_the_term_list( $id, 'question-category', '', ', ', '' ) );
 				if ( ! $output ) {
 					$output = '&mdash;';
 				}
@@ -474,8 +474,14 @@ class Sensei_Question {
 			$output .= $type_options;
 			$output .= '</select>';
 
-			// Question category
-			$cats = get_terms( 'question-category', array( 'hide_empty' => false ) );
+			// Question category.
+			$cats = get_terms(
+				array(
+					'hide_empty' => false,
+					'taxonomy'   => 'question-category',
+				)
+			);
+
 			if ( ! empty( $cats ) && ! is_wp_error( $cats ) ) {
 				$selected    = isset( $_GET['question_cat'] ) ? $_GET['question_cat'] : '';
 				$cat_options = '<option value="">' . esc_html__( 'All categories', 'sensei-lms' ) . '</option>';

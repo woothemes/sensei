@@ -1,0 +1,4 @@
+Significance: patch
+Type: changed
+
+Switch to using `wp_json_encode` instead of `json_encode` on Modules page

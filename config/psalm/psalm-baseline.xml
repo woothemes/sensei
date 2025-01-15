@@ -187,9 +187,6 @@
     <InvalidArgument occurrences="1">
       <code>'course-category'</code>
     </InvalidArgument>
-    <PossibleRawObjectIteration occurrences="1">
-      <code>$cats</code>
-    </PossibleRawObjectIteration>
     <PossiblyFalseArgument occurrences="6">
       <code>$name</code>
       <code>$post_id</code>
@@ -201,9 +198,6 @@
     <PossiblyFalseReference occurrences="1">
       <code>is_enrolled</code>
     </PossiblyFalseReference>
-    <PossiblyInvalidIterator occurrences="1">
-      <code>$cats</code>
-    </PossiblyInvalidIterator>
     <PossiblyInvalidMethodCall occurrences="1">
       <code>get_provider_results</code>
     </PossiblyInvalidMethodCall>
@@ -338,60 +332,6 @@
     <UndefinedInterfaceMethod occurrences="1">
       <code>output</code>
     </UndefinedInterfaceMethod>
-  </file>
-  <file src="includes/admin/class-senseilms-plugin-updater.php">
-    <ArgumentTypeCoercion occurrences="1">
-      <code>'\SenseiLMS_Licensing\SenseiLMS_Plugin_Updater'</code>
-    </ArgumentTypeCoercion>
-    <InvalidReturnStatement occurrences="1">
-      <code>$res</code>
-    </InvalidReturnStatement>
-    <InvalidReturnType occurrences="1">
-      <code>false|object</code>
-    </InvalidReturnType>
-    <PossiblyInvalidPropertyFetch occurrences="18">
-      <code>$remote-&gt;author</code>
-      <code>$remote-&gt;banners</code>
-      <code>$remote-&gt;download_url</code>
-      <code>$remote-&gt;download_url</code>
-      <code>$remote-&gt;icons</code>
-      <code>$remote-&gt;last_updated</code>
-      <code>$remote-&gt;name</code>
-      <code>$remote-&gt;requires</code>
-      <code>$remote-&gt;requires</code>
-      <code>$remote-&gt;requires_php</code>
-      <code>$remote-&gt;requires_php</code>
-      <code>$remote-&gt;sections</code>
-      <code>$remote-&gt;slug</code>
-      <code>$remote-&gt;slug</code>
-      <code>$remote-&gt;tested</code>
-      <code>$remote-&gt;tested</code>
-      <code>$remote-&gt;version</code>
-      <code>$remote-&gt;version</code>
-    </PossiblyInvalidPropertyFetch>
-    <UndefinedClass occurrences="1">
-      <code>\SenseiLMS_Licensing\License_Manager</code>
-    </UndefinedClass>
-    <UndefinedPropertyFetch occurrences="18">
-      <code>$remote-&gt;author</code>
-      <code>$remote-&gt;banners</code>
-      <code>$remote-&gt;download_url</code>
-      <code>$remote-&gt;download_url</code>
-      <code>$remote-&gt;icons</code>
-      <code>$remote-&gt;last_updated</code>
-      <code>$remote-&gt;name</code>
-      <code>$remote-&gt;requires</code>
-      <code>$remote-&gt;requires</code>
-      <code>$remote-&gt;requires_php</code>
-      <code>$remote-&gt;requires_php</code>
-      <code>$remote-&gt;sections</code>
-      <code>$remote-&gt;slug</code>
-      <code>$remote-&gt;slug</code>
-      <code>$remote-&gt;tested</code>
-      <code>$remote-&gt;tested</code>
-      <code>$remote-&gt;version</code>
-      <code>$remote-&gt;version</code>
-    </UndefinedPropertyFetch>
   </file>
   <file src="includes/admin/content-duplicators/class-course-lessons-duplicator.php">
     <PossiblyInvalidArgument occurrences="1">
@@ -1789,9 +1729,8 @@
       <code>$user_id</code>
       <code>$which</code>
     </MissingParamType>
-    <MissingPropertyType occurrences="3">
+    <MissingPropertyType occurrences="2">
       <code>$file</code>
-      <code>$name</code>
       <code>$page_slug</code>
     </MissingPropertyType>
     <PossiblyFalseArgument occurrences="1">
@@ -2422,18 +2361,6 @@
       <code>get_queried_object()-&gt;ID</code>
       <code>get_queried_object()-&gt;post_type</code>
     </PossiblyNullPropertyFetch>
-    <PropertyNotSetInConstructor occurrences="10">
-      <code>$course</code>
-      <code>$lesson</code>
-      <code>$messages</code>
-      <code>$question</code>
-      <code>$quiz</code>
-      <code>WooThemes_Sensei_PostTypes</code>
-      <code>WooThemes_Sensei_PostTypes</code>
-      <code>WooThemes_Sensei_PostTypes</code>
-      <code>WooThemes_Sensei_PostTypes</code>
-      <code>WooThemes_Sensei_PostTypes</code>
-    </PropertyNotSetInConstructor>
     <RedundantConditionGivenDocblockType occurrences="1">
       <code>$post instanceof WP_Post</code>
     </RedundantConditionGivenDocblockType>
@@ -4181,11 +4108,9 @@
     <InvalidGlobal occurrences="1">
       <code>global $sensei_email_data;</code>
     </InvalidGlobal>
-    <MissingPropertyType occurrences="6">
-      <code>$heading</code>
+    <MissingPropertyType occurrences="4">
       <code>$learner</code>
       <code>$recipient</code>
-      <code>$subject</code>
       <code>$teacher</code>
       <code>$template</code>
     </MissingPropertyType>
@@ -4432,8 +4357,7 @@
       <code>$post</code>
       <code>$post</code>
     </ParamNameMismatch>
-    <PossiblyNullArgument occurrences="2">
-      <code>get_edit_post_link( $post )</code>
+    <PossiblyNullArgument occurrences="1">
       <code>get_edit_post_link( $post-&gt;ID )</code>
     </PossiblyNullArgument>
     <PropertyNotSetInConstructor occurrences="4">
@@ -4970,13 +4894,6 @@
     </TypeDoesNotContainType>
   </file>
   <file src="includes/rest-api/class-sensei-rest-api-course-progress-controller.php">
-    <InvalidClass occurrences="1">
-      <code>WP_HTTP</code>
-    </InvalidClass>
-    <PossiblyInvalidArrayAssignment occurrences="2">
-      <code>$result[ $student_id ][ $course_id ]</code>
-      <code>$result[ $student_id ][ $course_id ]</code>
-    </PossiblyInvalidArrayAssignment>
     <PossiblyNullArgument occurrences="1">
       <code>$edit_course_cap</code>
     </PossiblyNullArgument>
@@ -5013,8 +4930,7 @@
       <code>WP_HTTP</code>
       <code>WP_HTTP</code>
     </InvalidClass>
-    <PossiblyInvalidArrayAssignment occurrences="2">
-      <code>$result[ $user_id ][ $course_id ]</code>
+    <PossiblyInvalidArrayAssignment occurrences="1">
       <code>$result[ $user_id ][ $course_id ]</code>
     </PossiblyInvalidArrayAssignment>
     <PossiblyNullArgument occurrences="1">
@@ -5249,12 +5165,6 @@
     </UndefinedPropertyFetch>
   </file>
   <file src="includes/rest-api/class-sensei-rest-api-question-helpers-trait.php">
-    <ArgumentTypeCoercion occurrences="1">
-      <code>$post_args</code>
-    </ArgumentTypeCoercion>
-    <InvalidArgument occurrences="1">
-      <code>$post_args</code>
-    </InvalidArgument>
     <PossibleRawObjectIteration occurrences="1">
       <code>$question_categories</code>
     </PossibleRawObjectIteration>

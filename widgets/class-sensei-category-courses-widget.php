@@ -103,13 +103,13 @@ class Sensei_Category_Courses_Widget extends WP_Widget {
 		$instance = $old_instance;
 
 		/* Strip tags for title and name to remove HTML (important for text inputs). */
-		$instance['title'] = strip_tags( $new_instance['title'] );
+		$instance['title'] = wp_strip_all_tags( $new_instance['title'] );
 
 		/* The select box is returning a text value, so we escape it. */
 		$instance['course_category'] = esc_attr( $new_instance['course_category'] );
 
 		/* Strip tags for limit to remove HTML (important for text inputs). */
-		$instance['limit'] = strip_tags( $new_instance['limit'] );
+		$instance['limit'] = wp_strip_all_tags( $new_instance['limit'] );
 
 		return $instance;
 	}

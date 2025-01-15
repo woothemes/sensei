@@ -44,32 +44,11 @@ abstract class Email_Generators_Abstract {
 	protected $repository;
 
 	/**
-	 * Action name.
+	 * All registered actions.
 	 *
-	 * @var string
+	 * @var array
 	 */
-	private $action = '';
-
-	/**
-	 * Callback name.
-	 *
-	 * @var callable
-	 */
-	private $callback = '';
-
-	/**
-	 * Priority.
-	 *
-	 * @var int
-	 */
-	private $priority = 10;
-
-	/**
-	 * Accepted arguments.
-	 *
-	 * @var int
-	 */
-	private $accepted_args = 1;
+	private $actions = [];
 
 	/**
 	 * Email_Generators_Abstract constructor.
@@ -121,10 +100,11 @@ abstract class Email_Generators_Abstract {
 	 * @param int      $accepted_args Accepted arguments.
 	 */
 	protected function maybe_add_action( $action, $callback, $priority = 10, $accepted_args = 1 ) {
-		$this->action        = $action;
-		$this->callback      = $callback;
-		$this->priority      = $priority;
-		$this->accepted_args = $accepted_args;
+		$this->actions[ $action ] = [
+			'callback'      => $callback,
+			'priority'      => $priority,
+			'accepted_args' => $accepted_args,
+		];
 
 		add_action( $action, [ $this, 'add_action_if_email_active' ], 1 );
 	}
@@ -137,8 +117,11 @@ abstract class Email_Generators_Abstract {
 	 * @internal
 	 */
 	public function add_action_if_email_active() {
-		if ( $this->is_email_active() ) {
-			add_action( $this->action, $this->callback, $this->priority, $this->accepted_args );
+		$current_action_name = current_filter();
+
+		if ( $this->is_email_active() && array_key_exists( $current_action_name, $this->actions ) ) {
+			$action = $this->actions[ $current_action_name ];
+			add_action( $current_action_name, $action['callback'], $action['priority'], $action['accepted_args'] );
 		}
 	}
 

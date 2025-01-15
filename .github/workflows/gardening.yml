@@ -14,12 +14,12 @@ jobs:
 
     steps:
      - name: Checkout
-       uses: actions/checkout@v3
+       uses: actions/checkout@v4
 
      - name: Setup Node
        uses: actions/setup-node@v3
        with:
-         node-version: 16
+         node-version: 22
 
      - name: Wait for prior instances of the workflow to finish
        uses: softprops/turnstyle@v1
