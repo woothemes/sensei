@@ -1,4 +1,0 @@
-Significance: minor
-Type: security
-
-Remove feed content if the user doesn't have access to the lesson
