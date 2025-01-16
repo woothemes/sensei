@@ -12,7 +12,7 @@ type RequestRunner = ( WpApiRequestContext ) => void;
  * Run callback over a separated temporary context
  * avoiding to mess the test context.
  *
- * @param callback A callback function to run requests using the admin context
+ * @param  callback A callback function to run requests using the admin context
  * @return Promise<void>
  */
 export const asAdmin = async ( callback: RequestRunner ): Promise< void > => {
