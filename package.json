@@ -63,6 +63,7 @@
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "@wordpress/element": "$@wordpress/element",
+    "@wordpress/private-apis": "0.40.0",
     "@es-joy/jsdoccomment": "0.36.1",
     "eslint-plugin-jsdoc": "39.3.1",
     "memize": "1.1.0"
