@@ -1284,7 +1284,7 @@ class Sensei_Main {
 	/**
 	 * Remove feed content if the user doesn't have access to the lesson.
 	 *
-	 * @since   $$next-version$$
+	 * @since   4.24.5
 	 * @access  private
 	 *
 	 * @param string $content The current post content.
