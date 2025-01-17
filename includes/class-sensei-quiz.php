@@ -103,6 +103,28 @@ class Sensei_Quiz {
 			// Create the quiz progress when the student visits the quiz page for the first time.
 			add_action( 'wp', array( $this, 'maybe_create_quiz_progress' ) );
 		}
+
+		// Enqueue frontend styles.
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_styles' ) );
+	}
+
+	/**
+	 * Enqueue frontend CSS files for quizzes.
+	 *
+	 * @internal
+	 *
+	 * @since  4.24.4
+	 * @return void
+	 */
+	public function enqueue_styles() {
+		if (
+			is_admin() ||
+			! is_singular( 'quiz' )
+		) {
+			return;
+		}
+
+		Sensei()->assets->enqueue( 'sensei-single-quiz-style', 'blocks/quiz/style.css' );
 	}
 
 	/**

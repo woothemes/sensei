@@ -10,19 +10,22 @@
  * Add customizer settings.
  */
 class Sensei_Customizer {
-
-	/**
-	 * Configurable colors.
-	 *
-	 * @var array[]
-	 */
-	private $colors;
-
 	/**
 	 * Sensei_Customizer constructor.
 	 */
 	public function __construct() {
-		$this->colors = [
+		add_action( 'customize_register', [ $this, 'add_customizer_settings' ] );
+		add_action( 'customize_preview_init', [ $this, 'enqueue_customizer_helper' ] );
+		add_action( 'wp_head', [ $this, 'output_custom_settings' ] );
+	}
+
+	/**
+	 * Get the configurable colors.
+	 *
+	 * @return array[]
+	 */
+	private function get_colors() {
+		return [
 			'sensei-course-theme-primary-color'    => [
 				'label'   => __( 'Primary Color', 'sensei-lms' ),
 				'default' => '#1e1e1e',
@@ -36,16 +39,12 @@ class Sensei_Customizer {
 				'default' => '#1e1e1e',
 			],
 		];
-
-		add_action( 'customize_register', [ $this, 'add_customizer_settings' ] );
-		add_action( 'customize_preview_init', [ $this, 'enqueue_customizer_helper' ] );
-		add_action( 'wp_head', [ $this, 'output_custom_settings' ] );
 	}
 
 	/**
 	 * Add Sensei section and settings to Customizer.
 	 *
-	 * @param WP_Customize_Manager $wp_customize
+	 * @param WP_Customize_Manager $wp_customize The WP_Customize_Manager instance.
 	 */
 	public function add_customizer_settings( WP_Customize_Manager $wp_customize ) {
 
@@ -59,7 +58,7 @@ class Sensei_Customizer {
 			]
 		);
 
-		foreach ( $this->colors as $variable => $settings ) {
+		foreach ( $this->get_colors() as $variable => $settings ) {
 
 			$wp_customize->add_setting(
 				$variable,
@@ -84,7 +83,6 @@ class Sensei_Customizer {
 				)
 			);
 		}
-
 	}
 
 	/**
@@ -103,7 +101,7 @@ class Sensei_Customizer {
 
 		$css = '';
 
-		foreach ( $this->colors as $variable => $settings ) {
+		foreach ( $this->get_colors() as $variable => $settings ) {
 			$value = get_option( $variable );
 			if ( $value && $value !== $settings['default'] ) {
 				$css .= sprintf( "--%s: %s;\n", $variable, ( $value ) );
@@ -127,7 +125,7 @@ class Sensei_Customizer {
 		?>
 		<script type="text/javascript">
 			<?php
-			foreach ( $this->colors as $variable => $settings ) {
+			foreach ( $this->get_colors() as $variable => $settings ) {
 				?>
 			wp.customize( '<?php echo esc_js( $variable ); ?>', ( setting ) => {
 				setting.bind( ( value ) => {

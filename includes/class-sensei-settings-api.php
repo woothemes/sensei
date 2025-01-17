@@ -35,20 +35,6 @@ class Sensei_Settings_API {
 	public $page_slug;
 
 	/**
-	 * Page name.
-	 *
-	 * @var string
-	 */
-	public $name;
-
-	/**
-	 * Menu label.
-	 *
-	 * @var string
-	 */
-	public $menu_label;
-
-	/**
 	 * Settings.
 	 *
 	 * @var array
@@ -132,7 +118,6 @@ class Sensei_Settings_API {
 	 * @since  1.0.0
 	 */
 	public function __construct() {
-
 		$this->token        = 'sensei-settings';
 		$this->token_legacy = 'woothemes-sensei-settings';
 		$this->page_slug    = 'sensei-settings-api';
@@ -149,9 +134,48 @@ class Sensei_Settings_API {
 		$this->settings_version  = '';
 
 		// Set default empty values for properties.
-		$this->name       = '';
-		$this->menu_label = '';
-		$this->settings   = array();
+		$this->settings = array();
+	}
+
+	/**
+	 * Graceful fallback for deprecated properties.
+	 *
+	 * @since 4.24.4
+	 *
+	 * @param string $key The key to get.
+	 *
+	 * @return mixed
+	 */
+	public function __get( $key ) {
+		if ( 'name' === $key ) {
+			_doing_it_wrong( __CLASS__ . '->name', 'The "name" property is deprecated.', '4.24.5' );
+
+			return $this->get_name();
+		}
+
+		if ( 'menu_label' === $key ) {
+			_doing_it_wrong( __CLASS__ . '->menu_label', 'The "menu_label" property is deprecated.', '4.24.5' );
+
+			return $this->get_menu_label();
+		}
+	}
+
+	/**
+	 * Get the name of the screen.
+	 *
+	 * @return string
+	 */
+	protected function get_name() {
+		return ''; // Should be overwritten by extension.
+	}
+
+	/**
+	 * Get the menu label.
+	 *
+	 * @return string
+	 */
+	protected function get_menu_label() {
+		return ''; // Should be overwritten by extension.
 	}
 
 	/**
@@ -498,7 +522,7 @@ class Sensei_Settings_API {
 	public function register_settings_screen() {
 
 		if ( current_user_can( 'manage_sensei' ) ) {
-			$hook = add_submenu_page( 'sensei', $this->name, $this->menu_label, 'manage_sensei', $this->page_slug, array( $this, 'settings_screen' ) );
+			$hook = add_submenu_page( 'sensei', $this->get_name(), $this->get_menu_label(), 'manage_sensei', $this->page_slug, array( $this, 'settings_screen' ) );
 
 			$this->hook = $hook;
 		}
@@ -527,7 +551,7 @@ class Sensei_Settings_API {
 					<div class="sensei-custom-navigation__title">
 						<h1>
 							<?php
-							echo esc_html( $this->name );
+							echo esc_html( $this->get_name() );
 
 							if ( '' != $this->settings_version ) {
 								echo ' <span class="version">' . esc_html( $this->settings_version ) . '</span>';
@@ -1240,7 +1264,7 @@ class Sensei_Settings_API {
 			}
 		} else {
 			// translators: Placeholder is the name of the settings page.
-			$message = sprintf( __( '%s updated', 'sensei-lms' ), $this->name );
+			$message = sprintf( __( '%s updated', 'sensei-lms' ), $this->get_name() );
 			add_settings_error( $this->token . '-errors', $this->token, $message, 'updated' );
 		}
 	}

@@ -11,7 +11,6 @@
 			<directory name="config" />
 			<directory name="includes/internal/emails/views" />
 			<directory name="sample-data" />
-			<directory name="third-party" />
 			<directory name="vendor" />
 			<directory name="vendor-bin" />
 			<directory name="widgets" />
@@ -32,6 +31,11 @@
 				<referencedProperty name="Sensei_Main::$lesson_progress_repository_factory" />
 				<referencedProperty name="Sensei_Main::$quiz_progress_repository_factory" />
 				<referencedProperty name="Sensei_REST_API_Lesson_Actions_Controller::$schema" />
+				<referencedProperty name="Sensei_PostTypes::$course" />
+				<referencedProperty name="Sensei_PostTypes::$lesson" />
+				<referencedProperty name="Sensei_PostTypes::$question" />
+				<referencedProperty name="Sensei_PostTypes::$quiz" />
+				<referencedProperty name="Sensei_PostTypes::$messages" />
 			</errorLevel>
 		</PropertyNotSetInConstructor>
 		<UndefinedClass>

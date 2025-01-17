@@ -19,8 +19,6 @@ if ( ! class_exists( 'Sensei_Email_Teacher_Completed_Lesson', false ) ) :
 	class Sensei_Email_Teacher_Completed_Lesson {
 
 		var $template;
-		var $subject;
-		var $heading;
 		var $recipient;
 		var $learner;
 		var $teacher;
@@ -30,9 +28,6 @@ if ( ! class_exists( 'Sensei_Email_Teacher_Completed_Lesson', false ) ) :
 		 */
 		function __construct() {
 			$this->template = 'teacher-completed-lesson';
-			// translators: Placeholder is the blog name.
-			$this->subject = apply_filters( 'sensei_email_subject', sprintf( __( '[%1$s] Your student has completed a lesson', 'sensei-lms' ), get_bloginfo( 'name' ) ), $this->template );
-			$this->heading = apply_filters( 'sensei_email_heading', __( 'Your student has completed a lesson', 'sensei-lms' ), $this->template );
 		}
 
 		/**
@@ -63,7 +58,7 @@ if ( ! class_exists( 'Sensei_Email_Teacher_Completed_Lesson', false ) ) :
 				'sensei_email_data',
 				array(
 					'template'     => $this->template,
-					'heading'      => $this->heading,
+					'heading'      => $this->get_heading(),
 					'teacher_id'   => $teacher_id,
 					'learner_id'   => $learner_id,
 					'learner_name' => $this->learner->display_name,
@@ -76,7 +71,26 @@ if ( ! class_exists( 'Sensei_Email_Teacher_Completed_Lesson', false ) ) :
 			$this->recipient = stripslashes( $this->teacher->user_email );
 
 			// Send mail
-			Sensei()->emails->send( $this->recipient, $this->subject, Sensei()->emails->get_content( $this->template ) );
+			Sensei()->emails->send( $this->recipient, $this->get_subject(), Sensei()->emails->get_content( $this->template ) );
+		}
+
+		/**
+		 * Get the subject.
+		 *
+		 * @return string
+		 */
+		private function get_subject() {
+			// translators: Placeholder is the blog name.
+			return (string) apply_filters( 'sensei_email_subject', sprintf( __( '[%1$s] Your student has completed a lesson', 'sensei-lms' ), get_bloginfo( 'name' ) ), $this->template );
+		}
+
+		/**
+		 * Get the heading.
+		 *
+		 * @return string
+		 */
+		private function get_heading() {
+			return (string) apply_filters( 'sensei_email_heading', __( 'Your student has completed a lesson', 'sensei-lms' ), $this->template );
 		}
 	}
 

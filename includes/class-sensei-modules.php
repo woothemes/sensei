@@ -731,8 +731,8 @@ class Sensei_Core_Modules {
 			}
 		}
 
-		// Encode and return results for processing & selection
-		echo json_encode( $found_courses );
+		// Encode and return results for processing & selection.
+		echo wp_json_encode( $found_courses );
 		die();
 	}
 
@@ -2289,25 +2289,26 @@ class Sensei_Core_Modules {
 	 * Will return the admin user author could not be determined.
 	 *
 	 * @since 1.8.0
+	 * @deprecated 4.24.5
 	 *
 	 * @param string $term_name
 	 * @return array $owners { type WP_User }. Empty array if none if found.
 	 */
 	public static function get_term_authors( $term_name ) {
+		_deprecated_function( __METHOD__, '4.24.5' );
 
 		$terms = get_terms(
-			array( 'module' ),
 			array(
-				'name__like' => $term_name,
 				'hide_empty' => false,
+				'name__like' => $term_name,
+				'taxonomy'   => 'module',
 			)
 		);
 
 		$owners = array();
+
 		if ( empty( $terms ) ) {
-
 			return $owners;
-
 		}
 
 		// setup the admin user

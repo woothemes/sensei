@@ -31,7 +31,7 @@ class Sensei_Course_List_Categories_Filter extends Sensei_Course_List_Filter_Abs
 	 *
 	 * @param WP_Block $block The block instance.
 	 */
-	public function get_content( WP_Block $block ) : string {
+	public function get_content( WP_Block $block ): string {
 		$attributes       = $block->attributes;
 		$query_id         = $block->context['queryId'];
 		$is_inherited     = $block->context['query']['inherit'] ?? false;
@@ -78,7 +78,12 @@ class Sensei_Course_List_Categories_Filter extends Sensei_Course_List_Filter_Abs
 		// phpcs:ignore WordPress.Security.NonceVerification
 		$category_id = intval( $_GET[ $filter_param_key ] );
 
-		$course_categories = get_terms( 'course-category', [ 'fields' => 'ids' ] );
+		$course_categories = get_terms(
+			array(
+				'fields'   => 'ids',
+				'taxonomy' => 'course-category',
+			)
+		);
 
 		if ( ! is_array( $course_categories ) || ! in_array( $category_id, $course_categories, true ) ) {
 			return [];
