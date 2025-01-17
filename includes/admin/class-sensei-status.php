@@ -236,9 +236,9 @@ class Sensei_Status {
 		}
 
 		// Read the first 8kb of the file.
-		$fp        = fopen( $file, 'r' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_fopen -- Read only open.
-		$file_data = fread( $fp, 8192 ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_fread
-		fclose( $fp ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_fclose
+		$fp        = fopen( $file, 'r' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen -- Read only open.
+		$file_data = fread( $fp, 8192 ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fread
+		fclose( $fp ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
 
 		// Make sure we catch CR-only line endings.
 		$file_data = str_replace( "\r", "\n", $file_data );

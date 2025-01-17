@@ -10,6 +10,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 ?>
+<!-- wp:paragraph {"placeholder":"<?php esc_html_e( 'Write lesson content...', 'sensei-lms' ); ?>","className":"sensei-content-description"} -->
+<p class="sensei-content-description"></p>
+<!-- /wp:paragraph -->
 <!-- wp:group {"align":"wide","style":{"color":{"background":"#f6f6f6"}}} -->
 <div class="wp-block-group alignwide has-background" style="background-color:#f6f6f6"><!-- wp:columns {"verticalAlignment":"center","align":"wide"} -->
 	<div class="wp-block-columns alignwide are-vertically-aligned-center"><!-- wp:column {"verticalAlignment":"center"} -->
@@ -53,7 +56,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <!-- wp:sensei-lms/lesson-actions -->
 <div class="wp-block-sensei-lms-lesson-actions"><div class="sensei-buttons-container"><!-- wp:sensei-lms/button-view-quiz {"inContainer":true} -->
-		<div class="wp-block-sensei-lms-button-view-quiz is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-view-quiz__wrapper"><div class="wp-block-sensei-lms-button-view-quiz is-style-default wp-block-sensei-button wp-block-button has-text-align-left"><button class="wp-block-button__link"><?php esc_html_e( 'View Quiz', 'sensei-lms' ); ?></button></div></div>
+		<div class="wp-block-sensei-lms-button-view-quiz is-style-default sensei-buttons-container__button-block wp-block-sensei-lms-button-view-quiz__wrapper"><div class="wp-block-sensei-lms-button-view-quiz is-style-default wp-block-sensei-button wp-block-button has-text-align-left"><button class="wp-block-button__link"><?php esc_html_e( 'Take Quiz', 'sensei-lms' ); ?></button></div></div>
 		<!-- /wp:sensei-lms/button-view-quiz -->
 
 		<!-- wp:sensei-lms/button-complete-lesson {"inContainer":true} -->

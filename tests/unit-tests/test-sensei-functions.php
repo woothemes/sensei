@@ -2,11 +2,26 @@
 
 class Sensei_Functions_Test extends WP_UnitTestCase {
 
+	/**
+	 * Sensei factory.
+	 *
+	 * @var \Sensei_Factory
+	 */
+	protected $factory;
+
+	public function setUp(): void {
+		parent::setUp();
+
+		$this->factory = new \Sensei_Factory();
+	}
+
 	public function tearDown(): void {
 		// Ensure explicit theme support is removed.
 		remove_theme_support( 'sensei' );
 
 		parent::tearDown();
+
+		$this->factory->tearDown();
 	}
 
 	/**
@@ -106,6 +121,30 @@ class Sensei_Functions_Test extends WP_UnitTestCase {
 			sensei_user_registration_url(),
 			'Should return NULL when filter is set to use wp registration link'
 		);
+	}
+
+	public function testSenseiCanUserViewLesson_WhenCalled_FiresFilterWithChecksArgument() {
+		/* Arrange. */
+		$lesson_id = $this->factory->lesson->create();
+		$user_id   = $this->factory->user->create();
+
+		$has_checks = false;
+		$filter     = function ( $can_view_lesson, $lesson_id, $user_id, $checks ) use ( &$has_checks ) {
+			$has_checks = is_array( $checks ) && isset(
+				$checks['login_not_required'],
+				$checks['user_has_all_access'],
+				$checks['user_can_view_course_content'],
+				$checks['pre_requisite_complete'],
+				$checks['is_preview_lesson']
+			);
+		};
+		add_filter( 'sensei_can_user_view_lesson', $filter, 10, 4 );
+
+		/* Act. */
+		sensei_can_user_view_lesson( $lesson_id, $user_id );
+
+		/* Assert. */
+		$this->assertTrue( $has_checks );
 	}
 
 	/**

@@ -35,6 +35,11 @@ $MOBILE_HEADER_SIZE: 32px;
 	float: right;
 }
 
+.wp-block-image img {
+	height: auto;
+	box-sizing: border-box;
+}
+
 .has-global-padding{
 	padding: 0px;
 }
@@ -44,7 +49,19 @@ $MOBILE_HEADER_SIZE: 32px;
 }
 
 .has-border-color, .has-border {
- 	border-style: solid;
+	border-style: solid;
+}
+
+.has-text-align-center{
+	text-align:center;
+}
+
+.has-text-align-left{
+	text-align:left;
+}
+
+.has-text-align-right{
+	text-align:right;
 }
 
 .wp-element-button, .editor-styles-wrapper .wp-block-button__link {
@@ -80,21 +97,21 @@ figure {
 /* MOBILE VERSION */
 @media (max-width: 800px) {
 
-    .email-notification__header {
-        min-height: $MOBILE_HEADER_SIZE !important; // It is important when there is no logo available.
-    }
+	.email-notification__header {
+		min-height: $MOBILE_HEADER_SIZE !important; // It is important when there is no logo available.
+	}
 
-    .email-notification__header .wp-block-site-title {
-        line-height: $MOBILE_HEADER_SIZE !important;
-    }
+	.email-notification__header .wp-block-site-title {
+		line-height: $MOBILE_HEADER_SIZE !important;
+	}
 
 	.wp-block-site-title {
 		font-size: 15px !important;
 	}
 
 	.wp-block-site-logo img{
-    	max-height: $MOBILE_HEADER_SIZE !important;
-    }
+		max-height: $MOBILE_HEADER_SIZE !important;
+	}
 
 	.wp-block-buttons {
 		margin-bottom: 0 !important;

@@ -24,7 +24,7 @@ class Sensei_Block_Quiz {
 			[
 				'render_callback' => [ $this, 'render_quiz' ],
 			],
-			Sensei()->assets->src_path( 'blocks/quiz' )
+			Sensei()->assets->src_path( 'blocks/quiz/quiz-block' )
 		);
 	}
 

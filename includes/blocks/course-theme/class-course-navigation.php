@@ -24,6 +24,7 @@ class Course_Navigation {
 		'not-started' => 'circle',
 		'in-progress' => 'half-filled-circle',
 		'ungraded'    => 'half-filled-circle',
+		'complete'    => 'check-filled-circle',
 		'completed'   => 'check-filled-circle',
 		'failed'      => 'half-filled-circle',
 		'locked'      => 'lock',
@@ -95,7 +96,7 @@ class Course_Navigation {
 		$modules_html = implode(
 			'',
 			array_map(
-				function( $item ) {
+				function ( $item ) {
 					if ( 'module' === $item['type'] ) {
 						return $this->render_module( $item );
 					}
@@ -108,7 +109,7 @@ class Course_Navigation {
 		$lessons_html = implode(
 			'',
 			array_map(
-				function( $item ) {
+				function ( $item ) {
 					if ( 'lesson' === $item['type'] ) {
 						return $this->render_lesson( $item );
 					}
@@ -158,13 +159,13 @@ class Course_Navigation {
 	private function render_module( $module ) {
 		$module_id  = $module['id'];
 		$title      = esc_html( $module['title'] );
-		$lessons    = $module['lessons'];
+		$lessons    = is_array( $module['lessons'] ) ? $module['lessons'] : [];
 		$module_url = add_query_arg( 'course_id', $this->course_id, get_term_link( $module_id, 'module' ) );
 
 		$lessons_html = implode(
 			'',
 			array_map(
-				function( $lesson ) {
+				function ( $lesson ) {
 					return $this->render_lesson( $lesson );
 				},
 				$lessons
@@ -175,7 +176,7 @@ class Course_Navigation {
 		$has_current_lesson = count(
 			array_filter(
 				$lessons,
-				function( $lesson ) use ( $current_lesson_id ) {
+				function ( $lesson ) use ( $current_lesson_id ) {
 					return $current_lesson_id === $lesson['id'];
 				}
 			)
@@ -186,7 +187,7 @@ class Course_Navigation {
 		$quiz_count   = count(
 			array_filter(
 				$lessons,
-				function( $lesson ) {
+				function ( $lesson ) {
 					return \Sensei_Lesson::lesson_quiz_has_questions( $lesson['id'] );
 				}
 			)
@@ -213,7 +214,7 @@ class Course_Navigation {
 				<div class="sensei-lms-course-navigation-module__header">
 					<button type="button" class="sensei-collapsible__toggle sensei-lms-course-navigation-module__button ' . $collapsed . '"
 						aria-controls="' . $content_id . '" aria-expanded="' . esc_attr( $is_current_module ? 'true' : 'false' ) . '">
-						<div class="sensei-lms-course-navigation-module__title">' . $title . '</div>
+						<h3 class="sensei-lms-course-navigation-module__title">' . $title . '</h3>
 						' . Sensei()->assets->get_icon( 'chevron-up', 'sensei-lms-course-navigation-module__collapsible-icon' ) . '
 					</button>
 				</div>
@@ -282,6 +283,15 @@ class Course_Navigation {
 	private function lesson_status_icon( $status ) {
 		$icon = Sensei()->assets->get_icon( self::ICONS[ $status ], 'sensei-lms-course-navigation-lesson__status' );
 
+		/**
+		 * Filter the lesson status icon.
+		 *
+		 * @hook sensei_learning_mode_lesson_status_icon
+		 *
+		 * @param {string} $icon   The icon HTML.
+		 * @param {string} $status The lesson status.
+		 * @return {string} The icon HTML.
+		 */
 		return apply_filters( 'sensei_learning_mode_lesson_status_icon', $icon, $status );
 	}
 
@@ -310,12 +320,22 @@ class Course_Navigation {
 		if ( $completed ) {
 			$status = 'completed';
 		} else {
-			$user_lesson_status = \Sensei_Utils::user_lesson_status( $lesson_id, $this->user_id );
-			if ( isset( $user_lesson_status->comment_approved ) ) {
-				$status = $user_lesson_status->comment_approved;
+			// If the lesson has a quiz, use the quiz progress.
+			$quiz_id       = Sensei()->lesson->lesson_quizzes( $lesson_id );
+			$quiz_progress = null;
+			if ( $quiz_id ) {
+				$quiz_progress = \Sensei()->quiz_progress_repository->get( $quiz_id, $this->user_id );
+			}
 
+			if ( $quiz_progress ) {
+				$status = $quiz_progress->get_status();
 				if ( in_array( $status, $in_progress_statuses, true ) ) {
 					$status = 'in-progress';
+				}
+			} else {
+				$lesson_progress = \Sensei()->lesson_progress_repository->get( $lesson_id, $this->user_id );
+				if ( $lesson_progress ) {
+					$status = $lesson_progress->get_status();
 				}
 			}
 		}

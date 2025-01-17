@@ -17,10 +17,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 get_sensei_header();
 
 /**
- * This action before course messages archive loop. This hook fires within the archive-message.php file.
+ * This action before course messages archive loop.
+ * This hook fires within the archive-message.php file.
  * It fires even if the current archive has no no messages.
  *
  * @since 1.9.0
+ *
+ * @hook sensei_archive_before_message_loop
  *
  * @hooked Sensei_Messages::the_archive_header -20
  */
@@ -43,10 +46,13 @@ do_action( 'sensei_archive_before_message_loop' );
 
 <?php
 /**
- * This action before course messages archive loop. This hook fires within the archive-message.php file.
+ * This action before course messages archive loop.
+ * This hook fires within the archive-message.php file.
  * It fires even if the current archive has no no messages.
  *
  * @since 1.9.0
+ *
+ * @hook sensei_archive_after_message_loop
  */
 do_action( 'sensei_archive_after_message_loop' );
 ?>

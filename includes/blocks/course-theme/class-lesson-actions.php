@@ -28,6 +28,8 @@ class Lesson_Actions {
 
 	/**
 	 * Lesson_Actions constructor.
+	 *
+	 * @deprecated 4.19.2 Use the normal Lesson Actions block (Sensei_Lesson_Actions_Block) instead.
 	 */
 	public function __construct() {
 		$block_json_path = Sensei()->assets->src_path( 'course-theme/blocks' ) . self::BLOCK_JSON_FILE;
@@ -42,14 +44,20 @@ class Lesson_Actions {
 	}
 
 	/**
-	 * Renders complete lesson button.
+	 * Render Complete Lesson button.
 	 *
-	 * @param string $button_class Button class.
-	 * @param bool   $is_disabled  Whether it is disabled.
+	 * @param string $button_class     Button class.
+	 * @param bool   $is_outline_style Whether the button should be rendered using the outline style.
+	 * @param bool   $is_disabled      Whether it is disabled.
 	 *
 	 * @return string The complete lesson button.
 	 */
-	private function render_complete_lesson( string $button_class, bool $is_disabled ): string {
+	private function render_complete_lesson( string $button_class, bool $is_outline_style, bool $is_disabled ): string {
+		if ( ! sensei_can_user_view_lesson() ) {
+			return '';
+		}
+
+		$button_style_class = $is_outline_style ? 'is-style-outline' : '';
 		$disabled_attribute = $is_disabled ? 'disabled' : '';
 
 		$nonce     = wp_nonce_field( 'woothemes_sensei_complete_lesson_noonce', 'woothemes_sensei_complete_lesson_noonce', false, false );
@@ -61,7 +69,7 @@ class Lesson_Actions {
 			<form data-id="complete-lesson-form" class="sensei-course-theme-lesson-actions__complete-lesson-form" method="POST" action="' . $permalink . '">
 				' . $nonce . '
 				<input type="hidden" name="quiz_action" value="lesson-complete" />
-				<div class="wp-block-button is-style-outline">
+				<div class="wp-block-button ' . $button_style_class . '">
 					<button type="submit" data-id="complete-lesson-button" class="wp-block-button__link wp-element-button sensei-course-theme__button sensei-course-theme-lesson-actions__complete ' . $button_class . '" ' . $disabled_attribute . '>
 						' . $text . '
 					</button>
@@ -80,7 +88,7 @@ class Lesson_Actions {
 		$icon  = \Sensei()->assets->get_icon( 'checked' );
 
 		return (
-			'<div className="wp-block-button">' .
+			'<div class="wp-block-button is-style-outline">' .
 				'<button disabled="disabled" class="wp-block-button__link wp-element-button sensei-course-theme-lesson-actions__completed sensei-course-theme__button is-secondary is-completed has-icon">' . $icon .
 					' <span>' .
 						$label .
@@ -107,9 +115,9 @@ class Lesson_Actions {
 		}
 
 		$label = __( 'Next Lesson', 'sensei-lms' );
-		$icon  = \Sensei()->assets->get_icon( 'chevron-right' );
+		$icon  = \Sensei()->assets->get_icon( 'arrow-right' );
 
-		return ( "<a class='sensei-course-theme-lesson-actions__next-lesson sensei-course-theme__button is-link has-icon' href='{$url}'><span>{$label}</span>{$icon}</a>" );
+		return ( "<a class='wp-block-button__link wp-element-button sensei-course-theme__button sensei-course-theme-lesson-actions__next-lesson is-primary has-icon' href='{$url}'><span>{$label}</span>{$icon}</a>" );
 
 	}
 
@@ -159,6 +167,12 @@ class Lesson_Actions {
 
 		$course_id = Sensei()->lesson->get_course_id( $lesson_id );
 
+		$is_learning_mode = \Sensei_Course_Theme_Option::has_learning_mode_enabled( $course_id );
+
+		if ( $is_learning_mode && 'quiz' === get_post_type() ) {
+			return '';
+		}
+
 		if (
 			! Sensei_Course::is_user_enrolled( $course_id )
 		) {
@@ -174,20 +188,24 @@ class Lesson_Actions {
 			}
 		} else {
 			$render_quiz_button          = false;
-			$complete_button_class       = 'is-primary';
 			$has_incomplete_prerequisite = ! Sensei_Lesson::is_prerequisite_complete( $lesson_id, $user_id );
 			$quiz_permalink              = Sensei()->lesson->get_quiz_permalink( $lesson_id );
 			$is_quiz_submitted           = Sensei()->lesson->is_quiz_submitted( $lesson_id, $user_id );
 			$is_pass_required            = Sensei()->lesson->lesson_has_quiz_with_questions_and_pass_required( $lesson_id );
 
 			if ( ! empty( $quiz_permalink ) && ! $is_quiz_submitted ) {
-				$render_quiz_button    = true;
-				$complete_button_class = 'is-secondary';
+				$render_quiz_button = true;
 			}
 
 			// Complete button.
 			if ( ! $is_pass_required ) {
-				$complete_lesson_button = $this->render_complete_lesson( $complete_button_class, $has_incomplete_prerequisite );
+				$is_outline_style = false;
+
+				if ( $render_quiz_button ) {
+					$is_outline_style = true;
+				}
+
+				$complete_lesson_button = $this->render_complete_lesson( 'is-secondary', $is_outline_style, $has_incomplete_prerequisite );
 				$actions[]              = $complete_lesson_button;
 			}
 

@@ -93,7 +93,7 @@ class Email_Sender {
 	public function send_email( $email_name, $replacements, $usage_tracking_type ) {
 		$email_post = $this->get_email_post_by_name( $email_name );
 
-		if ( ! $email_post ) {
+		if ( ! $email_post || 'publish' !== $email_post->post_status ) {
 			return;
 		}
 
@@ -104,16 +104,19 @@ class Email_Sender {
 		 * Filter the email replacements.
 		 *
 		 * @since 4.12.0
+		 *
 		 * @hook sensei_email_replacements
 		 *
-		 * @param {Array}        $replacements The email replacements.
+		 * @param {array}        $replacements The email replacements.
 		 * @param {string}       $email_name   The email name.
 		 * @param {WP_Post}      $email_post   The email post.
 		 * @param {Email_Sender} $email_sender The email sender class instance.
-		 *
 		 * @return {Array} The email replacements.
 		 */
 		$replacements = apply_filters( 'sensei_email_replacements', $replacements, $email_name, $email_post, $this );
+
+		add_filter( 'wp_mail_from', array( $this, 'get_from_address' ) );
+		add_filter( 'wp_mail_from_name', array( $this, 'get_from_name' ) );
 
 		foreach ( $replacements as $recipient => $replacement ) {
 			$subject = $this->get_email_subject( $email_post, $replacement );
@@ -122,17 +125,54 @@ class Email_Sender {
 			/*
 			 * For documentation of the filter check class-sensei-emails.php file.
 			 */
-			if ( apply_filters( 'sensei_send_emails', true, $recipient, $subject, $message ) ) {
+			if ( apply_filters( 'sensei_send_emails', true, $recipient, $subject, $message, $email_name, $replacement ) ) {
 				wp_mail(
 					$recipient,
 					$subject,
 					$message,
-					$this->get_email_headers(),
-					null
+					$this->get_email_headers()
 				);
 				sensei_log_event( 'email_send', [ 'type' => $usage_tracking_type ] );
 			}
 		}
+
+		remove_filter( 'wp_mail_from', array( $this, 'get_from_address' ) );
+		remove_filter( 'wp_mail_from_name', array( $this, 'get_from_name' ) );
+	}
+
+
+	/**
+	 * Get from name for email.
+	 *
+	 * @since 4.16.0
+	 * @return string
+	 */
+	public function get_from_name() {
+		$settings  = $this->settings->get_settings();
+		$from_name = $settings['email_from_name'] ?? '';
+
+		if ( empty( $from_name ) ) {
+			return get_bloginfo( 'name' );
+		}
+
+		return $from_name;
+	}
+
+	/**
+	 * Get from email address.
+	 *
+	 * @since 4.16.0
+	 * @return string
+	 */
+	public function get_from_address() {
+		$settings     = $this->settings->get_settings();
+		$from_address = $settings['email_from_address'] ?? '';
+
+		if ( empty( $from_address ) ) {
+			return get_bloginfo( 'admin_email' );
+		}
+
+		return $from_address;
 	}
 
 	/**
@@ -176,9 +216,8 @@ class Email_Sender {
 		);
 
 		the_post();
-
 		$templated_output = $this->get_templated_post_content( $placeholders );
-		wp_reset_postdata();
+		wp_reset_query(); // phpcs:ignore WordPress.WP.DiscouragedFunctions.wp_reset_query_wp_reset_query -- We need to reset the global query object.
 
 		return CssInliner::fromHtml( $templated_output )
 			->inlineCss( $this->load_email_styles() )
@@ -190,17 +229,18 @@ class Email_Sender {
 	 *
 	 * @internal
 	 *
-	 * @param string $string The string.
+	 * @param string $content Content to replace the placeholders in.
 	 * @param array  $placeholders The placeholders.
 	 *
 	 * @return string
 	 */
-	private function replace_placeholders( string $string, array $placeholders ): string {
+	private function replace_placeholders( string $content, array $placeholders ): string {
 		foreach ( $placeholders as $placeholder => $value ) {
-			$string = str_replace( '[' . $placeholder . ']', $value, $string );
+			// Strip out URL protocol if necessary. Partial solution for https://github.com/Automattic/sensei/issues/7621.
+			$content = preg_replace( '~(https?://)?\[' . $placeholder . '\]~', $value, $content );
 		}
 
-		return $string;
+		return $content;
 	}
 
 	/**
@@ -211,14 +251,15 @@ class Email_Sender {
 	 * @return string
 	 */
 	private function load_email_styles(): string {
-		$css_dist_path = Sensei()->assets->dist_path( 'css/email-notifications/email-style.css' );
+		$styles = wp_get_global_stylesheet();
 
+		$css_dist_path = Sensei()->assets->dist_path( 'css/email-notifications/email-style.css' );
 		if ( file_exists( $css_dist_path ) ) {
 			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Local file usage.
-			return file_get_contents( $css_dist_path );
+			$styles .= file_get_contents( $css_dist_path );
 		}
 
-		return '';
+		return $styles;
 	}
 
 	/**
@@ -283,7 +324,7 @@ class Email_Sender {
 	 *
 	 * @return array Headers.
 	 */
-	private function get_email_headers():array {
+	private function get_email_headers(): array {
 		$settings = $this->settings->get_settings();
 		$headers  = [
 			'Content-Type: text/html; charset=UTF-8',
@@ -293,6 +334,14 @@ class Email_Sender {
 			$reply_to_address = $settings['email_reply_to_address'];
 			$reply_to_name    = isset( $settings['email_reply_to_name'] ) ? $settings['email_reply_to_name'] : '';
 			$headers[]        = "Reply-To: $reply_to_name <$reply_to_address>";
+		}
+
+		if ( ! empty( $settings['email_cc'] ) ) {
+			$headers[] = 'Cc: ' . $settings['email_cc'];
+		}
+
+		if ( ! empty( $settings['email_bcc'] ) ) {
+			$headers[] = 'Bcc: ' . $settings['email_bcc'];
 		}
 
 		return $headers;

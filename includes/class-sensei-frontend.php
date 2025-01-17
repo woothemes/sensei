@@ -152,7 +152,12 @@ class Sensei_Frontend {
 			Sensei()->assets->register( 'sensei-stop-double-submission', 'js/stop-double-submission.js', [], true );
 			Sensei()->assets->register( Sensei()->token . '-user-dashboard', 'js/user-dashboard.js', [ 'jquery-ui-tabs' ], true );
 
-			// Allow additional scripts to be loaded.
+			/**
+			 * Fires when the frontend scripts are being enqueued.
+			 * Allow additional scripts to be loaded.
+			 *
+			 * @hook sensei_additional_scripts
+			 */
 			do_action( 'sensei_additional_scripts' );
 
 		}
@@ -166,16 +171,33 @@ class Sensei_Frontend {
 	 * @return void
 	 */
 	public function enqueue_styles() {
+		global $post;
+
+		$is_learning_mode_enabled = false;
+		$post_type                = get_post_type( $post );
+		$disable_styles           = Sensei_Utils::get_setting_as_flag( 'styles_disable', 'sensei_disable_styles' );
+
+		// Don't load frontend.css in Learning Mode as it's not needed and negatively impacts button styles.
+		if ( 'lesson' === $post_type ) {
+			$course_id                = intval( get_post_meta( $post->ID, '_lesson_course', true ) );
+			$is_learning_mode_enabled = Sensei_Course_Theme_Option::has_learning_mode_enabled( $course_id );
+		}
+
 		Sensei()->assets->enqueue( 'pages-frontend', 'css/pages-frontend.css' );
 
-		$disable_styles = Sensei_Utils::get_setting_as_flag( 'styles_disable', 'sensei_disable_styles' );
-
-		if ( ! $disable_styles ) {
-			Sensei()->assets->enqueue( Sensei()->token . '-frontend', 'css/frontend.css', [], 'screen' );
-
-			// Allow additional stylesheets to be loaded.
-			do_action( 'sensei_additional_styles' );
+		if ( $disable_styles || $is_learning_mode_enabled ) {
+			return;
 		}
+
+		Sensei()->assets->enqueue( Sensei()->token . '-frontend', 'css/frontend.css', [], 'screen' );
+
+		/**
+		 * Fires when the frontend styles are being enqueued.
+		 * Allow additional stylesheets to be loaded.
+		 *
+		 * @hook sensei_additional_styles
+		 */
+		do_action( 'sensei_additional_styles' );
 	}
 
 	/**
@@ -323,7 +345,7 @@ class Sensei_Frontend {
 
 		if ( 'nav-menus.php' != $pagenow && ! defined( 'DOING_AJAX' ) && isset( $item->url ) && 'custom' == $item->type ) {
 			// Set up Sensei menu links.
-			$my_account_page_id = intval( Sensei()->settings->settings['my_course_page'] );
+			$my_account_page_id = Sensei()->settings->get_my_courses_page_id();
 			$course_page_url    = Sensei_Course::get_courses_page_url();
 			$lesson_archive_url = get_post_type_archive_link( 'lesson' );
 			$my_courses_url     = get_permalink( $my_account_page_id );
@@ -376,7 +398,10 @@ class Sensei_Frontend {
 						 *
 						 * With this filter you can alter the login / login menu item title string
 						 *
-						 * @param $menu_title
+						 * @hook sensei_login_logout_menu_title
+						 *
+						 * @param {string} $menu_title The menu title.
+						 * @return {string} The filtered menu title.
 						 */
 						$item->title = apply_filters( 'sensei_login_logout_menu_title', $menu_title );
 
@@ -528,7 +553,15 @@ class Sensei_Frontend {
 		}
 
 		$sensei_breadcrumb_prefix = __( 'Back to: ', 'sensei-lms' );
-		$separator                = apply_filters( 'sensei_breadcrumb_separator', '&gt;' );
+		/**
+		 * Filter the breadcrumb separator.
+		 *
+		 * @hook sensei_breadcrumb_separator
+		 *
+		 * @param {string} $separator Breadcrumb separator.
+		 * @return {string} Filtered separator.
+		 */
+		$separator = apply_filters( 'sensei_breadcrumb_separator', '&gt;' );
 
 		$html = '<section class="sensei-breadcrumb">' . esc_html( $sensei_breadcrumb_prefix );
 		// Lesson.
@@ -548,7 +581,15 @@ class Sensei_Frontend {
 			 $html .= '<a href="' . esc_url( get_permalink( $lesson_id ) ) . '" title="' . esc_attr__( 'Back to the lesson', 'sensei-lms' ) . '">' . esc_html( get_the_title( $lesson_id ) ) . '</a>';
 		}
 
-		// Allow other plugins to filter html.
+		/**
+		 * Filter the breadcrumb HTML.
+		 *
+		 * @hook sensei_breadcrumb_output
+		 *
+		 * @param {string} $html      Breadcrumb HTML.
+		 * @param {string} $separator Breadcrumb separator.
+		 * @return {string} Filtered HTML.
+		 */
 		$html  = apply_filters( 'sensei_breadcrumb_output', $html, $separator );
 		$html .= '</section>';
 
@@ -563,7 +604,7 @@ class Sensei_Frontend {
 	public function lesson_tags_display( $lesson_id = 0 ) {
 		if ( $lesson_id ) {
 			$tags = wp_get_post_terms( $lesson_id, 'lesson-tag' );
-			if ( $tags && count( $tags ) > 0 ) {
+			if ( $tags ) {
 				$tag_list = '';
 				foreach ( $tags as $tag ) {
 					$tag_link = get_term_link( $tag, 'lesson-tag' );
@@ -612,8 +653,17 @@ class Sensei_Frontend {
 	 */
 	public function lesson_tag_archive_header( $title ) {
 		if ( is_tax( 'lesson-tag' ) ) {
+			/**
+			 * Filters the lesson tag archive title.
+			 *
+			 * @hook sensei_lesson_tag_archive_title
+			 *
+			 * @param {string} $title Lesson tag archive title.
+			 * @return {string} Filtered title.
+			 */
+			$lesson_tag_archive_title = apply_filters( 'sensei_lesson_tag_archive_title', get_queried_object()->name );
 			// translators: Placeholder is the filtered tag name.
-			$title = sprintf( __( 'Lesson tag: %1$s', 'sensei-lms' ), apply_filters( 'sensei_lesson_tag_archive_title', get_queried_object()->name ) );
+			$title = sprintf( __( 'Lesson tag: %1$s', 'sensei-lms' ), $lesson_tag_archive_title );
 		}
 		return $title;
 	}
@@ -624,6 +674,15 @@ class Sensei_Frontend {
 	public function lesson_tag_archive_description() {
 		if ( is_tax( 'lesson-tag' ) ) {
 			$tag = get_queried_object();
+			/**
+			 * Filters the lesson tag archive description.
+			 *
+			 * @hook sensei_lesson_tag_archive_description
+			 *
+			 * @param {string} $description Lesson tag archive description.
+			 * @param {int}    $tag_id      Lesson tag ID.
+			 * @return {string} Filtered description.
+			 */
 			echo '<p class="archive-description lesson-description">' . wp_kses_post( apply_filters( 'sensei_lesson_tag_archive_description', nl2br( $tag->description ), $tag->term_id ) ) . '</p>';
 		}
 	}
@@ -696,9 +755,12 @@ class Sensei_Frontend {
 		 *
 		 * @since 1.12.0
 		 *
-		 * @param string|bool $redirect_url URL to redirect students to after completing a lesson. False to skip redirect.
-		 * @param int         $lesson_id    Current lesson ID.
-		 * @param array       $nav_links    Navigation links found for the current lesson.
+		 * @hook sensei_complete_lesson_redirect_url
+		 *
+		 * @param {string|bool} $redirect_url URL to redirect students to after completing a lesson. False to skip redirect.
+		 * @param {int}         $lesson_id    Current lesson ID.
+		 * @param {array}       $nav_links    Navigation links found for the current lesson.
+		 * @return {string|bool} Filtered URL to redirect students to after completing a lesson. False to skip redirect.
 		 */
 		$redirect_url = apply_filters( 'sensei_complete_lesson_redirect_url', $redirect_url, $lesson_id, $nav_links );
 
@@ -719,7 +781,7 @@ class Sensei_Frontend {
 	 * @param int    $course_id The course ID.
 	 */
 	public function redirect_to_course_completed_page( $status, $user_id, $course_id ) {
-		if ( 'complete' !== $status || ! $course_id ) {
+		if ( 'complete' !== $status || ! $course_id || Sensei_Utils::is_rest_request() ) {
 			return;
 		}
 
@@ -727,6 +789,14 @@ class Sensei_Frontend {
 
 		if ( $url ) {
 
+			/**
+			 * Fires when a user completes a course and is redirected to the course completed page.
+			 *
+			 * @hook sensei_user_course_end
+			 *
+			 * @param {int} $user_id   The user ID.
+			 * @param {int} $course_id The course ID.
+			 */
 			do_action( 'sensei_user_course_end', $user_id, $course_id );
 
 			wp_safe_redirect( esc_url_raw( $url ) );
@@ -768,6 +838,14 @@ class Sensei_Frontend {
 						update_comment_meta( $course_progress->get_id(), $key, $value );
 					}
 
+					/**
+					 * Fires when a user completes a course.
+					 *
+					 * @hook sensei_user_course_end
+					 *
+					 * @param {int} $user_id   The user ID.
+					 * @param {int} $course_id The course ID.
+					 */
 					do_action( 'sensei_user_course_end', $current_user->ID, $sanitized_course_id );
 
 					// Success message.
@@ -934,7 +1012,9 @@ class Sensei_Frontend {
 				 *
 				 * @since 2.0.0
 				 *
-				 * @params int $course_id Course post ID.
+				 * @hook sensei_course_meta_inside_before
+				 *
+				 * @param {int} $course_id Course post ID.
 				 */
 				do_action( 'sensei_course_meta_inside_before', $post_id );
 
@@ -967,7 +1047,9 @@ class Sensei_Frontend {
 			 *
 			 * @since 2.0.0
 			 *
-			 * @params int $course_id Course post ID.
+			 * @hook sensei_course_meta_inside_after
+			 *
+			 * @param {int} $course_id Course post ID.
 			 */
 			do_action( 'sensei_course_meta_inside_after', $post_id );
 			?>
@@ -998,9 +1080,16 @@ class Sensei_Frontend {
 					the_post();
 					?>
 
-					<article class="<?php echo esc_attr( join( ' ', get_post_class( array( 'course', 'post' ), get_the_ID() ) ) ); ?>">
+					<article class="<?php echo esc_attr( implode( ' ', get_post_class( array( 'course', 'post' ), get_the_ID() ) ) ); ?>">
 
-						<?php do_action( 'sensei_course_archive_meta' ); ?>
+						<?php
+						/**
+						 * Fires when course meta is displayed.
+						 *
+						 * @hook sensei_course_archive_meta
+						 */
+						do_action( 'sensei_course_archive_meta' );
+						?>
 
 					</article>
 
@@ -1050,7 +1139,14 @@ class Sensei_Frontend {
 
 					<form method="post" class="register">
 
-						<?php do_action( 'sensei_register_form_start' ); ?>
+						<?php
+						/**
+						 * Fires at the start of the register form.
+						 *
+						 * @hook sensei_register_form_start
+						 */
+						do_action( 'sensei_register_form_start' );
+						?>
 
 						<p class="form-row form-row-wide">
 							<label for="sensei_reg_username"><?php esc_html_e( 'Username', 'sensei-lms' ); ?> <span class="required">*</span></label>
@@ -1070,16 +1166,31 @@ class Sensei_Frontend {
 						<!-- Spam Trap -->
 						<div style="left:-999em; position:absolute;"><label for="trap"><?php esc_html_e( 'Anti-spam', 'sensei-lms' ); ?></label><input type="text" name="email_2" id="trap" tabindex="-1" /></div>
 
-						<?php do_action( 'sensei_register_form_fields' ); ?>
+						<?php
+						/**
+						 * Fires at the end of the register form.
+						 * Allows adding extra fields to the registration form.
+						 *
+						 * @hook sensei_register_form_fields
+						 */
+						do_action( 'sensei_register_form_fields' );
+						?>
 						<?php do_action( 'register_form' ); ?>
 
 						<?php wp_nonce_field( 'sensei-register' ); ?>
 
 						<p class="form-row">
-							<input type="submit" class="button" name="register" value="<?php esc_attr_e( 'Register', 'sensei-lms' ); ?>" />
+							<input type="submit" class="button wp-element-button" name="register" value="<?php esc_attr_e( 'Register', 'sensei-lms' ); ?>" />
 						</p>
 
-						<?php do_action( 'sensei_register_form_end' ); ?>
+						<?php
+						/**
+						 * Fires at the end of the register form.
+						 *
+						 * @hook sensei_register_form_end
+						 */
+						do_action( 'sensei_register_form_end' );
+						?>
 
 					</form>
 				</div>
@@ -1129,8 +1240,11 @@ class Sensei_Frontend {
 		 *
 		 * @since 1.11.0
 		 *
-		 * @param string $preview_text
-		 * @param int    $course_id
+		 * @hook sensei_lesson_preview_title_text
+		 *
+		 * @param {string} $preview_text
+		 * @param {int}    $course_id
+		 * @return {string} Filtered text.
 		 */
 		return apply_filters( 'sensei_lesson_preview_title_text', $preview_text, $course_id );
 	}
@@ -1163,68 +1277,93 @@ class Sensei_Frontend {
 		return $title;
 	} // sensei_lesson_preview_title
 
+	/**
+	 * Start a course.
+	 */
 	public function sensei_course_start() {
 		global $post, $current_user;
 
-		// Handle user starting the course.
-		if (
-			is_singular( 'course' )
-			&& isset( $_POST['course_start'] )
-			&& wp_verify_nonce( $_POST['woothemes_sensei_start_course_noonce'], 'woothemes_sensei_start_course_noonce' )
-			&& Sensei_Course::can_current_user_manually_enrol( $post->ID )
-			&& Sensei_Course::is_prerequisite_complete( $post->ID )
-			&& ! post_password_required( $post->ID )
+		/**
+		 * Filter the course ID for the course being started.
+		 *
+		 * @since 4.23.1
+		 *
+		 * @hook sensei_course_start_course_id
+		 *
+		 * @param {int} $course_id Course post ID.
+		 * @return {int} Filtered course ID.
+		*/
+		$course_id = (int) apply_filters( 'sensei_course_start_course_id', $post->ID ?? 0 );
+
+		$nonce = isset( $_POST['woothemes_sensei_start_course_noonce'] )
+			? sanitize_text_field( wp_unslash( (string) $_POST['woothemes_sensei_start_course_noonce'] ) )
+			: '';
+
+		if ( ! is_singular( 'course' )
+			|| ! isset( $_POST['course_start'] )
+			|| ! wp_verify_nonce( $nonce, 'woothemes_sensei_start_course_noonce' )
+			|| ! Sensei_Course::can_current_user_manually_enrol( $course_id )
+			|| ! Sensei_Course::is_prerequisite_complete( $course_id )
+			|| post_password_required( $course_id )
 		) {
+			return;
+		}
 
-			/**
-			 * Lets providers give their own course sign-up handler.
-			 *
-			 * @since 3.0.0
-			 *
-			 * @param callable $handler {
-			 *     Frontend enrolment handler. Returns `true` if successful; `false` if not.
-			 *
-			 *     @type int $user_id   User ID.
-			 *     @type int $course_id Course post ID.
-			 * }
-			 * @param int      $user_id          User ID.
-			 * @param int      $course_id        Course post ID.
-			 */
-			$learner_enrollment_handler = apply_filters( 'sensei_frontend_learner_enrolment_handler', [ $this, 'manually_enrol_learner' ], $current_user->ID, $post->ID );
+		/**
+		 * Lets providers give their own course sign-up handler.
+		 *
+		 * @since 3.0.0
+		 *
+		 * @hook sensei_frontend_learner_enrolment_handler
+		 *
+		 * @param    {callback(int, int):bool} $handler   Frontend enrolment handler. Takes two arguments: $user_id and $course_id. Returns `true` if successful; `false` if not.
+		 * @param    {int}                     $user_id   User ID.
+		 * @param    {int}                     $course_id Course post ID.
+		 * @return   {callback(int, int):bool} Filtered handler.
+		*/
+		$learner_enrollment_handler = apply_filters(
+			'sensei_frontend_learner_enrolment_handler',
+			array( $this, 'manually_enrol_learner' ),
+			$current_user->ID,
+			$course_id
+		);
 
-			$student_enrolled = false;
-			if ( is_callable( $learner_enrollment_handler ) ) {
-				$student_enrolled = call_user_func( $learner_enrollment_handler, $current_user->ID, $post->ID );
-			}
+		$student_enrolled = false;
+		if ( is_callable( $learner_enrollment_handler ) ) {
+			$student_enrolled = call_user_func( $learner_enrollment_handler, $current_user->ID, $course_id );
+		}
 
-			$this->data                        = new stdClass();
-			$this->data->is_user_taking_course = false;
-			if ( $student_enrolled ) {
-				$this->data->is_user_taking_course = true;
+		$this->data                        = new stdClass();
+		$this->data->is_user_taking_course = false;
+		if ( ! $student_enrolled ) {
+			return;
+		}
 
-				// Refresh page to avoid re-posting.
-				/**
-				 * Filter the URL that students are redirected to after starting a course.
-				 *
-				 * @since 1.10.0
-				 *
-				 * @param string|bool  $redirect_url URL to redirect students to after starting course. Return `false` to prevent redirect.
-				 * @param WP_Post      $post         Post object for course.
-				 */
-				$redirect_url = apply_filters( 'sensei_start_course_redirect_url', get_permalink( $post->ID ), $post );
+		$this->data->is_user_taking_course = true;
 
-				if ( 'publish' !== get_post_status( $post ) ) {
-					wp_safe_redirect( add_query_arg( 'draftcourse', 'true', $redirect_url ) );
-					exit();
-				}
-				if ( false !== $redirect_url ) {
-					?>
+		// Refresh page to avoid re-posting.
+		/**
+		 * Filter the URL that students are redirected to after starting a course.
+		 *
+		 * @since 1.10.0
+		 *
+		 * @hook sensei_start_course_redirect_url
+		 *
+		 * @param {string|bool}  $redirect_url URL to redirect students to after starting course. Return `false` to prevent redirect.
+		 * @param {WP_Post}      $post         Post object for course.
+		 * @return {string|bool} Filtered URL to redirect students to after starting course. Return `false` to prevent redirect.
+		*/
+		$redirect_url = apply_filters( 'sensei_start_course_redirect_url', get_permalink( $post->ID ), $post );
 
-					<script type="text/javascript"> window.location = '<?php echo esc_url( $redirect_url ); ?>'; </script>
+		if ( 'publish' !== get_post_status( $post ) ) {
+			wp_safe_redirect( add_query_arg( 'draftcourse', 'true', $redirect_url ) );
+			exit();
+		}
 
-					<?php
-				}
-			}
+		if ( false !== $redirect_url ) {
+			?>
+			<script type="text/javascript"> window.location = '<?php echo esc_url_raw( $redirect_url ); ?>'; </script>
+			<?php
 		}
 	}
 
@@ -1403,12 +1542,14 @@ class Sensei_Frontend {
 					/**
 					 * Change the redirect url programatically.
 					 *
-					 * @hook sensei_login_success_redirect_url
+					 * The redirect URL if login is successful. Note that if this URL points to an external domain, it may need to be whitelisted using the `allowed_redirect_hosts` filter.
+					 *
 					 * @since 3.15.0
 					 *
-					 * @param {string} $referrer The page where the current url wheresensei login form was posted from.
+					 * @hook sensei_login_success_redirect_url
 					 *
-					 * The redirect URL if login is successful. Note that if this URL points to an external domain, it may need to be whitelisted using the `allowed_redirect_hosts` filter.
+					 * @param {string} $referrer The page where the current url wheresensei login form was posted from.
+					 * @return {string} The redirect URL.
 					 */
 					$success_redirect_url = apply_filters( 'sensei_login_success_redirect_url', $success_redirect_url );
 
@@ -1528,6 +1669,14 @@ class Sensei_Frontend {
 
 		$redirect_to = isset( $_REQUEST['redirect_to'] ) ? esc_url_raw( wp_unslash( $_REQUEST['redirect_to'] ) ) : $redirect;
 
+		/**
+		 * Filter the URL that students are redirected to after registering.
+		 *
+		 * @hook sensei_registration_redirect
+		 *
+		 * @param {string} $redirect_to URL to redirect students to after registering.
+		 * @return {string} Filtered URL to redirect students to after registering.
+		 */
 		wp_safe_redirect( apply_filters( 'sensei_registration_redirect', $redirect_to ) );
 		exit;
 
@@ -1541,10 +1690,10 @@ class Sensei_Frontend {
 	 */
 	public function login_message_process() {
 
-			// setup the message variables.
-			$message = '';
+		// setup the message variables.
+		$message = '';
 
-			// only output message if the url contains login=failed and login=emptyfields.
+		// only output message if the url contains login=failed and login=emptyfields.
 		if ( $_GET['login'] == 'failed' ) {
 
 			$message = __( 'Incorrect login details', 'sensei-lms' );
@@ -1554,7 +1703,14 @@ class Sensei_Frontend {
 			$message = __( 'Please enter your username and password', 'sensei-lms' );
 		}
 
-			Sensei()->notices->add_notice( $message, 'alert' );
+		if ( '' !== $message ) {
+			// If it's a login failure, don't print the notices from the wp_body_open hook. Because on non-block
+			// themes, the notices are printed in the top, even above the header or nav, which breaks it.
+			// We show the notice on the login form instead.
+			remove_action( 'wp_body_open', [ Sensei()->notices, 'maybe_print_notices' ] );
+		}
+
+		Sensei()->notices->add_notice( $message, 'alert' );
 
 	}
 

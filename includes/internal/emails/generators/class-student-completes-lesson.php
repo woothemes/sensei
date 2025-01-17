@@ -8,9 +8,7 @@
 namespace Sensei\Internal\Emails\Generators;
 
 use Sensei\Internal\Emails\Email_Repository;
-use Sensei\Internal\Student_Progress\Lesson_Progress\Models\Lesson_Progress;
 use Sensei\Internal\Student_Progress\Lesson_Progress\Repositories\Lesson_Progress_Repository_Interface;
-use Sensei\Internal\Student_Progress\Quiz_Progress\Models\Quiz_Progress;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -24,6 +22,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 4.12.0
  */
 class Student_Completes_Lesson extends Email_Generators_Abstract {
+
+	use Course_Teachers_Trait;
+
 	/**
 	 * Lesson progress repository.
 	 *
@@ -72,7 +73,7 @@ class Student_Completes_Lesson extends Email_Generators_Abstract {
 	 * @return void
 	 */
 	public function init() {
-		add_action( 'sensei_user_lesson_end', [ $this, 'student_completed_lesson_mail_to_teacher' ], 10, 2 );
+		$this->maybe_add_action( 'sensei_user_lesson_end', [ $this, 'student_completed_lesson_mail_to_teacher' ], 10, 2 );
 	}
 
 	/**
@@ -85,14 +86,11 @@ class Student_Completes_Lesson extends Email_Generators_Abstract {
 	 */
 	public function student_completed_lesson_mail_to_teacher( $student_id, $lesson_id ) {
 		$lesson_progress = $this->lesson_progress_repository->get( $lesson_id, $student_id );
-		if ( ! $lesson_progress || ! in_array( $lesson_progress->get_status(), [ Lesson_Progress::STATUS_COMPLETE, Quiz_Progress::STATUS_PASSED ], true ) ) {
+		if ( ! $lesson_progress || ! $lesson_progress->is_complete() ) {
 			return;
 		}
 
 		$course_id  = \Sensei()->lesson->get_course_id( $lesson_id );
-		$teacher_id = get_post_field( 'post_author', $lesson_id, 'raw' );
-		$teacher    = new \WP_User( $teacher_id );
-		$recipient  = stripslashes( $teacher->user_email );
 		$student    = new \WP_User( $student_id );
 		$manage_url = esc_url(
 			add_query_arg(
@@ -106,18 +104,23 @@ class Student_Completes_Lesson extends Email_Generators_Abstract {
 			)
 		);
 
-		$this->send_email_action(
-			[
-				$recipient => [
-					'student:id'          => (int) $student_id,
-					'student:displayname' => $student->display_name,
-					'course:id'           => (int) $course_id,
-					'course:name'         => get_the_title( $course_id ),
-					'lesson:id'           => (int) $lesson_id,
-					'lesson:name'         => get_the_title( $lesson_id ),
-					'manage:students'     => $manage_url,
-				],
-			]
-		);
+		$email_replacements = [
+			'student:id'          => (int) $student_id,
+			'student:displayname' => $student->display_name,
+			'course:id'           => (int) $course_id,
+			'course:name'         => get_the_title( $course_id ),
+			'lesson:id'           => (int) $lesson_id,
+			'lesson:name'         => html_entity_decode( get_the_title( $lesson_id ) ),
+			'manage:students'     => $manage_url,
+		];
+
+		$teacher_ids   = $this->get_course_teachers( $course_id );
+		$recipients    = $this->get_recipients( $teacher_ids );
+		$emais_to_send = array();
+		foreach ( $recipients as $recipient ) {
+			$emais_to_send[ $recipient ] = $email_replacements;
+		}
+
+		$this->send_email_action( $emais_to_send );
 	}
 }

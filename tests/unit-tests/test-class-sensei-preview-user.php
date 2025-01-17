@@ -21,6 +21,13 @@ class Sensei_Preview_User_Test extends WP_UnitTestCase {
 	protected $factory;
 
 	/**
+	 * Preview user instance.
+	 *
+	 * @var Sensei_Preview_User
+	 */
+	protected $preview_user;
+
+	/**
 	 * Set up the test.
 	 */
 	public function setUp(): void {
@@ -55,7 +62,7 @@ class Sensei_Preview_User_Test extends WP_UnitTestCase {
 
 		$this->assertNotEquals( $admin_id, get_current_user_id(), 'Current user should be changed.' );
 		$preview_user = wp_get_current_user();
-		$this->assertRegexp( '/^Preview Student.*$/', $preview_user->display_name, 'Current user should be a preview student.' );
+		$this->assertMatchesRegularExpression( '/^Preview Student.*$/', $preview_user->display_name, 'Current user should be a preview student.' );
 
 		// Switch off preview user.
 
@@ -130,8 +137,10 @@ class Sensei_Preview_User_Test extends WP_UnitTestCase {
 	 * @param string $url URL.
 	 */
 	public function go_to( $url ) {
+		ob_start();
 		wp_set_current_user( $this->get_user_by_role( 'administrator' ) );
 		parent::go_to( $url );
+		ob_end_clean();
 	}
 
 

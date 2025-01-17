@@ -20,8 +20,14 @@ $style_small = 'text-align: center !important;';
 $style_large = 'text-align: center !important;font-size: 350% !important;line-height: 100% !important;';
 
 // $template is provided by the calling code.
-// phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UndefinedVariable
-do_action( 'sensei_before_email_content', $template );
+/**
+ * Action hook before email content.
+ *
+ * @hook sensei_before_email_content
+ *
+ * @param {string} $template Template name.
+ */
+do_action( 'sensei_before_email_content', $template ); // phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UndefinedVariable
 ?>
 
 <p style="<?php echo esc_attr( $style_small ); ?>">
@@ -48,6 +54,13 @@ do_action( 'sensei_before_email_content', $template );
 
 <?php
 
+/**
+ * Action hook after email content.
+ *
+ * @hook sensei_after_email_content
+ *
+ * @param {string} $template Template name.
+ */
 do_action( 'sensei_after_email_content', $sensei_email_data['template'] );
 
 ?>

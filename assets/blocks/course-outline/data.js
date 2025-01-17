@@ -24,9 +24,10 @@ import { curry, invert } from 'lodash';
  */
 /**
  * @typedef CourseLessonData
- * @param {string}  type  Block type ('lesson')
- * @param {string?} title Lesson title
- * @param {number?} id    Lesson ID
+ * @param {string}  type           Block type ('lesson')
+ * @param {string?} title          Lesson title
+ * @param {number?} id             Lesson ID
+ * @param {string?} initialContent Initial lesson content.
  */
 
 export const blockNames = {
@@ -82,15 +83,21 @@ const byCourseData = curry( ( courseData, block ) => {
 	const { name, attributes } = block;
 	const isTheCorrectBlockType = Object.keys( blockTypes ).includes( name );
 
-	const findById = () => !! attributes.id && courseData.id === attributes.id;
-	const findByTitle = () => attributes.title === courseData.title;
-	const findByLastTitle = () => attributes.title === courseData.lastTitle;
+	const isModule = courseData.type === 'module';
 
 	if ( ! isTheCorrectBlockType ) {
 		return false;
 	}
 
-	return [ findById(), findByTitle(), findByLastTitle() ].includes( true );
+	if ( isModule ) {
+		return [ courseData.title, courseData.lastTitle ].includes(
+			attributes.title
+		);
+	}
+
+	if ( attributes.id ) {
+		return courseData.id === attributes.id;
+	}
 } );
 
 const findInInnerBlocks = ( blocks, predicate ) =>
@@ -135,6 +142,7 @@ export const extractStructure = ( blocks ) => {
 		lesson: ( block ) => ( {
 			draft: block.attributes.draft,
 			preview: block.attributes.preview,
+			initialContent: block.attributes.initialContent,
 		} ),
 	};
 

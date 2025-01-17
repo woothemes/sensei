@@ -48,15 +48,32 @@ class Sensei_Block_Take_Course {
 		}
 
 		$course_id = $post->ID;
-		$html      = '';
+
+		/**
+		 * Filters the course ID for the take course block.
+		 *
+		 * @hook sensei_block_take_course_course_id
+		 *
+		 * @since 4.23.1
+		 *
+		 * @param {int} $course_id The course ID.
+		 * @return {int} The course ID.
+		 */
+		$course_id = apply_filters( 'sensei_block_take_course_course_id', $course_id );
+
+		$html = '';
 
 		if ( 'course' !== get_post_type( $course_id ) ) {
 			return '';
 		}
 
+		$is_course_page = is_single();
+
 		if ( Sensei_Course::can_current_user_manually_enrol( $course_id ) ) {
 			if ( ! Sensei_Course::is_prerequisite_complete( $course_id ) ) {
-				Sensei()->notices->add_notice( Sensei()->course::get_course_prerequisite_message( $course_id ), 'info', 'sensei-take-course-prerequisite' );
+				if ( $is_course_page ) {
+					Sensei()->notices->add_notice( Sensei()->course::get_course_prerequisite_message( $course_id ), 'info', 'sensei-take-course-prerequisite' );
+				}
 				$html = $this->render_disabled( $content );
 			} else {
 				// Replace button label in case it's coming from a sign in with redirect to take course.
@@ -71,6 +88,14 @@ class Sensei_Block_Take_Course {
 				}
 				$html = $this->render_with_start_course_form( $course_id, $content );
 			}
+		} elseif ( Sensei_Course::is_self_enrollment_not_allowed( $course_id ) && ! Sensei_Course::is_user_enrolled( $course_id, get_current_user_id() ) ) {
+			if ( $is_course_page ) {
+				Sensei()->notices->add_notice(
+					__( 'Please contact the course administrator to sign up for this course.', 'sensei-lms' ),
+					'info'
+				);
+			}
+			$html = $this->render_disabled( $content );
 		} elseif ( ! is_user_logged_in() ) {
 			$html = $this->render_with_login( $content );
 		}
@@ -105,7 +130,7 @@ class Sensei_Block_Take_Course {
 	 *
 	 * @return string The html with the added classes.
 	 */
-	private function add_button_classes( $button ) : string {
+	private function add_button_classes( $button ): string {
 		wp_enqueue_script( 'sensei-stop-double-submission' );
 
 		if ( preg_match( '/<button(.*)class="(.*)"/', $button ) ) {

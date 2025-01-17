@@ -44,6 +44,13 @@ abstract class Email_Generators_Abstract {
 	protected $repository;
 
 	/**
+	 * All registered actions.
+	 *
+	 * @var array
+	 */
+	private $actions = [];
+
+	/**
 	 * Email_Generators_Abstract constructor.
 	 *
 	 * @param Email_Repository $repository Email_Repository instance.
@@ -81,6 +88,44 @@ abstract class Email_Generators_Abstract {
 	}
 
 	/**
+	 * Add action if email is active.
+	 *
+	 * @since 4.18.0
+	 *
+	 * @internal
+	 *
+	 * @param string   $action        Action name.
+	 * @param callable $callback      Callback.
+	 * @param int      $priority      Priority.
+	 * @param int      $accepted_args Accepted arguments.
+	 */
+	protected function maybe_add_action( $action, $callback, $priority = 10, $accepted_args = 1 ) {
+		$this->actions[ $action ] = [
+			'callback'      => $callback,
+			'priority'      => $priority,
+			'accepted_args' => $accepted_args,
+		];
+
+		add_action( $action, [ $this, 'add_action_if_email_active' ], 1 );
+	}
+
+	/**
+	 * Add action if email is active.
+	 *
+	 * @since 4.18.0
+	 *
+	 * @internal
+	 */
+	public function add_action_if_email_active() {
+		$current_action_name = current_filter();
+
+		if ( $this->is_email_active() && array_key_exists( $current_action_name, $this->actions ) ) {
+			$action = $this->actions[ $current_action_name ];
+			add_action( $current_action_name, $action['callback'], $action['priority'], $action['accepted_args'] );
+		}
+	}
+
+	/**
 	 * Get name of the identifier of the Email.
 	 *
 	 * @since 4.12.0
@@ -109,6 +154,7 @@ abstract class Email_Generators_Abstract {
 		 * Send HTML email.
 		 *
 		 * @since 4.12.0
+		 *
 		 * @hook sensei_email_send
 		 *
 		 * @param {string} $email_name          The email name.
@@ -116,5 +162,20 @@ abstract class Email_Generators_Abstract {
 		 * @param {string} $usage_tracking_type Usage tracking type.
 		 */
 		do_action( 'sensei_email_send', $this->get_identifier(), $replacements, static::USAGE_TRACKING_TYPE );
+	}
+
+	/**
+	 * Return recipients' email addresses based on given user IDs.
+	 *
+	 * @param array $user_ids User IDs.
+	 * @return array Array of email addresses.
+	 */
+	protected function get_recipients( $user_ids ): array {
+		$recipients = array();
+		foreach ( $user_ids as $user_id ) {
+			$user         = new \WP_User( $user_id );
+			$recipients[] = stripslashes( $user->user_email );
+		}
+		return $recipients;
 	}
 }

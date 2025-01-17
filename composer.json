@@ -1,32 +1,35 @@
 {
 	"name": "automattic/sensei-lms",
 	"description": "A learning management plugin for WordPress, which provides the smoothest platform for helping you teach anything.",
+	"require": {
+		"woocommerce/action-scheduler": "3.6.2"
+	},
 	"require-dev": {
-		"php": "^7.2.5 || ^8",
-		"automattic/jetpack-changelogger": "v3.3.1",
+		"php": "^7.4 || ^8",
+		"automattic/jetpack-changelogger": "3.3.5",
 		"bamarni/composer-bin-plugin": "1.8.2",
-		"dealerdirect/phpcodesniffer-composer-installer": "0.7.2",
-		"dms/phpunit-arraysubset-asserts": "0.4.0",
-		"humbug/php-scoper": "0.13.9",
-		"pelago/emogrifier": "6.0.0",
+		"dms/phpunit-arraysubset-asserts": "0.5.0",
+		"humbug/php-scoper": "0.15.0",
+		"pelago/emogrifier": "7.0.0",
+		"php-stubs/wordpress-stubs": "^6.3",
 		"phpcompatibility/phpcompatibility-wp": "2.1.4",
 		"sirbrillig/phpcs-no-get-current-user": "1.1.0",
-		"sirbrillig/phpcs-variable-analysis": "2.11.9",
-		"squizlabs/php_codesniffer": "3.7.1",
+		"sirbrillig/phpcs-variable-analysis": "2.11.16",
 		"symfony/polyfill-php80": "1.16.0",
-		"wp-coding-standards/wpcs": "2.3.0",
-		"yoast/phpunit-polyfills": "1.0.4"
+		"vimeo/psalm": "4.22.0",
+		"wp-coding-standards/wpcs": "3.0.1",
+		"yoast/phpunit-polyfills": "2.0.0"
 	},
 	"minimum-stability": "dev",
 	"prefer-stable": true,
 	"autoload": {
 		"classmap": [
-			"third-party/",
+			"vendor/sensei-lms/third-party-libs/",
 			"includes/"
 		],
-        "files": [
-            "includes/sensei-functions.php"
-        ]
+		"files": [
+			"includes/sensei-functions.php"
+		]
 	},
 	"autoload-dev": {
 		"classmap": [
@@ -35,13 +38,13 @@
 	},
 	"scripts": {
 		"prefix-dependencies": [
-			"@php ./vendor/humbug/php-scoper/bin/php-scoper add-prefix --output-dir=third-party --config=config/scoper.inc.php --force --quiet"
+			"@php ./vendor/humbug/php-scoper/bin/php-scoper add-prefix --output-dir=vendor/sensei-lms/third-party-libs --config=config/scoper.inc.php --force --quiet"
 		],
 		"pre-install-cmd": [
-			"mkdir -p third-party"
+			"mkdir -p vendor/sensei-lms/third-party-libs"
 		],
 		"pre-update-cmd": [
-			"mkdir -p third-party"
+			"mkdir -p vendor/sensei-lms/third-party-libs"
 		],
 		"post-autoload-dump": [
 			"Sensei\\Config\\Composer\\Actions::prefix_dependencies",
@@ -79,7 +82,6 @@
 			"!/sensei-lms.php",
 			"!/wpml-config.xml",
 			"!/vendor",
-			"!/third-party",
 			".DS_Store",
 			".*",
 			"*.test.js",
@@ -90,16 +92,25 @@
 		"optimize-autoloader": true,
 		"sort-packages": true,
 		"platform": {
-			"php": "7.2.5"
+			"php": "7.4"
 		},
 		"allow-plugins": {
-			"dealerdirect/phpcodesniffer-composer-installer": true,
-			"bamarni/composer-bin-plugin": true
+			"bamarni/composer-bin-plugin": true,
+			"dealerdirect/phpcodesniffer-composer-installer": true
 		}
 	},
 	"extra": {
 		"changelogger": {
-			"changelog": "changelog.txt"
+			"changelog": "changelog.txt",
+			"types": {
+				"security": "Security",
+				"added": "Added",
+				"changed": "Changed",
+				"deprecated": "Deprecated",
+				"removed": "Removed",
+				"fixed": "Fixed",
+				"development": "Development"
+			}
 		}
 	}
 }

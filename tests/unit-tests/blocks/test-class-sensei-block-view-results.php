@@ -18,6 +18,20 @@ class Sensei_Block_View_Results_Test extends WP_UnitTestCase {
 	private $block;
 
 	/**
+	 * The course post.
+	 *
+	 * @var WP_Post
+	 */
+	private $course;
+
+	/**
+	 * Factory for setting up testing data.
+	 *
+	 * @var Sensei_Factory
+	 */
+	protected $factory;
+
+	/**
 	 * Block content.
 	 */
 	const CONTENT = '<!-- wp:sensei-lms/button-view-results -->
@@ -87,7 +101,10 @@ class Sensei_Block_View_Results_Test extends WP_UnitTestCase {
 
 		$result = $this->block->render( [], self::CONTENT );
 
-		$this->assertRegExp( "|<form method=\"get\" action=\"http://example.org/\?page_id={$page_id}&#038;course_id={$this->course->ID}\".*>|", $result );
+		$this->assertMatchesRegularExpression(
+			"|<form method=\"get\" action=\"http://example.org/\?page_id={$page_id}&#038;course_id={$this->course->ID}\".*><input type=\"hidden\" name=\"page_id\" value=\"{$page_id}\"><input type=\"hidden\" name=\"course_id\" value=\"{$this->course->ID}\">|",
+			$result
+		);
 	}
 
 	/**

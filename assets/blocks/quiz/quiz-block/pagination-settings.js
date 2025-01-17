@@ -6,7 +6,7 @@ import {
 	PanelRow,
 	ToggleControl,
 	SelectControl,
-	Toolbar,
+	ToolbarItem,
 	ToolbarGroup,
 } from '@wordpress/components';
 import { __, _n } from '@wordpress/i18n';
@@ -171,17 +171,18 @@ export const PaginationToolbarSettings = ( { settings, updatePagination } ) => {
 
 	return (
 		<>
-			<Toolbar>
+			<ToolbarGroup>
 				<ToolbarDropdown
 					options={ paginationOptions }
 					optionsLabel={ __( 'Quiz pagination', 'sensei-lms' ) }
 					value={ paginationNumber === null ? SINGLE : MULTI }
 					onChange={ onDropdownChange( updatePagination ) }
 				/>
-			</Toolbar>
+			</ToolbarGroup>
 			{ paginationNumber !== null && (
 				<ToolbarGroup className="sensei-lms-quiz-block__toolbar-group">
-					<QuestionsControl
+					<ToolbarItem
+						as={ QuestionsControl }
 						settings={ settings }
 						updatePagination={ updatePagination }
 					/>

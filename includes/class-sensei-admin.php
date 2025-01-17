@@ -1,4 +1,9 @@
 <?php
+
+use Sensei\Admin\Content_Duplicators\Course_Lessons_Duplicator;
+use Sensei\Admin\Content_Duplicators\Lesson_Quiz_Duplicator;
+use Sensei\Admin\Content_Duplicators\Post_Duplicator;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
@@ -50,7 +55,6 @@ class Sensei_Admin {
 		add_action( 'menu_order', array( $this, 'admin_menu_order' ) );
 		add_action( 'admin_head', array( $this, 'admin_menu_highlight' ) );
 		add_action( 'admin_init', array( $this, 'sensei_add_custom_menu_items' ) );
-		add_action( 'admin_init', array( $this, 'admin_init' ) );
 		add_action( 'admin_print_scripts', array( $this, 'sensei_set_plugin_url' ) );
 
 		// Duplicate lesson & courses
@@ -81,9 +85,6 @@ class Sensei_Admin {
 
 		// remove a course from course order when trashed
 		add_action( 'transition_post_status', array( $this, 'remove_trashed_course_from_course_order' ) );
-
-		// Add workaround for block editor bug on CPT pages. See the function doc for more information.
-		add_action( 'admin_footer', array( $this, 'output_cpt_block_editor_workaround' ) );
 
 		// Add AJAX endpoint for event logging.
 		add_action( 'wp_ajax_sensei_log_event', array( $this, 'ajax_log_event' ) );
@@ -130,7 +131,7 @@ class Sensei_Admin {
 	 */
 	public function add_course_order() {
 		add_submenu_page(
-			null, // Hide in menu.
+			'', // Hide in menu.
 			__( 'Order Courses', 'sensei-lms' ),
 			__( 'Order Courses', 'sensei-lms' ),
 			'manage_sensei',
@@ -147,7 +148,7 @@ class Sensei_Admin {
 	 */
 	public function add_lesson_order() {
 		add_submenu_page(
-			null,
+			'',
 			__( 'Order Lessons', 'sensei-lms' ),
 			__( 'Order Lessons', 'sensei-lms' ),
 			'edit_published_lessons',
@@ -355,8 +356,34 @@ class Sensei_Admin {
 	 * @return bool Returns true if admin custom styles are allowed.
 	 */
 	private function are_custom_admin_styles_allowed( $post_type, $hook_suffix, $screen ) {
-		$allowed_post_types      = apply_filters( 'sensei_scripts_allowed_post_types', array( 'lesson', 'course', 'question' ) );
+		/**
+		 * Filter the list of post types where the admin custom styles should be loaded.
+		 *
+		 * @hook sensei_scripts_allowed_post_types
+		 *
+		 * @param {array} $allowed_post_types The list of post types where the admin custom styles should be loaded.
+		 * @return {array} Filtered list of allowed post types.
+		 */
+		$allowed_post_types = apply_filters( 'sensei_scripts_allowed_post_types', array( 'lesson', 'course', 'question' ) );
+
+		/**
+		 * Filter the list of admin pages where the admin custom styles should be loaded.
+		 *
+		 * @hook sensei_scripts_allowed_post_type_pages
+		 *
+		 * @param {array} $allowed_post_type_pages The list of admin pages where the admin custom styles should be loaded.
+		 * @return {array} Filtered list of allowed admin pages.
+		 */
 		$allowed_post_type_pages = apply_filters( 'sensei_scripts_allowed_post_type_pages', array( 'edit.php', 'post-new.php', 'post.php', 'edit-tags.php' ) );
+
+		/**
+		 * Filter the list of admin pages slugs where the admin custom styles should be loaded.
+		 *
+		 * @hook sensei_scripts_allowed_pages
+		 *
+		 * @param {array} $allowed_pages The list of admin pages slugs where the admin custom styles should be loaded.
+		 * @return {array} Filtered list of allowed admin pages.
+		 */
 		$allowed_pages           = apply_filters( 'sensei_scripts_allowed_pages', array( 'sensei_grading', Sensei_Analysis::PAGE_SLUG, 'sensei_learners', 'sensei_updates', 'sensei-settings', 'sensei_learners', Sensei_Course::SHOWCASE_COURSES_SLUG, $this->lesson_order_page_slug, $this->course_order_page_slug ) );
 		$module_pages_screen_ids = [ 'edit-module' ];
 
@@ -628,17 +655,20 @@ class Sensei_Admin {
 
 		if ( ! is_wp_error( $post ) ) {
 
-			$new_post = $this->duplicate_post( $post );
+			$post_duplicator = new Post_Duplicator();
+			$new_post        = $post_duplicator->duplicate( $post );
 
-			if ( $new_post && ! is_wp_error( $new_post ) ) {
+			if ( ! is_wp_error( $new_post ) && $new_post ) {
 
 				if ( 'lesson' == $new_post->post_type ) {
-					$this->duplicate_lesson_quizzes( $post_id, $new_post->ID );
+					$lesson_quiz_duplicator = new Lesson_Quiz_Duplicator();
+					$lesson_quiz_duplicator->duplicate( $post_id, $new_post->ID );
 				}
 
 				if ( 'course' == $new_post->post_type && $with_lessons ) {
 					$event                            = 'course_duplicate_with_lessons';
-					$event_properties['lesson_count'] = $this->duplicate_course_lessons( $post_id, $new_post->ID );
+					$course_lessons_duplicator        = new Course_Lessons_Duplicator();
+					$event_properties['lesson_count'] = $course_lessons_duplicator->duplicate( $post_id, $new_post->ID );
 				}
 
 				$redirect_url = admin_url( 'post.php?post=' . $new_post->ID . '&action=edit' );
@@ -653,286 +683,6 @@ class Sensei_Admin {
 
 			$this->safe_redirect( $redirect_url );
 		}
-	}
-
-	/**
-	 * Duplicate quizzes inside lessons.
-	 *
-	 * @param  integer $old_lesson_id ID of original lesson.
-	 * @param  integer $new_lesson_id ID of duplicate lesson.
-	 * @return void
-	 */
-	private function duplicate_lesson_quizzes( $old_lesson_id, $new_lesson_id ) {
-		$old_quiz_id = Sensei()->lesson->lesson_quizzes( $old_lesson_id );
-
-		if ( empty( $old_quiz_id ) ) {
-			return;
-		}
-
-		$old_quiz_questions = Sensei()->lesson->lesson_quiz_questions( $old_quiz_id );
-
-		// duplicate the generic wp post information
-		$new_quiz = $this->duplicate_post( get_post( $old_quiz_id ), '' );
-
-		// update the new lesson data
-		add_post_meta( $new_lesson_id, '_lesson_quiz', $new_quiz->ID );
-
-		// update the new quiz data
-		add_post_meta( $new_quiz->ID, '_quiz_lesson', $new_lesson_id );
-		wp_update_post(
-			array(
-				'ID'          => $new_quiz->ID,
-				'post_parent' => $new_lesson_id,
-			)
-		);
-
-		foreach ( $old_quiz_questions as $question ) {
-
-			// copy the question order over to the new quiz
-			$old_question_order = get_post_meta( $question->ID, '_quiz_question_order' . $old_quiz_id, true );
-			$new_question_order = str_ireplace( $old_quiz_id, $new_quiz->ID, $old_question_order );
-			add_post_meta( $question->ID, '_quiz_question_order' . $new_quiz->ID, $new_question_order );
-
-			// Add question to quiz
-			add_post_meta( $question->ID, '_quiz_id', $new_quiz->ID, false );
-
-		}
-	}
-
-	/**
-	 * Update prerequisite ids after course duplication.
-	 *
-	 * @param  array $lessons_to_update    List with lesson_id and old_prerequisite_id id to update.
-	 * @param  array $new_lesson_id_lookup History with the id before and after duplication.
-	 * @return void
-	 */
-	private function update_lesson_prerequisite_ids( $lessons_to_update, $new_lesson_id_lookup ) {
-		foreach ( $lessons_to_update as $lesson_to_update ) {
-			$old_prerequisite_id = $lesson_to_update['old_prerequisite_id'];
-			$new_prerequisite_id = $new_lesson_id_lookup[ $old_prerequisite_id ];
-			add_post_meta( $lesson_to_update['lesson_id'], '_lesson_prerequisite', $new_prerequisite_id );
-		}
-	}
-
-	/**
-	 * Get an prerequisite update object.
-	 *
-	 * @param  integer $old_lesson_id ID of the lesson before the duplication.
-	 * @param  integer $new_lesson_id New ID of the lesson.
-	 * @return array                  Object with the id of the lesson to update and its old prerequisite id.
-	 */
-	private function get_prerequisite_update_object( $old_lesson_id, $new_lesson_id ) {
-		$lesson_prerequisite = get_post_meta( $old_lesson_id, '_lesson_prerequisite', true );
-
-		if ( ! empty( $lesson_prerequisite ) ) {
-			return array(
-				'lesson_id'           => $new_lesson_id,
-				'old_prerequisite_id' => $lesson_prerequisite,
-			);
-		}
-
-		return null;
-	}
-
-	/**
-	 * Update the _lesson_order meta on the duplicated Course so that it uses
-	 * the new Lesson IDs.
-	 *
-	 * @since 3.0.0
-	 *
-	 * @param int   $course_id            The ID of the new Course.
-	 * @param array $new_lesson_id_lookup An array mapping old lesson IDs to the
-	 *                                    IDs of their duplicates.
-	 */
-	private function update_lesson_order_on_course( $course_id, $new_lesson_id_lookup ) {
-		$old_lesson_order_string = get_post_meta( $course_id, '_lesson_order', true );
-
-		if ( empty( $old_lesson_order_string ) ) {
-			return;
-		}
-
-		$old_lesson_order = explode( ',', $old_lesson_order_string );
-		$new_lesson_order = [];
-
-		// Map old lesson IDs to new IDs.
-		foreach ( $old_lesson_order as $old_lesson_id ) {
-			if ( ! isset( $new_lesson_id_lookup[ $old_lesson_id ] ) ) {
-				continue;
-			}
-
-			// Add new lesson ID to order.
-			$new_lesson_id      = $new_lesson_id_lookup[ $old_lesson_id ];
-			$new_lesson_order[] = $new_lesson_id;
-		}
-
-		// Persist new lesson order to course meta.
-		$new_lesson_order_string = join( ',', $new_lesson_order );
-		update_post_meta( $course_id, '_lesson_order', $new_lesson_order_string );
-	}
-
-	/**
-	 * Update the _order_<course-id> on a newly duplicated Lesson to use the
-	 * new Course ID.
-	 *
-	 * @since 3.0.0
-	 *
-	 * @param WP_Post $lesson        The new Lesson.
-	 * @param int     $old_course_id The ID of the old Course that was duplicated.
-	 * @param int     $new_course_id The ID of the new Course.
-	 */
-	private function update_lesson_order_on_lesson( $lesson, $old_course_id, $new_course_id ) {
-		$lesson_order_value = get_post_meta( $lesson->ID, "_order_$old_course_id", true );
-		update_post_meta( $lesson->ID, "_order_$new_course_id", $lesson_order_value );
-		delete_post_meta( $lesson->ID, "_order_$old_course_id" );
-	}
-
-	/**
-	 * Duplicate lessons inside a course.
-	 *
-	 * @param  integer $old_course_id ID of original course.
-	 * @param  integer $new_course_id ID of duplicated course.
-	 * @return int Number of lessons duplicated.
-	 */
-	private function duplicate_course_lessons( $old_course_id, $new_course_id ) {
-		$lessons              = Sensei()->course->course_lessons( $old_course_id, 'any' );
-		$new_lesson_id_lookup = array();
-		$lessons_to_update    = array();
-
-		foreach ( $lessons as $lesson ) {
-			$new_lesson = $this->duplicate_post( $lesson, '', true );
-			add_post_meta( $new_lesson->ID, '_lesson_course', $new_course_id );
-
-			$update_prerequisite_object = $this->get_prerequisite_update_object( $lesson->ID, $new_lesson->ID );
-
-			if ( ! is_null( $update_prerequisite_object ) ) {
-				$lessons_to_update[] = $update_prerequisite_object;
-			}
-
-			$new_lesson_id_lookup[ $lesson->ID ] = $new_lesson->ID;
-			$this->duplicate_lesson_quizzes( $lesson->ID, $new_lesson->ID );
-
-			// Update the _order_<course-id> meta on the lesson.
-			$this->update_lesson_order_on_lesson( $new_lesson, $old_course_id, $new_course_id );
-		}
-
-		$this->update_lesson_prerequisite_ids( $lessons_to_update, $new_lesson_id_lookup );
-
-		// Update the _lesson_order meta on the course.
-		$this->update_lesson_order_on_course( $new_course_id, $new_lesson_id_lookup );
-
-		return count( $lessons );
-	}
-
-	/**
-	 * Duplicate post.
-	 *
-	 * @param  object  $post          Post to be duplicated.
-	 * @param  string  $suffix        Suffix for duplicated post title.
-	 * @param  boolean $ignore_course Ignore lesson course when dulicating.
-	 * @return object                 Duplicate post object.
-	 */
-	private function duplicate_post( $post, $suffix = null, $ignore_course = false ) {
-
-		$new_post = array();
-
-		foreach ( $post as $k => $v ) {
-			if ( ! in_array( $k, array( 'ID', 'post_status', 'post_date', 'post_date_gmt', 'post_name', 'post_modified', 'post_modified_gmt', 'guid', 'comment_count' ) ) ) {
-				$new_post[ $k ] = $v;
-			}
-		}
-
-		$new_post['post_title']       .= $suffix;
-		$new_post['post_date']         = current_time( 'mysql' );
-		$new_post['post_date_gmt']     = get_gmt_from_date( $new_post['post_date'] );
-		$new_post['post_modified']     = $new_post['post_date'];
-		$new_post['post_modified_gmt'] = $new_post['post_date_gmt'];
-
-		switch ( $post->post_type ) {
-			case 'course':
-				$new_post['post_status'] = 'draft';
-				break;
-			case 'lesson':
-				$new_post['post_status'] = 'draft';
-				break;
-			case 'quiz':
-				$new_post['post_status'] = 'publish';
-				break;
-			case 'question':
-				$new_post['post_status'] = 'publish';
-				break;
-		}
-
-		// As per wp_update_post() we need to escape the data from the db.
-		$new_post = wp_slash( $new_post );
-
-		/**
-		 * Filter arguments for `wp_insert_post` when duplicating a Sensei
-		 * post. This may be a Course, Lesson, or Quiz.
-		 *
-		 * @hook  sensei_duplicate_post_args
-		 * @since 3.11.0
-		 *
-		 * @param {array}   $new_post The arguments for duplicating the post.
-		 * @param {WP_Post} $post     The original post being duplicated.
-		 *
-		 * @return {array}  The new arguments to be handed to `wp_insert_post`.
-		 */
-		$new_post = apply_filters( 'sensei_duplicate_post_args', $new_post, $post );
-
-		$new_post_id = wp_insert_post( $new_post );
-
-		if ( ! is_wp_error( $new_post_id ) ) {
-
-			$post_meta = get_post_custom( $post->ID );
-			if ( $post_meta && count( $post_meta ) > 0 ) {
-
-				/**
-				 * Ignored meta fields when duplicating a post.
-				 *
-				 * @hook  sensei_duplicate_post_ignore_meta
-				 * @since 3.7.0
-				 *
-				 * @param {array}   $meta_keys The meta keys to be ignored.
-				 * @param {WP_Post} $new_post  The new duplicate post.
-				 * @param {WP_Post} $post      The original post that's being duplicated.
-				 *
-				 * @return {array} $meta_keys The meta keys to be ignored.
-				 */
-				$ignore_meta = apply_filters( 'sensei_duplicate_post_ignore_meta', [ '_quiz_lesson', '_quiz_id', '_lesson_quiz', '_lesson_prerequisite' ], $new_post, $post );
-
-				if ( $ignore_course ) {
-					$ignore_meta[] = '_lesson_course';
-				}
-
-				foreach ( $post_meta as $key => $meta ) {
-					foreach ( $meta as $value ) {
-						$value = maybe_unserialize( $value );
-						if ( ! in_array( $key, $ignore_meta ) ) {
-							add_post_meta( $new_post_id, $key, $value );
-						}
-					}
-				}
-			}
-
-			add_post_meta( $new_post_id, '_duplicate', $post->ID );
-
-			$taxonomies = get_object_taxonomies( $post->post_type, 'objects' );
-
-			foreach ( $taxonomies as $slug => $tax ) {
-				$terms = get_the_terms( $post->ID, $slug );
-				if ( isset( $terms ) && is_array( $terms ) && 0 < count( $terms ) ) {
-					foreach ( $terms as $term ) {
-						wp_set_object_terms( $new_post_id, $term->term_id, $slug, true );
-					}
-				}
-			}
-
-			$new_post = get_post( $new_post_id );
-
-			return $new_post;
-		}
-
-		return false;
 	}
 
 	/**
@@ -1088,7 +838,7 @@ class Sensei_Admin {
 
 		$html = '';
 
-		if ( 0 == count( $settings ) ) {
+		if ( ! $settings ) {
 			return $html;
 		}
 
@@ -1189,7 +939,7 @@ class Sensei_Admin {
 					$html .= 'name="' . esc_attr( $field['id'] ) . '" ';
 					$html .= 'placeholder="' . esc_attr( $field['placeholder'] ) . '" ';
 					$html .= disabled( $field['disabled'], true, false );
-					$html .= '>' . strip_tags( $data ) . '</textarea><br/>' . "\n";
+					$html .= '>' . wp_strip_all_tags( $data ) . '</textarea><br/>' . "\n";
 					break;
 
 				case 'checkbox':
@@ -1379,7 +1129,7 @@ class Sensei_Admin {
 
 								$courses = Sensei()->course->get_all_courses();
 
-								if ( 0 < count( $courses ) ) {
+								if ( $courses ) {
 
 									// order the courses as set by the users
 									$all_course_ids = array();
@@ -1495,12 +1245,18 @@ class Sensei_Admin {
 	 */
 	public function handle_order_lessons() {
 		check_admin_referer( 'order_lessons' );
-		if ( ! current_user_can( 'edit_published_lessons' ) ) {
+
+		$course_id = isset( $_POST['course_id'] ) ? intval( $_POST['course_id'] ) : 0;
+
+		if (
+			! current_user_can( 'edit_published_lessons' )
+			|| ! Sensei_Course::can_current_user_edit_course( $course_id )
+		) {
 			wp_die( esc_html__( 'Insufficient permissions', 'sensei-lms' ) );
 		}
 
 		if (
-			empty( $_POST['course_id'] )
+			empty( $course_id )
 			|| empty( $_POST['lessons'] )
 		) {
 			_doing_it_wrong(
@@ -1520,8 +1276,7 @@ class Sensei_Admin {
 			];
 		}
 
-		$course_id = (int) $_POST['course_id'];
-		$ordered   = $this->sync_lesson_order(
+		$ordered = $this->sync_lesson_order(
 			$lessons_order,
 			$course_id
 		);
@@ -1841,32 +1596,6 @@ class Sensei_Admin {
 		return $course_structure;
 	}
 
-	/**
-	 * Registers the hook to call mark_completed on tasks that have been
-	 * completed.
-	 *
-	 * @access private
-	 * @return void
-	 */
-	public function admin_init() {
-		global $pagenow;
-
-		if ( Sensei_Home_Task_Sell_Course_With_WooCommerce::is_active() ) {
-			$hook = get_plugin_page_hook( 'wc-admin', 'woocommerce' );
-			if ( null !== $hook ) {
-				add_action( $hook, [ Sensei_Home_Task_Sell_Course_With_WooCommerce::class, 'mark_completed' ] );
-			}
-		}
-
-		// Mark the Course Theme Customization as completed if we are visiting
-		// the site editor or the customizer with the Course theme installed.
-		if ( Sensei_Home_Task_Customize_Course_Theme::is_active() ) {
-			if ( in_array( $pagenow, [ 'site-editor.php', 'customize.php' ], true ) ) {
-				Sensei_Home_Task_Customize_Course_Theme::mark_completed();
-			}
-		}
-	}
-
 	function sensei_add_custom_menu_items() {
 		global $pagenow;
 
@@ -2018,44 +1747,6 @@ class Sensei_Admin {
 	}
 
 	/**
-	 * Adds a workaround for fixing an issue with CPT's in the block editor.
-	 *
-	 * See https://github.com/WordPress/gutenberg/pull/15375
-	 *
-	 * Once that PR makes its way into WP Core, this function (and its
-	 * attachment to the action in `__construct`) can be removed.
-	 *
-	 * @access private
-	 *
-	 * @since 2.1.0
-	 */
-	public function output_cpt_block_editor_workaround() {
-		$screen = get_current_screen();
-
-		if ( ! ( method_exists( $screen, 'is_block_editor' ) && $screen->is_block_editor() ) ) {
-			return;
-		}
-
-		?>
-<script type="text/javascript">
-	jQuery( document ).ready( function() {
-		if ( wp.apiFetch ) {
-			wp.apiFetch.use( function( options, next ) {
-				let url = options.path || options.url;
-				if ( 'POST' === options.method && wp.url.getQueryArg( url, 'meta-box-loader' ) ) {
-					if ( options.body instanceof FormData && 'undefined' === options.body.get( 'post_author' ) ) {
-						options.body.delete( 'post_author' );
-					}
-				}
-				return next( options );
-			} );
-		}
-	} );
-</script>
-		<?php
-	}
-
-	/**
 	 * Attempt to log a Sensei event.
 	 *
 	 * @since 2.1.0
@@ -2111,6 +1802,7 @@ class Sensei_Admin {
 			<script>
 				window.sensei = window.sensei || {};
 				window.sensei.pluginUrl = '<?php echo esc_url( Sensei()->plugin_url ); ?>';
+				window.sensei.isCourseThemeInstalled = <?php echo wp_get_theme( 'course' )->exists() ? 'true' : 'false'; ?>;
 			</script>
 			<?php
 		}

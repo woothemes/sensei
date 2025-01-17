@@ -289,12 +289,13 @@ class Sensei_Messages {
 		 *
 		 * @since 1.9.18
 		 *
-		 * @param string    $html
-		 * @param array     $this->message_notice
-		 * @param int       $post_id
-		 * @param int       $user_id
+		 * @hook sensei_messages_send_message_link
 		 *
-		 * @return string
+		 * @param {string} $html           The HTML for the send message link.
+		 * @param {array}  $message_notice The message notice.
+		 * @param {int}    $post_id        The post ID.
+		 * @param {int}    $user_id        The user ID.
+		 * @return {string} Filtered HTML.
 		 */
 		echo wp_kses(
 			apply_filters( 'sensei_messages_send_message_link', $html, isset( $this->message_notice ) ? $this->message_notice : '', $post_id, $user_id ),
@@ -410,6 +411,14 @@ class Sensei_Messages {
 		// Force comment to be approved.
 		wp_set_comment_status( $comment_id, 'approve' );
 
+		/**
+		 * Fires when a private message reply is received.
+		 *
+		 * @hook sensei_private_message_reply
+		 *
+		 * @param {WP_Comment} $comment The comment object.
+		 * @param {WP_Post}    $message The message post object.
+		 */
 		do_action( 'sensei_private_message_reply', $comment, $message );
 	}
 
@@ -526,6 +535,7 @@ class Sensei_Messages {
 				 * Fires when a new private message is sent.
 				 *
 				 * @since 1.8.0
+				 *
 				 * @hook  sensei_new_private_message
 				 *
 				 * @param {int} $message_id The message ID.
@@ -604,6 +614,7 @@ class Sensei_Messages {
 			return false;
 		}
 
+		$user_login = null;
 		if ( $user_id == 0 ) {
 			global $current_user;
 			wp_get_current_user();
@@ -650,14 +661,9 @@ class Sensei_Messages {
 			return;
 		}
 
-		$settings = Sensei()->settings->get_settings();
-		if ( isset( $settings['my_course_page'] )
-			&& 0 < intval( $settings['my_course_page'] ) ) {
-
-			$my_courses_page_id = $settings['my_course_page'];
-
+		$my_courses_page_id = Sensei()->settings->get_my_courses_page_id();
+		if ( 0 < $my_courses_page_id ) {
 			$my_courses_url = get_permalink( $my_courses_page_id );
-
 		}
 
 		if ( is_single() && is_singular( $this->post_type )
@@ -750,7 +756,7 @@ class Sensei_Messages {
 			}
 		}
 
-		return strip_shortcodes( $title );
+		return $this->replace_brackets( $title );
 	}
 
 	/**
@@ -772,7 +778,24 @@ class Sensei_Messages {
 			}
 		}
 
-		return strip_shortcodes( $content );
+		return $this->replace_brackets( $content );
+	}
+
+	/**
+	 * Escape brackets to prevent shortcode loading in message content.
+	 * This approach is adopted because strip_shortcodes() does not work for escaped shortcodes.
+	 * For example, [shortcode] will be stripped but [[shortcode]] will become an active shortcode.
+	 *
+	 * @param  string $content Original message content.
+	 * @return string          Modified message content
+	 */
+	private function replace_brackets( $content ) {
+		$bracket_replaces = [
+			'[' => '&#91;',
+			']' => '&#93;',
+		];
+
+		return strtr( $content, $bracket_replaces );
 	}
 
 	/**
@@ -888,9 +911,12 @@ class Sensei_Messages {
 				 * Filter Sensei single title
 				 *
 				 * @since 1.8.0
-				 * @param string $title
-				 * @param string $template
-				 * @param string $post_type
+				 *
+				 * @hook sensei_single_title
+				 *
+				 * @param {string} $title     The title.
+				 * @param {string} $post_type The post type.
+				 * @return {string} Filtered title.
 				 */
 				echo wp_kses_post( apply_filters( 'sensei_single_title', $title, $post->post_type ) );
 				?>
@@ -922,6 +948,11 @@ class Sensei_Messages {
 		 * Filter the sensei messages archive title.
 		 *
 		 * @since 1.0.0
+		 *
+		 * @hook sensei_message_archive_title
+		 *
+		 * @param {string} $html The HTML for the archive title.
+		 * @return {string} Filtered HTML.
 		 */
 		echo wp_kses_post( apply_filters( 'sensei_message_archive_title', $html ) );
 

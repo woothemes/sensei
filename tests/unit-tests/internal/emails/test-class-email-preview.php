@@ -7,6 +7,7 @@ use Sensei\Internal\Emails\Email_Sender;
 use Sensei_Assets;
 use Sensei_Factory;
 use Sensei_Test_Login_Helpers;
+use WP_Post;
 use WPDieException;
 
 /**
@@ -16,6 +17,27 @@ use WPDieException;
  */
 class Email_Preview_Test extends \WP_UnitTestCase {
 	use Sensei_Test_Login_Helpers;
+
+	/**
+	 * Factory instance.
+	 *
+	 * @var Sensei_Factory
+	 */
+	protected $factory;
+
+	/**
+	 * Email_Sender mock.
+	 *
+	 * @var \PHPUnit\Framework\MockObject\MockObject
+	 */
+	protected $email_sender;
+
+	/**
+	 * Sensei_Assets mock.
+	 *
+	 * @var \PHPUnit\Framework\MockObject\MockObject
+	 */
+	protected $assets;
 
 	public function setUp(): void {
 		parent::setUp();
@@ -41,7 +63,7 @@ class Email_Preview_Test extends \WP_UnitTestCase {
 		$this->assertSame( 10, $priority );
 	}
 
-	public function testInit_WhenCalled_AddsRegisterAdminScriptsHook() {
+	public function testInit_WhenCalled_AddsPreviewPostLinkHook() {
 		/* Arrange. */
 		$email_preview = new Email_Preview( $this->email_sender, $this->assets );
 
@@ -49,7 +71,19 @@ class Email_Preview_Test extends \WP_UnitTestCase {
 		$email_preview->init();
 
 		/* Assert. */
-		$priority = has_action( 'admin_enqueue_scripts', [ $email_preview, 'register_admin_scripts' ] );
+		$priority = has_action( 'preview_post_link', [ $email_preview, 'filter_preview_link' ] );
+		$this->assertSame( 10, $priority );
+	}
+
+	public function testInit_WhenCalled_AddsPostTypeLinkHook() {
+		/* Arrange. */
+		$email_preview = new Email_Preview( $this->email_sender, $this->assets );
+
+		/* Act. */
+		$email_preview->init();
+
+		/* Assert. */
+		$priority = has_action( 'post_type_link', [ $email_preview, 'filter_preview_link' ] );
 		$this->assertSame( 10, $priority );
 	}
 
@@ -152,12 +186,22 @@ class Email_Preview_Test extends \WP_UnitTestCase {
 		$this->assertStringContainsString( 'Welcome', $content );
 	}
 
-	public function testRenderPreview_WhenRenderingPage_RendersFromAddress() {
+	public function testRenderPreview_WhenRenderingPage_RendersFromInfo() {
 		/* Arrange. */
 		$this->login_as_admin();
 
 		$post_id       = $this->factory->email->create();
 		$email_preview = new Email_Preview( $this->email_sender, $this->assets );
+
+		$this->email_sender
+			->expects( $this->once() )
+			->method( 'get_from_address' )
+			->willReturn( 'from@address.com' );
+
+		$this->email_sender
+			->expects( $this->once() )
+			->method( 'get_from_name' )
+			->willReturn( 'Sensei Form Name' );
 
 		$_GET['sensei_email_preview_id'] = $post_id;
 		$_REQUEST['_wpnonce']            = wp_create_nonce( 'preview-email-post_' . $post_id );
@@ -168,26 +212,8 @@ class Email_Preview_Test extends \WP_UnitTestCase {
 		$content = ob_get_clean();
 
 		/* Assert. */
-		$this->assertStringContainsString( 'admin@example.org', $content );
-	}
-
-	public function testRenderPreview_WhenRenderingPage_RendersFromName() {
-		/* Arrange. */
-		$this->login_as_admin();
-
-		$post_id       = $this->factory->email->create();
-		$email_preview = new Email_Preview( $this->email_sender, $this->assets );
-
-		$_GET['sensei_email_preview_id'] = $post_id;
-		$_REQUEST['_wpnonce']            = wp_create_nonce( 'preview-email-post_' . $post_id );
-
-		/* Act. */
-		ob_start();
-		$email_preview->render_preview();
-		$content = ob_get_clean();
-
-		/* Assert. */
-		$this->assertStringContainsString( 'Test Blog', $content );
+		$this->assertStringContainsString( 'Sensei Form Name', $content, 'Fail to render the from name' );
+		$this->assertStringContainsString( 'from@address.com', $content, 'Fail to render the from address' );
 	}
 
 	public function testRenderPreview_WhenRenderingPage_RendersAvatar() {
@@ -235,53 +261,6 @@ class Email_Preview_Test extends \WP_UnitTestCase {
 		$this->assertSame( 'content', $content );
 	}
 
-	public function testRegisterAdminScripts_WhenNoScreen_DoesNothing() {
-		/* Arrange. */
-		$email_preview = new Email_Preview( $this->email_sender, $this->assets );
-
-		/* Assert. */
-		$this->assets
-			->expects( $this->never() )
-			->method( 'enqueue' );
-
-		/* Act. */
-		$email_preview->register_admin_scripts();
-	}
-
-	public function testRegisterAdminScripts_WhenNotOnTheEmailEditScreen_DoesNothing() {
-		/* Arrange. */
-		$email_preview = new Email_Preview( $this->email_sender, $this->assets );
-
-		set_current_screen( 'test' );
-
-		/* Assert. */
-		$this->assets
-			->expects( $this->never() )
-			->method( 'enqueue' );
-
-		/* Act. */
-		$email_preview->register_admin_scripts();
-	}
-
-	public function testRegisterAdminScripts_WhenOnTheEmailEditScreen_EnqueuesTheScript() {
-		/* Arrange. */
-		$email_preview = new Email_Preview( $this->email_sender, $this->assets );
-
-		set_current_screen( 'sensei_email' );
-
-		/* Assert. */
-		$this->assets
-			->expects( $this->exactly( 2 ) )
-			->method( 'enqueue' )
-			->withConsecutive(
-				[ 'sensei-email-preview-button', 'admin/emails/email-preview-button/index.js', [], true ],
-				[ 'sensei-email-preview-button', 'admin/emails/email-preview-button/email-preview-button.css' ]
-			);
-
-		/* Act. */
-		$email_preview->register_admin_scripts();
-	}
-
 	public function testGetPreviewLink_WhenCalled_ReturnsThePreviewLink() {
 		/* Arrange. */
 		$post_id = 1;
@@ -293,6 +272,28 @@ class Email_Preview_Test extends \WP_UnitTestCase {
 		$this->assertSame(
 			wp_nonce_url( get_home_url() . "?sensei_email_preview_id=$post_id", 'preview-email-post_' . $post_id ),
 			$link
+		);
+	}
+
+	public function testFilterPreviewLink_WhenCalled_ReturnsThePreviewLink() {
+		/* Arrange. */
+		$email_preview = new Email_Preview( $this->email_sender, $this->assets );
+		$link          = 'http://example.com/?p=1';
+		$post          = new WP_Post(
+			(object) array(
+				'ID'        => 1,
+				'post_type' => 'sensei_email',
+			)
+		);
+
+		/* Act. */
+		$filtered_link = $email_preview->filter_preview_link( $link, $post );
+
+		/* Assert. */
+		$nonce = wp_create_nonce( 'preview-email-post_1' );
+		$this->assertSame(
+			get_home_url() . '?sensei_email_preview_id=1&_wpnonce=' . $nonce,
+			$filtered_link
 		);
 	}
 }

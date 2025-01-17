@@ -51,6 +51,7 @@ const LessonSettings = ( {
 				) }
 				<PanelBody title={ __( 'Typography', 'sensei-lms' ) }>
 					<FontSizePicker
+						__nextHasNoMarginBottom // Can be removed when we support WP 6.5+
 						fontSizes={ fontSizes }
 						value={ fontSize }
 						onChange={ ( value ) => {

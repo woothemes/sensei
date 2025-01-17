@@ -67,19 +67,6 @@ class Sensei_Home_Tasks_Provider_Test extends WP_UnitTestCase {
 		$this->assertArrayHasKey( Sensei_Home_Task_Publish_First_Course::get_id(), $items );
 	}
 
-	public function testGetTasks_WhenCalledWhileCourseThemeActive_IncludesCourseThemeCustomizationTask() {
-		// Arrange
-		switch_theme( 'course' );
-
-		// Act
-		$result = $this->provider->get();
-
-		// Assert
-		$items = $result['items'];
-		$this->assertIsArray( $items );
-		$this->assertArrayHasKey( Sensei_Home_Task_Customize_Course_Theme::get_id(), $items );
-	}
-
 	public function testGet_GivenAFilterThatOverridesTasks_ReturnSingleOverriddenResult() {
 		// Arrange
 		add_filter( 'sensei_home_tasks', [ $this, 'overrideWithFakeTask' ] );
@@ -261,4 +248,35 @@ class Sensei_Home_Tasks_Provider_Test extends WP_UnitTestCase {
 		$this->assertTrue( get_option( Sensei_Home_Tasks_Provider::COMPLETED_TASKS_OPTION_KEY, false ) );
 	}
 
+	public function testLogCourseCompletionTasks_FirstDraftCourse_SetsOption() {
+		// Arrange
+		$course = new WP_Post(
+			(object) [
+				'post_type'   => 'course',
+				'post_status' => 'draft',
+			]
+		);
+
+		// Act
+		$this->provider->log_course_completion_tasks( $course->ID, $course, true );
+
+		// Assert
+		$this->assertEquals( get_option( Sensei_Home_Task_Create_First_Course::CREATED_FIRST_COURSE_OPTION_KEY, false ), 1 );
+	}
+
+	public function testLogCourseCompletionTasks_FirstPublishedCourse_SetsOption() {
+		// Arrange
+		$course = new WP_Post(
+			(object) [
+				'post_type'   => 'course',
+				'post_status' => 'publish',
+			]
+		);
+
+		// Act
+		$this->provider->log_course_completion_tasks( $course->ID, $course, true );
+
+		// Assert
+		$this->assertEquals( get_option( Sensei_Home_Task_Publish_First_Course::PUBLISHED_FIRST_COURSE_OPTION_KEY, false ), 1 );
+	}
 }

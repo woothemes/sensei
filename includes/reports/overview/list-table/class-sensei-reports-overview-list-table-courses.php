@@ -64,10 +64,10 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 			return $this->columns;
 		}
 
-		$all_course_ids    = $this->get_all_item_ids();
-		$total_completions = 0;
+		$all_course_ids   = $this->get_all_item_ids();
+		$total_completion = 0;
 		if ( ! empty( $all_course_ids ) ) {
-			$total_completions = Sensei_Utils::sensei_check_for_activity(
+			$total_completion = Sensei_Utils::sensei_check_for_activity(
 				array(
 					'type'     => 'sensei_course_status',
 					'status'   => 'complete',
@@ -77,6 +77,7 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 		}
 
 		$total_average_progress = $this->reports_overview_service_courses->get_total_average_progress( $all_course_ids );
+		$total_enrolled         = $this->reports_overview_service_courses->get_total_enrollments( $all_course_ids );
 
 		$columns = array(
 			'title'              => sprintf(
@@ -85,10 +86,21 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 				esc_html( count( $all_course_ids ) )
 			),
 			'last_activity'      => __( 'Last Activity', 'sensei-lms' ),
+			'enrolled'           => sprintf(
+			// translators: Placeholder value is the total number of enrollments across all courses.
+				__( 'Enrolled (%d)', 'sensei-lms' ),
+				$total_enrolled
+			),
+
 			'completions'        => sprintf(
-			// translators: Placeholder value is the number of completed courses.
-				__( 'Completed (%d)', 'sensei-lms' ),
-				esc_html( $total_completions )
+			// translators: Placeholder value represents the total number of enrollments that have completed courses..
+				__( 'Completions (%s)', 'sensei-lms' ),
+				$total_completion
+			),
+			'completion_rate'    => sprintf(
+			// translators: Placeholder value represents the % of enrolled students that completed the course.
+				__( 'Completion Rate (%s)', 'sensei-lms' ),
+				$this->get_completion_rate( $total_enrolled, $total_completion )
 			),
 			'average_progress'   => sprintf(
 			// translators: Placeholder value is the total average progress for all courses.
@@ -108,7 +120,26 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 		);
 
 		// Backwards compatible filter name, moving forward should have single filter name.
+		/**
+		 * Filter the columns for the courses overview report.
+		 *
+		 * @hook sensei_analysis_overview_courses_columns
+		 *
+		 * @param {array} $columns The columns for the courses overview report.
+		 * @param {Sensei_Reports_Overview_List_Table_Courses} $this The current instance of the class.
+		 * @return {array} The filtered columns.
+		 */
 		$columns = apply_filters( 'sensei_analysis_overview_courses_columns', $columns, $this );
+
+		/**
+		 * Filter the columns for the courses overview report.
+		 *
+		 * @hook sensei_analysis_overview_columns
+		 *
+		 * @param {array} $columns The columns for the courses overview report.
+		 * @param {Sensei_Reports_Overview_List_Table_Courses} $this The current instance of the class.
+		 * @return {array} The filtered columns.
+		 */
 		$columns = apply_filters( 'sensei_analysis_overview_columns', $columns, $this );
 
 		$this->columns = $columns;
@@ -128,7 +159,26 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 		);
 
 		// Backwards compatible filter name, moving forward should have single filter name.
+		/**
+		 * Filter the sortable columns for the courses overview report.
+		 *
+		 * @hook sensei_analysis_overview_courses_columns_sortable
+		 *
+		 * @param {array} $columns The sortable columns for the courses overview report.
+		 * @param {Sensei_Reports_Overview_List_Table_Courses} $this The current instance of the class.
+		 * @return {array} The filtered sortable columns.
+		 */
 		$columns = apply_filters( 'sensei_analysis_overview_courses_columns_sortable', $columns, $this );
+
+		/**
+		 * Filter the sortable columns for the courses overview report.
+		 *
+		 * @hook sensei_analysis_overview_columns_sortable
+		 *
+		 * @param {array} $columns The sortable columns for the courses overview report.
+		 * @param {Sensei_Reports_Overview_List_Table_Courses} $this The current instance of the class.
+		 * @return {array} The filtered sortable columns.
+		 */
 		$columns = apply_filters( 'sensei_analysis_overview_columns_sortable', $columns, $this );
 
 		return $columns;
@@ -147,11 +197,20 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 		$lessons = $this->course->course_lessons( $item->ID, 'any', 'ids' );
 
 		// Get Course Completions.
-		$course_args        = array(
+		$course_args = array(
 			'post_id' => $item->ID,
 			'type'    => 'sensei_course_status',
 			'status'  => 'complete',
 		);
+		/**
+		 * Filter the course completions query arguments.
+		 *
+		 * @hook sensei_analysis_course_completions
+		 *
+		 * @param {array} $course_args Array of query arguments for course completions.
+		 * @param {WP_Post} $item Current course post object.
+		 * @return {array} Filtered array of query arguments for course completions.
+		 */
 		$course_completions = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_course_completions', $course_args, $item ) );
 
 		// Average Grade will be N/A if the course has no lessons or quizzes, if none of the lessons
@@ -167,6 +226,15 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 				'meta_key' => 'grade', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
 			);
 
+			/**
+			 * Filter the course completion percentage query arguments.
+			 *
+			 * @hook sensei_analysis_course_percentage
+			 *
+			 * @param {array} $grade_args Array of query arguments for course percentage.
+			 * @param {WP_Post} $item Current course post object.
+			 * @return {array} Filtered array of query arguments for course percentage.
+			 */
 			$percent_count = Sensei_Utils::sensei_check_for_activity( apply_filters( 'sensei_analysis_course_percentage', $grade_args, $item ), false );
 			$percent_total = $this->grading::get_course_users_grades_sum( $item->ID );
 
@@ -181,8 +249,9 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 		$average_completion_days = $item->count_of_completions > 0 ? ceil( $item->days_to_completion / $item->count_of_completions ) : __( 'N/A', 'sensei-lms' );
 
 		// Output course data.
-		/** This filter is documented in wp-includes/post-template.php */
-		$course_title = apply_filters( 'the_title', $item->post_title, $item->ID ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals
+		$course_title   = apply_filters( 'the_title', $item->post_title, $item->ID ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals
+		$total_enrolled = $this->reports_overview_service_courses->get_total_enrollments( [ $item->ID ] );
+
 		if ( ! $this->csv_output ) {
 			$url = add_query_arg(
 				array(
@@ -197,12 +266,24 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 
 		$average_course_progress = $this->get_average_progress_for_courses_table( $item->ID );
 
+		/**
+		 * Filter the row data for the Analysis Overview list table.
+		 *
+		 * @hook sensei_analysis_overview_column_data
+		 *
+		 * @param {array} $column_data Array of column data for the report table.
+		 * @param {object|WP_Post|WP_User} $item Current row object.
+		 * @param {Sensei_Reports_Overview_List_Table_Courses} $this Current instance of the list table.
+		 * @return {array} Filtered array of column data for the report table.
+		 */
 		$column_data = apply_filters(
 			'sensei_analysis_overview_column_data',
 			array(
 				'title'              => $course_title,
 				'last_activity'      => $item->last_activity_date ? Sensei_Utils::format_last_activity_date( $item->last_activity_date ) : __( 'N/A', 'sensei-lms' ),
+				'enrolled'           => $total_enrolled,
 				'completions'        => $course_completions,
+				'completion_rate'    => $this->get_completion_rate( $total_enrolled, $course_completions ),
 				'average_progress'   => $average_course_progress,
 				'average_percent'    => $average_grade,
 				'days_to_completion' => $average_completion_days,
@@ -218,6 +299,24 @@ class Sensei_Reports_Overview_List_Table_Courses extends Sensei_Reports_Overview
 		}
 
 		return $escaped_column_data;
+	}
+
+	/**
+	 * Get completion rate for a lesson.
+	 *
+	 * @since 4.15.1
+	 *
+	 * @param int $total_enrollments Total of enrollments in a course.
+	 * @param int $total_completion Total of students who completed the course.
+	 *
+	 * @return string The completion rate or 'N/A' if there are no enrollment.
+	 */
+	private function get_completion_rate( int $total_enrollments, int $total_completion ): string {
+		if ( 0 >= $total_enrollments ) {
+			return __( 'N/A', 'sensei-lms' );
+		}
+
+		return Sensei_Utils::quotient_as_absolute_rounded_percentage( $total_completion, $total_enrollments ) . '%';
 	}
 
 	/**

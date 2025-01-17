@@ -41,7 +41,10 @@ class Course_Welcome extends Email_Generators_Abstract {
 	 * @return void
 	 */
 	public function init() {
-		add_action( 'sensei_user_course_start', [ $this, 'welcome_to_course_for_student' ], 10, 2 );
+		$this->maybe_add_action( 'sensei_course_enrolment_status_changed', [ $this, 'welcome_to_course_for_student' ], 10, 3 );
+
+		// Send welcome email on the day the student gets access to the course.
+		$this->maybe_add_action( 'sensei_pro_course_access_start_student_email_send', [ $this, 'welcome_to_course_for_student' ], 10, 2 );
 	}
 
 	/**
@@ -49,12 +52,25 @@ class Course_Welcome extends Email_Generators_Abstract {
 	 *
 	 * @access private
 	 *
-	 * @param int $student_id The student ID.
-	 * @param int $course_id  The course ID.
+	 * @param int  $student_id  The student ID.
+	 * @param int  $course_id   The course ID.
+	 * @param bool $is_enrolled Whether the student is enrolled in the course.
 	 */
-	public function welcome_to_course_for_student( $student_id, $course_id ) {
+	public function welcome_to_course_for_student( $student_id, $course_id, $is_enrolled = true ) {
+		if ( ! $is_enrolled ) {
+			return;
+		}
+
 		$course = get_post( $course_id );
 		if ( ! $course || 'publish' !== $course->post_status ) {
+			return;
+		}
+
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+		$original_course_id = apply_filters( 'wpml_original_element_id', null, $course_id, 'post_course' );
+
+		// Prevent sending emails for the copy courses created by WPML for translations.
+		if ( $original_course_id && intval( $original_course_id ) !== $course_id ) {
 			return;
 		}
 

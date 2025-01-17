@@ -23,11 +23,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 		<?php
 		/**
-		 * action that runs before the sensei {post_type} content. It runs inside the sensei
-		 * content.php template. This applies to the specific post type that you've targeted.
+		 * Action that runs before the sensei {post_type} content.
+		 * It runs inside the sensei content.php template.
+		 * This applies to the specific post type that you've targeted.
 		 *
 		 * @since 1.9
-		 * @param string $message_id
+		 *
+		 * @hook sensei_content_message_before
+		 *
+		 * @param {int} $message_id The message ID.
 		 *
 		 * @hooked Sensei_Messages::the_message_title - 10
 		 * @hooked Sensei_Messages::the_message_sender - 20
@@ -43,7 +47,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 			 *
 			 * @since 1.9
 			 *
-			 * @param string $message_id
+			 * @hook sensei_content_message_inside_before
+			 *
+			 * @param {int} $message_id The message ID.
 			 */
 			do_action( 'sensei_content_message_inside_before', get_the_ID() );
 			?>
@@ -60,7 +66,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 			 *
 			 * @since 1.9
 			 *
-			 * @param string $message_id
+			 * @hook sensei_content_message_inside_after
+			 *
+			 * @param {int} $message_id The message ID.
 			 */
 			do_action( 'sensei_content_message_inside_after', get_the_ID() );
 			?>
@@ -73,11 +81,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 		 * message-content.php template.
 		 *
 		 * @since 1.9
-		 * @param string $message_id
+		 *
+		 * @hook sensei_content_message_inside_after
+		 *
+		 * @param {int} $message_id The message ID.
 		 */
 		do_action( 'sensei_content_message_after', get_the_ID() );
 		?>
 
 	</section> <!-- article .message-content -->
 
-</article> <!-- article .(<?php echo esc_attr( join( ' ', get_post_class( array( 'sensei_message', 'post' ) ) ) ); ?>  -->
+</article> <!-- article .(<?php echo esc_attr( implode( ' ', get_post_class( array( 'sensei_message', 'post' ) ) ) ); ?>  -->

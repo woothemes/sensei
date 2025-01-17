@@ -357,6 +357,32 @@ class Sensei_REST_API_Questions_Controller_Tests extends WP_Test_REST_TestCase {
 		$this->assertEquals( 'draft', get_post_status( $question_id ) );
 	}
 
+	public function testQuestionUpdate_WhenPublishedQuestionAndNoStatusInPayload_DoesnChangeStatusToDraft() {
+		/* Arrange. */
+		$this->login_as_admin();
+
+		$question_id = $this->factory->question->create();
+
+		$this->save_question_post(
+			$question_id,
+			[
+				'status'  => 'publish',
+				'content' => '<!-- wp:sensei-lms/quiz-question {"title":"Test"} --><!-- /wp:sensei-lms/quiz-question -->',
+			]
+		);
+
+		/* Act. */
+		$this->save_question_post(
+			$question_id,
+			[
+				'content' => '<!-- wp:sensei-lms/quiz-question {"title":"Test"} --><!-- /wp:sensei-lms/quiz-question -->',
+			]
+		);
+
+		/* Assert. */
+		$this->assertEquals( 'publish', get_post_status( $question_id ) );
+	}
+
 	public function testQuestionWithCategoryUpdateToDraft() {
 		$this->login_as_admin();
 

@@ -116,7 +116,6 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 
 		// test if the global sensei lesson class is loaded
 		$this->assertTrue( isset( Sensei()->lesson ), 'Sensei lesson class is not loaded on the global sensei Object' );
-
 	}
 
 
@@ -168,7 +167,6 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 			Sensei_Lesson::is_prerequisite_complete( $test_lesson_id, $test_user_id, true ),
 			'Users that has completed prerequisite should return true.'
 		);
-
 	}
 
 	/**
@@ -778,7 +776,6 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 
 		/* Assert */
 		self::assertEmpty( $output );
-
 	}
 
 	public function providerAddCustomNavigation_WhenWrongScreen_DoesntHaveOutput(): array {
@@ -824,7 +821,7 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 				<div class="sensei-custom-navigation__links">
 					<a class="page-title-action" href="http://example.org/wp-admin/post-new.php?post_type=lesson">New Lesson</a>
 					<a href="http://example.org/wp-admin/admin.php?page=lesson-order">Order Lessons</a>
-					<a href="http://example.org/wp-admin/admin.php?page=sensei-settings#lesson-settings">Lesson Settings</a>
+					<a href="http://example.org/wp-admin/admin.php?page=sensei-settings&#038;tab=lesson-settings">Lesson Settings</a>
 				</div>
 			</div>
 			<div class="sensei-custom-navigation__tabbar">
@@ -1153,8 +1150,11 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		self::assertNull( $result );
 	}
 
-	public function testCourseSignupLink_WhenSignupNoticeNeeded_AddsNotice(): void {
+	public function testCourseSignupLink_WhenSignupNoticeNeededAndCourseAllowsSelfEnrollment_AddsNotice(): void {
 		/* Arrange */
+		global $post;
+		$lesson_id        = $this->factory->lesson->create();
+		$post             = get_post( $lesson_id );
 		$notices          = $this->createMock( Sensei_Notices::class );
 		Sensei()->notices = $notices;
 
@@ -1165,7 +1165,31 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		Sensei()->lesson = $lesson;
 
 		/* Expect & Act */
-		$notices->expects( self::once() )->method( 'add_notice' );
+		$notices->expects( self::once() )
+			->method( 'add_notice' )
+			->with( $this->stringContains( 'Please sign up for' ) );
+		$result = Sensei_Lesson::course_signup_link();
+	}
+
+	public function testCourseSignupLink_WhenSignupNoticeNeededAndCourseDoesntAllowSelfEnrollment_AddsNotice(): void {
+		/* Arrange */
+		global $post;
+		$lesson_id        = $this->factory->lesson->create();
+		$post             = get_post( $lesson_id );
+		$notices          = $this->createMock( Sensei_Notices::class );
+		Sensei()->notices = $notices;
+
+		$course = $this->factory->course->create_and_get();
+		update_post_meta( $course->ID, '_sensei_self_enrollment_not_allowed', true );
+
+		$lesson = $this->createMock( Sensei_Lesson::class );
+		$lesson->method( 'get_course_id' )->willReturn( $course->ID );
+		Sensei()->lesson = $lesson;
+
+		/* Expect & Act */
+		$notices->expects( self::once() )
+			->method( 'add_notice' )
+			->with( 'Please contact the course administrator to access the course content.' );
 		$result = Sensei_Lesson::course_signup_link();
 	}
 
@@ -1334,6 +1358,32 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		self::assertFalse( $result );
 	}
 
+	public function testShouldShowLessonActions_WhenHookNotSetAndHasNoPreRequisite_ReturnsTrue(): void {
+		/* Arrange */
+		$user_id   = $this->factory->user->create();
+		$lesson_id = $this->factory->lesson->create();
+
+		/* Act */
+		$result = Sensei_Lesson::should_show_lesson_actions( $lesson_id, $user_id );
+
+		/* Assert */
+		self::assertTrue( $result, 'Lesson actions should be shown because there is no filter or prerequisite' );
+	}
+
+	public function testShouldShowLessonActions_WhenHookSetToFalse_ReturnsFalse(): void {
+		/* Arrange */
+		$user_id   = $this->factory->user->create();
+		$lesson_id = $this->factory->lesson->create();
+
+		add_filter( 'sensei_lesson_show_actions', '__return_false' );
+
+		/* Act */
+		$result = Sensei_Lesson::should_show_lesson_actions( $lesson_id, $user_id );
+
+		/* Assert */
+		self::assertFalse( $result, 'Lesson actions should not be shown because filter is set to false here' );
+	}
+
 	public function testFooterQuizCallToAction_WhenCalled_OutputsButton(): void {
 		/* Arrange */
 		$course = $this->factory->get_course_with_lessons();
@@ -1465,7 +1515,8 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 	public function testSetQuickEditAdminDefaults_WhenCalled_LocalizesScripts(): void {
 		/* Arrange */
 		global $wp_scripts;
-		$wp_scripts = $this->createMock( WP_Scripts::class );
+		$old_wp_scripts = $wp_scripts;
+		$wp_scripts     = $this->createMock( WP_Scripts::class );
 
 		$post = $this->factory->lesson->create_and_get();
 		$quiz = $this->factory->quiz->create_and_get();
@@ -1506,6 +1557,9 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 				]
 			);
 		$lesson->set_quick_edit_admin_defaults( 'lesson-course', $post->ID );
+
+		/* Reset */
+		$wp_scripts = $old_wp_scripts;
 	}
 
 	public function testMetaBoxSave_PostIdGiven_UpdatesPostMeta(): void {
@@ -1611,5 +1665,56 @@ class Sensei_Class_Lesson_Test extends WP_UnitTestCase {
 		/* Assert. */
 		$this->assertSame( [ $question_1, $question_2 ], $question_ids );
 	}
-}
 
+	public function testSaveAllLessonsEditFields_WhenCalled_UpdatesPostMeta(): void {
+		/* Arrange */
+		$lesson_id = $this->factory->lesson->create();
+		$course_id = $this->factory->course->create();
+		$data      = array(
+			'_edit_lessons_nonce' => wp_create_nonce( 'bulk-edit-lessons' ),
+			'lesson_course'       => $course_id,
+			'lesson_complexity'   => 'hard',
+		);
+		$lesson    = new Sensei_Lesson();
+
+		/* Act */
+		$lesson->save_all_lessons_edit_fields( array( $lesson_id ), $data );
+
+		/* Assert */
+		$expected = array(
+			'_lesson_course'     => $course_id,
+			'_lesson_complexity' => 'hard',
+		);
+		$actual   = array(
+			'_lesson_course'     => (int) get_post_meta( $lesson_id, '_lesson_course', true ),
+			'_lesson_complexity' => get_post_meta( $lesson_id, '_lesson_complexity', true ),
+		);
+		self::assertSame( $expected, $actual );
+	}
+
+	public function testBulkEditSavePost_WhenCalled_UpdatesPostMeta(): void {
+		/* Arrange */
+		$lesson_id = $this->factory->lesson->create();
+		$course_id = $this->factory->course->create();
+		$_REQUEST  = array(
+			'_edit_lessons_nonce' => wp_create_nonce( 'bulk-edit-lessons' ),
+			'lesson_course'       => $course_id,
+			'lesson_complexity'   => 'hard',
+		);
+		$lesson    = new Sensei_Lesson();
+
+		/* Act */
+		$lesson->bulk_edit_save_post( $lesson_id );
+
+		/* Assert */
+		$expected = array(
+			'_lesson_course'     => $course_id,
+			'_lesson_complexity' => 'hard',
+		);
+		$actual   = array(
+			'_lesson_course'     => (int) get_post_meta( $lesson_id, '_lesson_course', true ),
+			'_lesson_complexity' => get_post_meta( $lesson_id, '_lesson_complexity', true ),
+		);
+		self::assertSame( $expected, $actual );
+	}
+}

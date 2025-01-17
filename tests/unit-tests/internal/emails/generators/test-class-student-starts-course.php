@@ -9,7 +9,7 @@ use Sensei_Factory;
 /**
  * Tests for Sensei\Internal\Emails\Student_Starts_Course class.
  *
- * @covers \Sensei\Internal\Emails\Student_Starts_Course
+ * @covers \Sensei\Internal\Emails\Generators\Student_Starts_Course
  */
 class Student_Starts_Course_Test extends \WP_UnitTestCase {
 
@@ -31,7 +31,9 @@ class Student_Starts_Course_Test extends \WP_UnitTestCase {
 		parent::setUp();
 
 		$this->factory          = new Sensei_Factory();
-		$this->email_repository = new Email_Repository();
+		$this->email_repository = $this->createMock( Email_Repository::class );
+		$this->email_repository->method( 'get' )
+			->willReturn( new \WP_Post( (object) [ 'post_status' => 'publish' ] ) );
 	}
 
 	public function testGenerateEmail_WhenCalledByStudentStartCourseEvent_CallsEmailSendingActionWithRightData() {
@@ -48,7 +50,7 @@ class Student_Starts_Course_Test extends \WP_UnitTestCase {
 		);
 		$course     = $this->factory->course->create_and_get(
 			[
-				'post_title'  => 'Test Course',
+				'post_title'  => '“Course with Special Characters…?”',
 				'post_author' => $teacher_id,
 			]
 		);
@@ -87,7 +89,7 @@ class Student_Starts_Course_Test extends \WP_UnitTestCase {
 		self::assertEquals( 'student_starts_course', $email_data['name'] );
 		self::assertArrayHasKey( 'test@a.com', $email_data['data'] );
 		self::assertEquals( 'Test Student', $email_data['data']['test@a.com']['student:displayname'] );
-		self::assertEquals( 'Test Course', $email_data['data']['test@a.com']['course:name'] );
+		self::assertEquals( '“Course with Special Characters…?”', $email_data['data']['test@a.com']['course:name'] );
 		self::assertEquals( $manage_url, $email_data['data']['test@a.com']['manage:students'] );
 	}
 }

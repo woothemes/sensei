@@ -7,7 +7,10 @@
 
 namespace Sensei\Internal\Quiz_Submission\Grade\Repositories;
 
-use Sensei\Internal\Quiz_Submission\Grade\Models\Grade;
+use Sensei\Internal\Quiz_Submission\Answer\Models\Answer_Interface;
+use Sensei\Internal\Quiz_Submission\Grade\Models\Comments_Based_Grade;
+use Sensei\Internal\Quiz_Submission\Grade\Models\Grade_Interface;
+use Sensei\Internal\Quiz_Submission\Submission\Models\Submission_Interface;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -26,15 +29,40 @@ class Comments_Based_Grade_Repository implements Grade_Repository_Interface {
 	 *
 	 * @internal
 	 *
-	 * @param int         $submission_id The submission ID.
-	 * @param int         $answer_id     The answer ID.
-	 * @param int         $question_id   The question ID.
-	 * @param int         $points        The points.
-	 * @param string|null $feedback      The feedback.
+	 * @param Submission_Interface $submission  The submission ID.
+	 * @param Answer_Interface     $answer      The answer.
+	 * @param int                  $question_id The question ID.
+	 * @param int                  $points      The points.
+	 * @param string|null          $feedback    The feedback.
 	 *
-	 * @return Grade The grade.
+	 * @return Grade_Interface The grade.
 	 */
-	public function create( int $submission_id, int $answer_id, int $question_id, int $points, string $feedback = null ): Grade {
+	public function create( Submission_Interface $submission, Answer_Interface $answer, int $question_id, int $points, string $feedback = null ): Grade_Interface {
+		/**
+		 * Filters the submission ID when quiz grade is created.
+		 *
+		 * @hook sensei_quiz_grade_create_submission_id
+		 *
+		 * @since 4.23.1
+		 *
+		 * @param {int} $submission_id The submission ID.
+		 * @param {string} $context    The context.
+		 * @return {int} The submission ID.
+		 */
+		$submission_id = apply_filters( 'sensei_quiz_grade_create_submission_id', $submission->get_id(), 'comments' );
+
+		/**
+		 * Filters the question ID when quiz grade is created.
+		 *
+		 * @hook sensei_quiz_grade_create_question_id
+		 *
+		 * @since 4.23.1
+		 *
+		 * @param {int} $question_id The question ID.
+		 * @return {int} The question ID.
+		 */
+		$question_id = apply_filters( 'sensei_quiz_grade_create_question_id', $question_id );
+
 		$grades_map                 = get_comment_meta( $submission_id, 'quiz_grades', true );
 		$grades_map                 = is_array( $grades_map ) ? $grades_map : [];
 		$grades_map[ $question_id ] = $points;
@@ -51,7 +79,7 @@ class Comments_Based_Grade_Repository implements Grade_Repository_Interface {
 
 		$created_at = current_datetime();
 
-		return new Grade( 0, 0, $question_id, $points, $feedback, $created_at, $created_at );
+		return new Comments_Based_Grade( $question_id, $points, $feedback, $created_at, $created_at );
 	}
 
 	/**
@@ -61,9 +89,22 @@ class Comments_Based_Grade_Repository implements Grade_Repository_Interface {
 	 *
 	 * @param int $submission_id The submission ID.
 	 *
-	 * @return Grade[] An array of grades.
+	 * @return Grade_Interface[] An array of grades.
 	 */
 	public function get_all( int $submission_id ): array {
+		/**
+		 * Filter the submission ID when getting all quiz grades.
+		 *
+		 * @hook sensei_quiz_grade_get_all_submission_id
+		 *
+		 * @since 4.23.1
+		 *
+		 * @param {int}    $submission_id The submission ID.
+		 * @param {string} $context       The context.
+		 * @return {int} The submission ID.
+		 */
+		$submission_id = (int) apply_filters( 'sensei_quiz_grade_get_all_submission_id', $submission_id, 'comments' );
+
 		$grades_map = get_comment_meta( $submission_id, 'quiz_grades', true );
 		if ( ! $grades_map || ! is_array( $grades_map ) ) {
 			return [];
@@ -75,7 +116,7 @@ class Comments_Based_Grade_Repository implements Grade_Repository_Interface {
 
 		foreach ( $grades_map as $question_id => $points ) {
 			$feedback = $feedback_map[ $question_id ] ?? null;
-			$grades[] = new Grade( 0, 0, $question_id, $points, $feedback, $created_at, $created_at );
+			$grades[] = new Comments_Based_Grade( $question_id, $points, $feedback, $created_at, $created_at );
 		}
 
 		return $grades;
@@ -86,16 +127,40 @@ class Comments_Based_Grade_Repository implements Grade_Repository_Interface {
 	 *
 	 * @internal
 	 *
-	 * @param int     $submission_id The submission ID.
-	 * @param Grade[] $grades        An array of grades.
+	 * @param Submission_Interface $submission The submission.
+	 * @param Grade_Interface[]    $grades     An array of grades.
 	 */
-	public function save_many( int $submission_id, array $grades ): void {
+	public function save_many( Submission_Interface $submission, array $grades ): void {
+		/**
+		 * Filters the submission ID when saving many quiz grades.
+		 *
+		 * @hook sensei_quiz_grade_save_many_submission_id
+		 *
+		 * @since 4.23.1
+		 *
+		 * @param {int}    $submission_id The submission ID.
+		 * @param {string} $context       The context.
+		 * @return {int} The submission ID.
+		 */
+		$submission_id = apply_filters( 'sensei_quiz_grade_save_many_submission_id', $submission->get_id(), 'comments' );
+
 		$grades_map   = [];
 		$feedback_map = [];
 
 		foreach ( $grades as $grade ) {
-			$grades_map[ $grade->get_question_id() ]   = $grade->get_points();
-			$feedback_map[ $grade->get_question_id() ] = $grade->get_feedback();
+			/**
+			 * Filters the question ID when saving many quiz grades.
+			 *
+			 * @hook sensei_quiz_grade_save_many_question_id
+			 *
+			 * @since 4.23.1
+			 *
+			 * @param {int}    $question_id The question ID.
+			 * @return {int} The question ID.
+			 */
+			$question_id                  = apply_filters( 'sensei_quiz_grade_save_many_question_id', $grade->get_question_id() );
+			$grades_map[ $question_id ]   = $grade->get_points();
+			$feedback_map[ $question_id ] = $grade->get_feedback();
 		}
 
 		update_comment_meta( $submission_id, 'quiz_grades', $grades_map );
@@ -107,9 +172,22 @@ class Comments_Based_Grade_Repository implements Grade_Repository_Interface {
 	 *
 	 * @internal
 	 *
-	 * @param int $submission_id The submission ID.
+	 * @param Submission_Interface $submission The submission.
 	 */
-	public function delete_all( int $submission_id ): void {
+	public function delete_all( Submission_Interface $submission ): void {
+		/**
+		 * Filters the submission ID when deleting all quiz grades.
+		 *
+		 * @hook sensei_quiz_grade_delete_all_submission_id
+		 *
+		 * @since 4.23.1
+		 *
+		 * @param {int}    $submission_id The submission ID.
+		 * @param {string} $context       The context.
+		 * @return {int} The submission ID.
+		 */
+		$submission_id = (int) apply_filters( 'sensei_quiz_grade_delete_all_submission_id', $submission->get_id(), 'comments' );
+
 		delete_comment_meta( $submission_id, 'quiz_grades' );
 		delete_comment_meta( $submission_id, 'quiz_answers_feedback' );
 	}

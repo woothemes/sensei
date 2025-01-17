@@ -53,10 +53,40 @@ if ( ! class_exists( 'Sensei_Email_Teacher_Started_Course', false ) ) :
 			// Set recipient (learner)
 			$this->recipient = stripslashes( $this->teacher->user_email );
 
+			/**
+			 * Action hook before email is sent.
+			 *
+			 * @hook sensei_before_mail
+			 *
+			 * @param {string} $recipient The email recipient.
+			 */
 			do_action( 'sensei_before_mail', $this->recipient );
 
-			// translators: Placeholder is the blog name.
-			$this->subject = apply_filters( 'sensei_email_subject', sprintf( __( '[%1$s] Your student has started a course', 'sensei-lms' ), get_bloginfo( 'name' ) ), $this->template );
+			/**
+			 * Filter the email subject.
+			 *
+			 * @hook sensei_email_subject
+			 *
+			 * @param {string} $subject The email subject.
+			 * @param {string} $template The email template.
+			 * @return {string} The filtered email subject.
+			 */
+			$this->subject = apply_filters(
+				'sensei_email_subject',
+				// translators: Placeholder is the blog name.
+				sprintf( __( '[%1$s] Your student has started a course', 'sensei-lms' ), get_bloginfo( 'name' ) ),
+				$this->template
+			);
+
+			/**
+			 * Filter the email heading.
+			 *
+			 * @hook sensei_email_heading
+			 *
+			 * @param {string} $heading The email heading.
+			 * @param {string} $template The email template.
+			 * @return {string} The filtered email heading.
+			 */
 			$this->heading = apply_filters( 'sensei_email_heading', __( 'Your student has started a course', 'sensei-lms' ), $this->template );
 
 			// Construct data array
@@ -76,6 +106,11 @@ if ( ! class_exists( 'Sensei_Email_Teacher_Started_Course', false ) ) :
 			// Send mail
 			Sensei()->emails->send( $this->recipient, $this->subject, Sensei()->emails->get_content( $this->template ) );
 
+			/**
+			 * Action hook after email is sent.
+			 *
+			 * @hook sensei_after_sending_email
+			 */
 			do_action( 'sensei_after_sending_email' );
 		}
 	}

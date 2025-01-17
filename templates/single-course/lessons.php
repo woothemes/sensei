@@ -22,8 +22,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 		/**
 		 * Actions just before the sensei single course lessons loop begins
 		 *
-		 * @hooked Sensei_Course::load_single_course_lessons_query
 		 * @since 1.9.0
+		 *
+		 * @hook sensei_single_course_lessons_before
+		 *
+		 * @hooked Sensei_Course::load_single_course_lessons_query
 		 */
 		do_action( 'sensei_single_course_lessons_before' );
 
@@ -49,7 +52,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 					 *
 					 * @since 1.9.0
 					 *
-					 * @param $lessons_id
+					 * @hook sensei_single_course_inside_before_lesson
+					 *
+					 * @param {int} $lessons_id Lesson ID.
 					 *
 					 * @hooked Sensei_Lesson::the_lesson_meta -  5
 					 * @hooked Sensei_Lesson::the_lesson_thumbnail - 8
@@ -76,6 +81,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 					 * It fires for each lesson.
 					 *
 					 * @since 1.9.0
+					 *
+					 * @hook sensei_single_course_inside_after_lesson
+					 *
+					 * @param {int} $lessons_id The lesson ID.
 					 */
 					do_action( 'sensei_single_course_inside_after_lesson', get_the_ID() );
 
@@ -95,6 +104,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 		 * @hooked Sensei_Course::reset_single_course_query
 		 *
 		 * @since 1.9.0
+		 *
+		 * @hook sensei_single_course_lessons_after
 		 */
 		do_action( 'sensei_single_course_lessons_after' );
 

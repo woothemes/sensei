@@ -169,7 +169,7 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 	private function is_my_courses() {
 		global $wp_query;
 
-		return $wp_query->is_page() && $wp_query->get_queried_object_id() === absint( Sensei()->settings->get( 'my_course_page' ) );
+		return $wp_query->is_page() && $wp_query->get_queried_object_id() === Sensei()->settings->get_my_courses_page_id();
 	}
 
 	private function should_filter_course_by_status( $course_status, $user_id ) {
@@ -214,13 +214,13 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 		 * Filters the query which fetches the user courses.
 		 *
 		 * @since 3.13.3
+		 *
 		 * @hook sensei_user_courses_query
 		 *
 		 * @param {null}   $query
 		 * @param {int}    $user_id         The user id.
 		 * @param {string} $status          Status of query to run.
 		 * @param {array}  $base_query_args Base query args.
-		 *
 		 * @return {WP_Query} The query.
 		 */
 		$filtered_query = apply_filters( 'sensei_user_courses_query', null, $user_id, $this->status, $base_query_args );
@@ -339,8 +339,20 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 
 		$this->attach_shortcode_hooks();
 
-		// mostly hooks added for legacy and backwards compatiblity sake
+		// Mostly hooks added for legacy and backwards compatiblity sake.
+		/**
+		 * Fires before the user courses are displayed.
+		 *
+		 * @hook sensei_my_courses_before
+		 */
 		do_action( 'sensei_my_courses_before' );
+		/**
+		 * Fires before the user course content is displayed.
+		 *
+		 * @hook sensei_before_user_course_content
+		 *
+		 * @param {WP_User} $user The user object.
+		 */
 		do_action( 'sensei_before_user_course_content', wp_get_current_user() );
 
 		ob_start();
@@ -350,14 +362,40 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 			Sensei_Messages::the_my_messages_link();
 		}
 
+		/**
+		 * Fires before the user course content is displayed inside a container.
+		 *
+		 * @hook sensei_my_courses_content_inside_before
+		 */
 		do_action( 'sensei_my_courses_content_inside_before' );
+
 		Sensei_Templates::get_template( 'loop-course.php' );
+
+		/**
+		 * Fires after the user course content is displayed inside a container.
+		 *
+		 * @hook sensei_my_courses_content_inside_after
+		 */
 		do_action( 'sensei_my_courses_content_inside_after' );
+
 		Sensei_Templates::get_template( 'globals/pagination.php' );
+
 		echo '</section>';
 
-		// mostly hooks added for legacy and backwards compatiblity sake
+		// Mostly hooks added for legacy and backwards compatiblity sake.
+		/**
+		 * Fires after the user course content is displayed.
+		 *
+		 * @hook sensei_after_user_course_content
+		 *
+		 * @param {WP_User} $user The user object.
+		 */
 		do_action( 'sensei_after_user_course_content', wp_get_current_user() );
+		/**
+		 * Fires after the user courses are displayed.
+		 *
+		 * @hook sensei_my_courses_after
+		 */
 		do_action( 'sensei_my_courses_after' );
 
 		$shortcode_output = ob_get_clean();
@@ -529,11 +567,12 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 		/**
 		 * Determine if we should display course toggles on User Courses Shortcode.
 		 *
-		 * @param bool $should_display_course_toggles Should we Display the course toggles.
-		 *
 		 * @since 1.9.18
 		 *
-		 * @return bool
+		 * @hook sensei_shortcode_user_courses_display_course_toggle_actions
+		 *
+		 * @param {bool} $should_display_course_toggles Should we display the course toggles.
+		 * @return {bool} Filtered value.
 		 */
 		$should_display_course_toggles = (bool) apply_filters( 'sensei_shortcode_user_courses_display_course_toggle_actions', true );
 		if ( false === $should_display_course_toggles ) {
@@ -574,10 +613,10 @@ class Sensei_Shortcode_User_Courses implements Sensei_Shortcode_Interface {
 		 * Filters the the user courses filter options.
 		 *
 		 * @since 3.13.3
+		 *
 		 * @hook sensei_user_courses_filter_options
 		 *
 		 * @param {array} $filter_options The filter options.
-		 *
 		 * @return {array} The filter options.
 		 */
 		return apply_filters( 'sensei_user_courses_filter_options', $filter_options );

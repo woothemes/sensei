@@ -56,7 +56,8 @@ class Email_Preview {
 	 */
 	public function init(): void {
 		add_action( 'template_redirect', [ $this, 'render_preview' ] );
-		add_action( 'admin_enqueue_scripts', [ $this, 'register_admin_scripts' ] );
+		add_filter( 'preview_post_link', [ $this, 'filter_preview_link' ], 10, 2 );
+		add_filter( 'post_type_link', [ $this, 'filter_preview_link' ], 10, 2 );
 	}
 
 	/**
@@ -84,29 +85,6 @@ class Email_Preview {
 	}
 
 	/**
-	 * Register and enqueue scripts and styles that are needed in the backend.
-	 *
-	 * @internal
-	 */
-	public function register_admin_scripts(): void {
-		$screen = get_current_screen();
-		if ( ! $screen || Email_Post_Type::POST_TYPE !== $screen->id ) {
-			return;
-		}
-
-		$this->assets->enqueue( 'sensei-email-preview-button', 'admin/emails/email-preview-button/index.js', [], true );
-		$this->assets->enqueue( 'sensei-email-preview-button', 'admin/emails/email-preview-button/email-preview-button.css' );
-
-		wp_localize_script(
-			'sensei-email-preview-button',
-			'sensei_email_preview',
-			[
-				'link' => self::get_preview_link( get_the_ID() ),
-			]
-		);
-	}
-
-	/**
 	 * Get the preview link.
 	 *
 	 * @internal
@@ -127,8 +105,8 @@ class Email_Preview {
 	 */
 	private function render_page(): void {
 		$subject      = $this->email_sender->get_email_subject( $this->get_email_post_for_preview(), $this->get_placeholders() );
-		$from_address = Sensei()->emails->get_from_address();
-		$from_name    = Sensei()->emails->get_from_name();
+		$from_address = $this->email_sender->get_from_address();
+		$from_name    = $this->email_sender->get_from_name();
 		$avatar       = get_avatar( $from_address, 40, '', '', [ 'force_display' => true ] );
 
 		require __DIR__ . '/views/preview.php';
@@ -217,10 +195,29 @@ class Email_Preview {
 			wp_die( esc_html__( 'Invalid request', 'sensei-lms' ) );
 		}
 
+		// phpcs:ignore WordPress.WP.Capabilities.Unknown
 		if ( ! current_user_can( 'manage_sensei' ) ) {
 			wp_die( esc_html__( 'Insufficient permissions', 'sensei-lms' ) );
 		}
 
 		check_admin_referer( 'preview-email-post_' . $post->ID );
+	}
+
+	/**
+	 * Filter the preview link.
+	 *
+	 * @internal
+	 *
+	 * @param string  $link The preview link.
+	 * @param WP_Post $post The post object.
+	 *
+	 * @return string
+	 */
+	public function filter_preview_link( $link, $post ): string {
+		if ( Email_Post_Type::POST_TYPE !== $post->post_type ) {
+			return $link;
+		}
+
+		return str_replace( '&amp;', '&', $this->get_preview_link( $post->ID ) );
 	}
 }

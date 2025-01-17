@@ -12,11 +12,11 @@ const execAsync = promisify( exec );
  * @param {string} command
  */
 export const cli = ( command: string ): Buffer =>
-	execSync( `npm run wp-env run tests-cli "${ command }"` );
+	execSync( `npm run wp-env run tests-cli -- ${ command }` );
 
 export const cliAsync = async ( command: string ): Promise< string > => {
 	const response = await execAsync(
-		`npm run wp-env run tests-cli "${ command }"`
+		`npm run wp-env run tests-cli -- ${ command }`
 	);
 	return response.stdout;
 };

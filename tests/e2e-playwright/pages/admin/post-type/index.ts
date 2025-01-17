@@ -61,7 +61,7 @@ export default class PostType {
 	}
 
 	async goToPreview(): Promise< Page > {
-		await this.page.locator( 'button:has-text("Preview")' ).first().click();
+		await this.page.locator( '.editor-preview-dropdown__toggle' ).click();
 
 		const [ previewPage ] = await Promise.all( [
 			this.page.waitForEvent( 'popup' ),
@@ -79,6 +79,12 @@ export default class PostType {
 		return this.page;
 	}
 
+	async saveDraft(): Promise< void > {
+		await this.page
+			.locator( '[aria-label="Editor top bar"] >> text=Save draft' )
+			.click();
+	}
+
 	async publish(): Promise< void > {
 		await this.page
 			.locator( '[aria-label="Editor top bar"] >> text=Publish' )
@@ -92,12 +98,12 @@ export default class PostType {
 
 	async submitForPreview(): Promise< void > {
 		await this.page
-			.locator( '[aria-label="Editor top bar"] >> text=Publish' )
+			.locator( 'button:has-text("Submit for Review")' )
 			.click();
 
 		return this.page
 			.locator(
-				'[aria-label="Editor publish"] >> text=Submit For Review'
+				'.editor-post-publish-panel button:has-text("Submit for Review")'
 			)
 			.first()
 			.click();

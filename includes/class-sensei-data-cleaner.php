@@ -6,6 +6,8 @@
  * @package Core
  */
 
+use Sensei\Internal\Installer\Installer;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	// Exit if accessed directly.
 	exit;
@@ -90,10 +92,14 @@ class Sensei_Data_Cleaner {
 		'sensei-cancelled-wccom-connect-dismissed',
 		'sensei_course_theme_query_var_flushed',
 		'sensei_settings_sections_visited',
-		'sensei_home_tasks_list_is_completed',
-		'sensei_home_tasks_dismissed',
-		'sensei_home_task_visited_woocommerce',
+		'sensei_home_task_created_first_course',
+		'sensei_home_task_published_first_course',
 		'sensei_home_task_visited_course_theme_customizer',
+		'sensei_home_task_visited_woocommerce',
+		'sensei_home_tasks_dismissed',
+		'sensei_home_tasks_list_is_completed',
+		'sensei-home-task-pro-upsell',
+		'sensei_activation_redirect',
 	);
 
 	/**
@@ -204,6 +210,8 @@ class Sensei_Data_Cleaner {
 		// Teacher caps.
 		'manage_lesson_categories',
 		'manage_course_categories',
+		'manage_question_categories',
+		'manage_modules',
 		'publish_quizzes',
 		'edit_quizzes',
 		'edit_published_quizzes',
@@ -228,7 +236,7 @@ class Sensei_Data_Cleaner {
 		'sensei_answers_feedback_[0-9]+_[0-9]+',
 		'quiz_grades_[0-9]+_[0-9]+',
 		'sensei_comment_counts_[0-9]+',
-		'sensei_activation_redirect',
+		'sensei_activation_redirect', // @deprecated 4.23.1 Changed to an option.
 		'sensei_woocommerce_plugin_information',
 		'sensei_extensions_.*',
 		'sensei_background_job_.*',
@@ -258,6 +266,7 @@ class Sensei_Data_Cleaner {
 		'sensei_payment_complete',
 		'sensei_products_processed',
 		'_sensei_attachment_source_key',
+		'sensei_course_publish_lessons',
 		'sensei_course_video_autocomplete',
 		'sensei_course_video_autopause',
 		'sensei_course_video_required',
@@ -280,6 +289,7 @@ class Sensei_Data_Cleaner {
 		self::cleanup_transients();
 		self::cleanup_options();
 		self::cleanup_user_meta();
+		self::cleanup_custom_tables();
 	}
 
 	/**
@@ -463,6 +473,20 @@ class Sensei_Data_Cleaner {
 
 		foreach ( self::$post_meta as $post_meta ) {
 			$wpdb->delete( $wpdb->postmeta, array( 'meta_key' => $post_meta ) );
+		}
+	}
+
+	/**
+	 * Drop the custom tables.
+	 */
+	private static function cleanup_custom_tables(): void {
+		global $wpdb;
+
+		$tables = Installer::instance()->get_schema()->get_tables();
+
+		foreach ( $tables as $table ) {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Intended.
+			$wpdb->query( "DROP TABLE IF EXISTS {$table}" );
 		}
 	}
 }

@@ -43,7 +43,7 @@ class Student_Message_Reply extends Email_Generators_Abstract {
 	 * @return void
 	 */
 	public function init() {
-		add_action( 'sensei_private_message_reply', array( $this, 'message_reply_mail_to_student' ), 10, 2 );
+		$this->maybe_add_action( 'sensei_private_message_reply', array( $this, 'message_reply_mail_to_student' ), 10, 2 );
 	}
 
 	/**
@@ -102,7 +102,7 @@ class Student_Message_Reply extends Email_Generators_Abstract {
 					'teacher:displayname'    => esc_html( $teacher->display_name ),
 					'course:name'            => esc_html( get_the_title( $course_id ) ),
 					'message:displaymessage' => esc_html( $comment->comment_content ),
-					'subject:displaysubject' => esc_html( $message->post_title ),
+					'subject:displaysubject' => html_entity_decode( esc_html( $message->post_title ) ),
 					'reply:url'              => esc_url( get_comment_link( $comment ) ),
 				],
 			]

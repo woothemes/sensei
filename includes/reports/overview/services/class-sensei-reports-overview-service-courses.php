@@ -125,7 +125,7 @@ class Sensei_Reports_Overview_Service_Courses {
 		) averages_by_course'
 		);
 
-		return doubleval( $result->courses_average );
+		return floatval( $result->courses_average );
 	}
 
 	/**
@@ -159,6 +159,32 @@ class Sensei_Reports_Overview_Service_Courses {
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.NoCaching -- Performance improvement.
 		return (float) $wpdb->get_var( $query );
+	}
+
+
+	/**
+	 * Get total of enrollments
+	 *
+	 * @since  4.15.1
+	 * @param array $course_ids Courses ids to filter by.
+	 *
+	 * @return int total of enrollments
+	 */
+	public function get_total_enrollments( $course_ids ):int {
+		if ( empty( $course_ids ) ) {
+			return 0;
+		}
+		$total_grouped_by_course = $this->get_students_count_in_courses( $course_ids );
+
+		if ( empty( $total_grouped_by_course ) ) {
+			return 0;
+		}
+
+		$to_total = function ( $acc, $current ) {
+			return $acc + $current->students_count;
+		};
+
+		return array_reduce( $total_grouped_by_course, $to_total, 0 );
 	}
 
 	/**

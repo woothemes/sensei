@@ -56,11 +56,38 @@ class Email_Post_Type {
 	 * @internal
 	 */
 	public function init(): void {
+		add_filter( 'block_editor_settings_all', array( $this, 'disable_unsupported_features' ), 10, 2 );
 		add_action( 'init', [ $this, 'register_post_type' ] );
 		add_action( 'load-edit.php', [ $this, 'maybe_redirect_to_listing' ] );
 		add_action( 'map_meta_cap', [ $this, 'remove_cap_of_deleting_email' ], 10, 4 );
 
 		add_filter( 'is_post_type_viewable', [ $this, 'enable_email_template_editor' ], 10, 2 );
+	}
+
+	/**
+	 * Disable the default color palette and gradients in the block editor for the Email post type.
+	 *
+	 * @internal
+	 *
+	 * @since 4.24.2
+	 *
+	 * @param array  $editor_settings The editor settings.
+	 * @param object $editor_context  The editor context.
+	 * @return array
+	 */
+	public function disable_unsupported_features( $editor_settings, $editor_context ) {
+		if ( empty( $editor_context->post ) || self::POST_TYPE !== $editor_context->post->post_type ) {
+			return $editor_settings;
+		}
+
+		// Remove the default styles that might affect the email appearance.
+		$editor_settings['styles'] = array();
+
+		// Disable the default color palette and gradients.
+		$editor_settings['__experimentalFeatures']['color']['defaultPalette']   = false;
+		$editor_settings['__experimentalFeatures']['color']['defaultGradients'] = false;
+
+		return $editor_settings;
 	}
 
 	/**
@@ -123,7 +150,7 @@ class Email_Post_Type {
 		register_post_type(
 			self::POST_TYPE,
 			[
-				'labels'       => [
+				'labels'                => [
 					'name'               => __( 'Emails', 'sensei-lms' ),
 					'singular_name'      => __( 'Email', 'sensei-lms' ),
 					'add_new'            => __( 'Add New', 'sensei-lms' ),
@@ -138,13 +165,17 @@ class Email_Post_Type {
 					'menu_name'          => __( 'Emails', 'sensei-lms' ),
 					'name_admin_bar'     => __( 'Email', 'sensei-lms' ),
 				],
-				'public'       => false,
-				'show_ui'      => true,
-				'show_in_menu' => false,
-				'show_in_rest' => true, // Enables the Gutenberg editor.
-				'hierarchical' => false,
-				'rewrite'      => false,
-				'supports'     => [ 'title', 'editor', 'author', 'revisions' ],
+				'public'                => true,
+				'exclude_from_search'   => true,
+				'publicly_queryable'    => false,
+				'show_in_nav_menus'     => false,
+				'show_ui'               => true,
+				'show_in_menu'          => false,
+				'show_in_rest'          => true, // Enables the Gutenberg editor.
+				'hierarchical'          => false,
+				'rewrite'               => false,
+				'supports'              => [ 'title', 'editor', 'author', 'revisions' ],
+				'rest_controller_class' => 'Sensei_REST_API_Sensei_Emails_Controller',
 			]
 		);
 	}
@@ -168,4 +199,3 @@ class Email_Post_Type {
 		exit;
 	}
 }
-

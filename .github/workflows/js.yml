@@ -9,12 +9,15 @@ jobs:
         name: JS Linting
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v3
-            - uses: actions/cache@v3
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 18
+            - uses: actions/checkout@v4
+            - uses: actions/cache@v4
               with:
                   path: ~/.npm/
                   key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}
-            - uses: actions/cache@v3
+            - uses: actions/cache@v4
               with:
                   path: node_modules/
                   key: ${{ runner.os }}-node-modules-${{ hashFiles('package-lock.json') }}
@@ -29,12 +32,15 @@ jobs:
         name: TypeScript Checking
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v3
-            - uses: actions/cache@v3
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 18
+            - uses: actions/checkout@v4
+            - uses: actions/cache@v4
               with:
                   path: ~/.npm/
                   key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}
-            - uses: actions/cache@v3
+            - uses: actions/cache@v4
               with:
                   path: node_modules/
                   key: ${{ runner.os }}-node-modules-${{ hashFiles('package-lock.json') }}
@@ -42,14 +48,17 @@ jobs:
               run: npm ci
             - name: Lint JS
               run: npm run lint-types
-              
+
     test:
         name: JS Testing
         runs-on: ubuntu-latest
         steps:
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 18
             # clone the repository
-            - uses: actions/checkout@v3
-            - uses: actions/cache@v3
+            - uses: actions/checkout@v4
+            - uses: actions/cache@v4
               with:
                   path: ~/.npm
                   key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
@@ -61,4 +70,12 @@ jobs:
               env:
                   NODE_OPTIONS: "--max_old_space_size=4096"
               run: npm run test-js
-    
+            - name: Slack Notification on Failure
+              uses: rtCamp/action-slack-notify@v2
+              if: ${{ failure() && github.event_name == 'push' }}
+              env:
+                SLACK_CHANNEL: ${{ secrets.SLACK_JANITORIAL_CHANNEL }}
+                SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+                SLACK_TITLE: 'JS Testing'
+                SLACK_COLOR: 'error'
+                SLACK_FOOTER: ''

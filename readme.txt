@@ -2,10 +2,10 @@
 === Sensei LMS - Online Courses, Quizzes, & Learning ===
 Contributors: automattic, aaronfc, burtrw, donnapep, fjorgemota, gabrielcaires, gikaragia, imranh920, jakeom, luchad0res, merkushin, m1r0, onubrooks, renathoc, yscik
 Tags: lms, eLearning, teach, online courses, woocommerce
-Requires at least: 6.0
-Tested up to: 6.2
-Requires PHP: 7.2
-Stable tag: 4.14.0
+Requires at least: 6.5
+Tested up to: 6.7
+Requires PHP: 7.4
+Stable tag: 4.24.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -70,10 +70,6 @@ https://videopress.com/v/tLYw7R27
 
 [Learn more about Sensei LMS Certificates.](https://wordpress.org/plugins/sensei-certificates/)
 
-**Media and Attachments:** Upload media and files like PDFs to a separate uploads area of your course or lesson.
-
-[Learn more about Sensei LMS Media Attachments.](https://wordpress.org/plugins/sensei-media-attachments/)
-
 **Post To Course Creator:** Create courses quickly by converting existing blog posts into course lessons in just a few clicks.
 
 [Learn more about Sensei LMS Post To Course Creator.](https://wordpress.org/plugins/sensei-post-to-course/)
@@ -120,7 +116,7 @@ To find out how to submit a course to the Sensei LMS showcase, and the requireme
 
 = Does Sensei support live courses, Zoom integration, or webinars? =
 
-Yes! You can add links to Zoom, Google Meet, or whatever platform you choose in a course lesson. In addition, Sensei includes a meeting lesson type you can select when creating a new lesson to help make this even easier.
+Yes! You can add links to Zoom, Google Meet, or whatever platform you choose in a course lesson. In addition, Sensei includes a meeting lesson layout you can select when creating a new lesson to help make this even easier.
 
 = Does Sensei work in WordPress Multisite? =
 
@@ -132,7 +128,7 @@ Sensei LMS is compatible with Sensei Pro and [WooCommerce Memberships](https://w
 
 See [Selling Courses as a Membership](https://senseilms.com/documentation/selling-courses-as-a-membership/) for more details.
 
-= Does Sensei work in my language =
+= Does Sensei work in my language? =
 
 Community members have translated the free Sensei LMS plugin [into 18 languages](https://translate.wordpress.org/projects/wp-plugins/sensei-lms/), while Sensei Pro has been [professionally translated into 16 languages](https://translate.wordpress.com/projects/sensei/). We welcome contributions to improve even more.
 
@@ -144,50 +140,57 @@ Community members have translated the free Sensei LMS plugin [into 18 languages]
 
 == Changelog ==
 
-### 4.14.0 - 2023-05-10
+### 4.24.5 - 2025-01-16
+#### Security
+- Fix unprepared SQL
+- Remove feed content if the user doesn't have access to the lesson
 
 #### Added
-- Ability to set conditions on admin notices based on a date range
-- Add disclamer with the reason that Sensei Pro can't be updated when license is not active
-- Add quiz generation using AI button in quiz block
+- Wrap question numbers in `<span>` tags [#7738](https://github.com/Automattic/sensei/pull/7738)
 
 #### Changed
-- Use non-deprecated attribute to load SVG icons.
+- Replace `date` with `gmdate` [#7735](https://github.com/Automattic/sensei/pull/7735)
+- Replace `unlink` with `wp_delete_file` [#7732](https://github.com/Automattic/sensei/pull/7732)
+- Replace `wp_json_encode` with `json_encode` [#7730](https://github.com/Automattic/sensei/pull/7730)
+- Update the placeholder to use an internal image [#7728](https://github.com/Automattic/sensei/pull/7728)
+- Replace `strip_tags` with `wp_strip_all_tags` [#7731](https://github.com/Automattic/sensei/pull/7731)
+
+#### Deprecated
+- Deprecate `load_localisation` and `load_plugin_textdomain` functions [#7713](https://github.com/Automattic/sensei/pull/7713)
+
+#### Removed
+- Remove manual loading of translations [#7713](https://github.com/Automattic/sensei/pull/7713)
+- Remove fallback code for Sensei Pro update reminder [#7729](https://github.com/Automattic/sensei/pull/7729)
+- Remove files that are already included in WordPress Core [#7727](https://github.com/Automattic/sensei/pull/7727)
+- Remove obsolete code from Students area [#7726](https://github.com/Automattic/sensei/pull/7726)
 
 #### Fixed
-- Don't send e-mails to Guest/Preview users
-- Fix PHP Warning with Divi when using Learning Mode Video theme
-- Fix Sensei admin notice styles
-- Missing email page template link on the editor
-- Removed unused calls to SenseiLMS.com for the old extensions page
+- Initialize Sensei blocks for posts [#7736](https://github.com/Automattic/sensei/pull/7736)
+- Remove usage of deprecated parameters in WordPress Core functions [#7724](https://github.com/Automattic/sensei/pull/7724)
 
-### 4.13.1 - 2023-04-19
-
-#### Changed
-- Disable the "welcome" and "no progress" emails by default
-- Update MailPoet link to point to Lists
-- Improve plugin loading performance using pre-built class map
-
-#### Fixed
-- Astra not loading the Courses page content
-- Fix auto grading not working and additionally throwing error for fill gap questions
-- Fix patterns wizard preview style
-- Fix the home email notification settings link
-- Make the email post type private
-- Remove fallback to legacy options
-- Fix showing warning from module when admin email does not match any existing user and it has no author
-
-### 4.13.0 - 2023-03-30
+### 4.24.4 - 2024-11-12
+#### Security
+- Messages and emails accessible using the search REST API
 
 #### Added
-- Functionality to create MailPoet lists for all courses and groups, and to subscribe users to those lists.
-
-#### Changed
-- Modify screen reader text to be less verbose on module expand button, front-end 👏 @alexstine
+- Allow additional users to manage students [#7700](https://github.com/Automattic/sensei/pull/7700)
 
 #### Fixed
-- Fix styling of notices on pages other than Sensei home and button output on Sensei home.
-- Missing aria-expanded attribute on front-end module expand button 👏 @alexstine
-- Only show the sensei_email template for the sensei emails.
+- Horizontal scroll on Course page when using Course theme [#7705](https://github.com/Automattic/sensei/pull/7705)
+- Loading some translations too early which generates a warning on WP 6.7 [#7701](https://github.com/Automattic/sensei/pull/7701)
+- PHP deprecation notice in View Results block [#7680](https://github.com/Automattic/sensei/pull/7680)
+- Hello elementor theme throwing 404 when rendering the Courses archive page [#7683](https://github.com/Automattic/sensei/pull/7683)
+- Label on course complete email received by the teacher [#7672](https://github.com/Automattic/sensei/pull/7672)
+- Timed quiz not stopping when time ends [#7675](https://github.com/Automattic/sensei/pull/7675)
 
+#### Development
+- Added a hook to conditionally render the lesson actions in the frontend [#7677](https://github.com/Automattic/sensei/pull/7677)
+- Filter course IDs associated with a given teacher [#7702](https://github.com/Automattic/sensei/pull/7702)
 
+### 4.24.3 - 2024-08-22
+#### Fixed
+- Ensure quiz description is displayed to the student [#7669](https://github.com/Automattic/sensei/pull/7669)
+- Incorrect URL for edited emails [#7671](https://github.com/Automattic/sensei/pull/7671)
+- Missing lesson status icon for "complete" status [#7667](https://github.com/Automattic/sensei/pull/7667)
+- PHP deprecation notice when opening site editor [#7668](https://github.com/Automattic/sensei/pull/7668)
+- Some reports not exporting all rows [#7670](https://github.com/Automattic/sensei/pull/7670)

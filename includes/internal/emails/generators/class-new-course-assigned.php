@@ -42,7 +42,7 @@ class New_Course_Assigned extends Email_Generators_Abstract {
 	 * @return void
 	 */
 	public function init() {
-		add_action( 'sensei_course_new_teacher_assigned', [ $this, 'course_new_teacher_assigned_email' ], 10, 2 );
+		$this->maybe_add_action( 'sensei_course_new_teacher_assigned', [ $this, 'course_new_teacher_assigned_email' ], 10, 2 );
 	}
 
 	/**
@@ -82,7 +82,7 @@ class New_Course_Assigned extends Email_Generators_Abstract {
 			[
 				$recipient => [
 					'teacher:displayname' => $teacher->display_name,
-					'course:name'         => get_the_title( $course_id ),
+					'course:name'         => html_entity_decode( get_the_title( $course_id ) ),
 					'editcourse:url'      => esc_url( $edit_link ),
 				],
 			]

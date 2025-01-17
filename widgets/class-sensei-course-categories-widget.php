@@ -100,7 +100,7 @@ class Sensei_Course_Categories_Widget extends WP_Widget {
 		$instance = $old_instance;
 
 		/* Strip tags for title and name to remove HTML (important for text inputs). */
-		$instance['title'] = strip_tags( $new_instance['title'] ?? '' );
+		$instance['title'] = wp_strip_all_tags( $new_instance['title'] ?? '' );
 
 		/* The select box is returning a text value, so we escape it. */
 		$instance['limit'] = (int) $new_instance['limit'] ?? 3;
@@ -181,7 +181,16 @@ class Sensei_Course_Categories_Widget extends WP_Widget {
 			$cat_args['number'] = $limit;
 		}
 		echo '<ul>';
-			wp_list_categories( apply_filters( 'widget_course_categories_args', $cat_args ) );
+		/**
+		 * Filter course categories arguments.
+		 *
+		 * @hook widget_course_categories_args
+		 *
+		 * @param {array} $cat_args Course categories arguments.
+		 * @return {array} Filtereed course categories arguments.
+		 */
+		$cat_args = apply_filters( 'widget_course_categories_args', $cat_args );
+		wp_list_categories( $cat_args );
 		echo '</ul>';
 	}
 }

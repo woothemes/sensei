@@ -45,41 +45,64 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 	protected $basic_test_question_ids;
 
 	/**
+	 * Course factory.
+	 *
 	 * @var WP_UnitTest_Factory_For_Course
 	 */
 	public $course;
 
 	/**
+	 * Lesson factory.
+	 *
 	 * @var WP_UnitTest_Factory_For_Lesson
 	 */
 	public $lesson;
 
 	/**
+	 * Quiz factory.
+	 *
 	 * @var WP_UnitTest_Factory_For_Quiz
 	 */
 	public $quiz;
 
 	/**
+	 * Question factory.
+	 *
 	 * @var WP_UnitTest_Factory_For_Question
 	 */
 	public $question;
 
 	/**
+	 * Multiple question factory.
+	 *
 	 * @var WP_UnitTest_Factory_For_Multiple_Question
 	 */
 	public $multiple_question;
 
 	/**
+	 * Module factory.
+	 *
 	 * @var WP_UnitTest_Factory_For_Module
 	 */
 	public $module;
 
 	/**
+	 * Question category factory.
+	 *
 	 * @var WP_UnitTest_Factory_For_Question_Category
 	 */
 	public $question_category;
 
 	/**
+	 * Course category factory.
+	 *
+	 * @var Sensei_UnitTest_Factory_For_Course_Category
+	 */
+	public $course_category;
+
+	/**
+	 * Message factory.
+	 *
 	 * @var WP_UnitTest_Factory_For_Message
 	 */
 	public $message;
@@ -263,6 +286,11 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 			$this->attach_lessons_multiple_questions( $multiple_question_count, $lesson_id, $args['multiple_question_args'], $args['quiz_args'] );
 		}
 
+		if ( $course_id && count( $lesson_ids ) ) {
+			$admin = new Sensei_Admin();
+			$admin->save_lesson_order( implode( ',', $lesson_ids ), $course_id );
+		}
+
 		return array(
 			'course_id'  => $course_id,
 			'lesson_ids' => $lesson_ids,
@@ -444,7 +472,7 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 			if ( 'multiple-choice' == $type ) {
 				// these answer can be found the question generate and attach answers function
 				$question_meta                      = get_post_meta( $question->ID );
-				$user_quiz_answers[ $question->ID ] = array( 0 => 'wrong1' . rand() );
+				$user_quiz_answers[ $question->ID ] = array( 0 => 'wrong1' . wp_rand() );
 
 			} elseif ( 'boolean' == $type ) {
 
@@ -459,15 +487,15 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 
 			} elseif ( 'single-line' == $type ) {
 
-				$user_quiz_answers[ $question->ID ] = 'Single line answer for basic testing ' . rand();
+				$user_quiz_answers[ $question->ID ] = 'Single line answer for basic testing ' . wp_rand();
 
 			} elseif ( 'gap-fill' == $type ) {
 
-				$user_quiz_answers[ $question->ID ] = 'OneWordScentencesForSampleAnswer ' . rand();
+				$user_quiz_answers[ $question->ID ] = 'OneWordScentencesForSampleAnswer ' . wp_rand();
 
 			} elseif ( 'multi-line' == $type ) {
 
-				$user_quiz_answers[ $question->ID ] = 'Sample paragraph to test the answer ' . rand();
+				$user_quiz_answers[ $question->ID ] = 'Sample paragraph to test the answer ' . wp_rand();
 
 			} elseif ( 'file-upload' == $type ) {
 
@@ -529,6 +557,8 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 		}
 
 		$quiz_id = $this->maybe_create_quiz_for_lesson( $lesson_id, $quiz_args );
+
+		update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
 
 		if ( $number > 0 ) {
 			update_post_meta( $lesson_id, '_quiz_has_questions', true );
@@ -768,7 +798,7 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 
 		foreach ( $answers as $question_id => $answer ) {
 
-			$answers_feedback[ $question_id ] = 'Sample Feedback ' . rand();
+			$answers_feedback[ $question_id ] = 'Sample Feedback ' . wp_rand();
 
 		}
 
