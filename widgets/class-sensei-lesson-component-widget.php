@@ -110,7 +110,7 @@ class Sensei_Lesson_Component_Widget extends WP_Widget {
 		$instance = $old_instance;
 
 		/* Strip tags for title and name to remove HTML (important for text inputs). */
-		$instance['title'] = strip_tags( $new_instance['title'] );
+		$instance['title'] = wp_strip_all_tags( $new_instance['title'] );
 
 		/* The select box is returning a text value, so we escape it. */
 		$instance['component'] = esc_attr( $new_instance['component'] );
@@ -188,7 +188,7 @@ class Sensei_Lesson_Component_Widget extends WP_Widget {
 		);
 		$posts_array = get_posts( $post_args );
 
-		if ( count( $posts_array ) > 0 ) {
+		if ( $posts_array ) {
 			?>
 			<ul>
 			<?php

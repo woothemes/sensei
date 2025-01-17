@@ -5,6 +5,7 @@ import { test, expect } from '@playwright/test';
 
 import PluginsPage from '@e2e/pages/admin/plugins/plugins';
 import { adminRole } from '@e2e/helpers/context';
+import { cli } from '@e2e/helpers/database';
 
 /**
  * This test suit is installing and installing the plugin to test some scenarios and
@@ -19,7 +20,7 @@ test.describe.serial( 'Setup Wizard @setup', () => {
 	test.beforeAll( async ( { browser } ) => {
 		page = await browser.newPage();
 		pluginsPage = new PluginsPage( page );
-		await pluginsPage.goTo( 'admin.php?page=sensei_setup_wizard' );
+		cli( 'wp option delete sensei_installed' );
 	} );
 
 	test( 'opens when first activating the Sensei LMS plugin', async () => {
@@ -62,7 +63,7 @@ test.describe.serial( 'Setup Wizard @setup', () => {
 
 		test( 'marks purpose step done and goes to features step', async () => {
 			await expect(
-				page.locator( 'text=Use our default theme' )
+				page.locator( 'text=Help us improve your Sensei experience' )
 			).toHaveCount( 1 );
 		} );
 	} );

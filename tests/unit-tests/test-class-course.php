@@ -3,6 +3,8 @@
 class Sensei_Class_Course_Test extends WP_UnitTestCase {
 	use Sensei_Course_Enrolment_Test_Helpers;
 	use Sensei_Course_Enrolment_Manual_Test_Helpers;
+	use Sensei_Test_Login_Helpers;
+	use Sensei_Test_Redirect_Helpers;
 
 	/**
 	 * Helper class to create testing data.
@@ -10,6 +12,13 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 	 * @var Sensei_Factory
 	 */
 	protected $factory;
+
+	/**
+	 * Keep initial state of Sensei()->notices.
+	 *
+	 * @var Sensei_Notices|null
+	 */
+	private $initial_notices;
 
 	/**
 	 * Setup function.
@@ -22,11 +31,15 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 
 		$this->factory = new Sensei_Factory();
 		Sensei_Test_Events::reset();
+
+		$this->initial_notices = Sensei()->notices;
 	}
 
 	public function tearDown(): void {
 		parent::tearDown();
 		$this->factory->tearDown();
+
+		Sensei()->notices = $this->initial_notices;
 	}
 
 	/**
@@ -77,6 +90,7 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 	 * @since 1.8.0
 	 */
 	public function testGetCompletedLessonIds() {
+		$lesson_progress_repository = Sensei()->lesson_progress_repository;
 
 		// does the function exist?
 		$this->assertTrue( method_exists( 'WooThemes_Sensei_Course', 'get_completed_lesson_ids' ), 'The course class get_completed_lesson_ids function does not exist.' );
@@ -96,14 +110,24 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 		// complete 3 lessons
 		$i = 0;
 		for ( $i = 0; $i < 3; $i++ ) {
-			WooThemes_Sensei_Utils::update_lesson_status( $test_user_id, $test_lessons[ $i ], 'complete' );
+			$progress = $lesson_progress_repository->get( $test_lessons[ $i ], $test_user_id );
+			if ( ! $progress ) {
+				$progress = $lesson_progress_repository->create( $test_lessons[ $i ], $test_user_id );
+			}
+			$progress->complete();
+			$lesson_progress_repository->save( $progress );
 		}
 
 		$this->assertEquals( 3, count( Sensei()->course->get_completed_lesson_ids( $test_course_id, $test_user_id ) ), 'Course completed lesson count not accurate' );
 
 		// complete all lessons
 		foreach ( $test_lessons as $lesson_id ) {
-			WooThemes_Sensei_Utils::update_lesson_status( $test_user_id, $lesson_id, 'complete' );
+			$progress = $lesson_progress_repository->get( $lesson_id, $test_user_id );
+			if ( ! $progress ) {
+				$progress = $lesson_progress_repository->create( $lesson_id, $test_user_id );
+			}
+			$progress->complete();
+			$lesson_progress_repository->save( $progress );
 		}
 
 		// does it return all lessons
@@ -117,6 +141,8 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 	 * @since 1.8.0
 	 */
 	public function testGetCompletionPercentage() {
+		$lesson_progress_repository = Sensei()->lesson_progress_repository;
+
 		// does the function exist?
 		$this->assertTrue( method_exists( 'WooThemes_Sensei_Course', 'get_completion_percentage' ), 'The course class get_completion_percentage function does not exist.' );
 
@@ -135,14 +161,24 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 		// complete 3 lessons and check if the correct percentage returns
 		$i = 0;
 		for ( $i = 0; $i < 3; $i++ ) {
-			WooThemes_Sensei_Utils::update_lesson_status( $test_user_id, $test_lessons[ $i ], 'complete' );
+			$progress = $lesson_progress_repository->get( $test_lessons[ $i ], $test_user_id );
+			if ( ! $progress ) {
+				$progress = $lesson_progress_repository->create( $test_lessons[ $i ], $test_user_id );
+			}
+			$progress->complete();
+			$lesson_progress_repository->save( $progress );
 		}
 		$expected_percentage = round( 3 / count( $test_lessons ) * 100, 2 );
 		$this->assertEquals( $expected_percentage, Sensei()->course->get_completion_percentage( $test_course_id, $test_user_id ), 'Course completed percentage is not accurate' );
 
 		// complete all lessons
 		foreach ( $test_lessons as $lesson_id ) {
-			WooThemes_Sensei_Utils::update_lesson_status( $test_user_id, $lesson_id, 'complete' );
+			$progress = $lesson_progress_repository->get( $lesson_id, $test_user_id );
+			if ( ! $progress ) {
+				$progress = $lesson_progress_repository->create( $lesson_id, $test_user_id );
+			}
+			$progress->complete();
+			$lesson_progress_repository->save( $progress );
 		}
 		// all lessons should no be completed
 		$this->assertEquals( 100, Sensei()->course->get_completion_percentage( $test_course_id, $test_user_id ), 'Course completed percentage is not accurate' );
@@ -548,5 +584,233 @@ class Sensei_Class_Course_Test extends WP_UnitTestCase {
 			'Order set and alphabetical option selected' => array( array( 'course-orderby' => 'title' ), 'anything', 'title', 'ASC' ),
 			'Order set and default option selected'      => array( array( 'course-orderby' => 'default' ), 'anything', 'menu_order', 'ASC' ),
 		);
+	}
+
+	public function testCourseClass_WhenInitialized_AddsHookToCompletionRedirect() {
+		/* Assert. */
+		$priority = has_action( 'template_redirect', [ Sensei()->course, 'maybe_redirect_to_login_from_course_completion' ] );
+		$this->assertSame( 10, $priority );
+	}
+
+	public function testCompletionRedirect_WhenCalled_DoesNotRedirectIfLoggedIn() {
+		/* Arrange. */
+		$this->login_as_student();
+		$this->prevent_wp_redirect();
+
+		$page_id = $this->factory->post->create(
+			[
+				'post_type'  => 'page',
+				'post_title' => 'Course Completed',
+			]
+		);
+		Sensei()->settings->set( 'course_completed_page', $page_id );
+
+		$this->go_to( get_permalink( Sensei()->settings->get( 'course_completed_page' ) ) );
+
+		/* Act. */
+		try {
+			Sensei()->course->maybe_redirect_to_login_from_course_completion();
+		} catch ( \Sensei_WP_Redirect_Exception $e ) {
+			$redirect_status = $e->getCode();
+		}
+
+		/* Assert. */
+		$this->assertFalse( isset( $redirect_status ) );
+	}
+
+	public function testCompletionRedirect_WhenCalled_DoesNotRedirectIfCompletionPageIsNotThere() {
+		/* Arrange. */
+		$this->prevent_wp_redirect();
+
+		Sensei()->settings->set( 'course_completed_page', null );
+
+		$normal_page_id = $this->factory->post->create(
+			array(
+				'post_type'  => 'page',
+				'post_title' => 'Random Page',
+			)
+		);
+
+		$this->go_to( get_permalink( $normal_page_id ) );
+
+		/* Act. */
+		try {
+			Sensei()->course->maybe_redirect_to_login_from_course_completion();
+		} catch ( \Sensei_WP_Redirect_Exception $e ) {
+			$redirect_status = $e->getCode();
+		}
+
+		/* Assert. */
+		$this->assertFalse( isset( $redirect_status ) );
+	}
+
+	public function testCompletionRedirect_WhenCalledForAnotherPage_DoesNotRedirectEvenIfCompletionPageExists() {
+		/* Arrange. */
+		$this->prevent_wp_redirect();
+
+		$page_id = $this->factory->post->create(
+			[
+				'post_type'  => 'page',
+				'post_title' => 'Course Completed',
+			]
+		);
+		Sensei()->settings->set( 'course_completed_page', $page_id );
+
+		$normal_page_id = $this->factory->post->create(
+			array(
+				'post_type'  => 'page',
+				'post_title' => 'Random Page',
+			)
+		);
+
+		$this->go_to( get_permalink( $normal_page_id ) );
+
+		/* Act. */
+		try {
+			Sensei()->course->maybe_redirect_to_login_from_course_completion();
+		} catch ( \Sensei_WP_Redirect_Exception $e ) {
+			$redirect_status = $e->getCode();
+		}
+
+		/* Assert. */
+		$this->assertFalse( isset( $redirect_status ) );
+	}
+
+	public function testCompletionRedirect_WhenCompletionPageExistsLoggedOut_PerformsRedirection() {
+		/* Arrange. */
+		$this->prevent_wp_redirect();
+		$page_id = $this->factory->post->create(
+			[
+				'post_type'  => 'page',
+				'post_title' => 'Course Completed',
+			]
+		);
+		Sensei()->settings->set( 'course_completed_page', $page_id );
+
+		$this->go_to( get_permalink( Sensei()->settings->get( 'course_completed_page' ) ) );
+
+		/* Act. */
+		try {
+			Sensei()->course->maybe_redirect_to_login_from_course_completion();
+		} catch ( \Sensei_WP_Redirect_Exception $e ) {
+			$redirect_status = $e->getCode();
+		}
+
+		/* Assert. */
+		$this->assertTrue( isset( $redirect_status ) );
+	}
+
+	public function testCompletionRedirect_WhenMyCoursesIsThere_PerformsRedirectionToMyCoursesPage() {
+		/* Arrange. */
+		$this->prevent_wp_redirect();
+		$completion_page_id = $this->factory->post->create(
+			[
+				'post_type'  => 'page',
+				'post_title' => 'Course Completed',
+			]
+		);
+
+		$my_courses_page_id = $this->factory->post->create(
+			[
+				'post_type'  => 'page',
+				'post_title' => 'My Courses',
+			]
+		);
+		Sensei()->settings->set( 'course_completed_page', $completion_page_id );
+		Sensei()->settings->set( 'my_course_page', $my_courses_page_id );
+
+		$this->go_to( get_permalink( Sensei()->settings->get( 'course_completed_page' ) ) );
+
+		/* Act. */
+		try {
+			Sensei()->course->maybe_redirect_to_login_from_course_completion();
+		} catch ( \Sensei_WP_Redirect_Exception $e ) {
+			$redirect_status   = $e->getCode();
+			$redirect_location = $e->getMessage();
+		}
+
+		/* Assert. */
+		$this->assertTrue( isset( $redirect_status ) );
+		$this->assertStringContainsString( get_permalink( $my_courses_page_id ), $redirect_location );
+	}
+
+	public function testCompletionRedirect_WhenMyCoursesPageNotThere_PerformsRedirectionToWpLoginPage() {
+		/* Arrange. */
+		$this->prevent_wp_redirect();
+		$page_id = $this->factory->post->create(
+			[
+				'post_type'  => 'page',
+				'post_title' => 'Course Completed',
+			]
+		);
+		Sensei()->settings->set( 'course_completed_page', $page_id );
+		Sensei()->settings->set( 'my_course_page', null );
+
+		$this->go_to( get_permalink( Sensei()->settings->get( 'course_completed_page' ) ) );
+
+		/* Act. */
+		try {
+			Sensei()->course->maybe_redirect_to_login_from_course_completion();
+		} catch ( \Sensei_WP_Redirect_Exception $e ) {
+			$redirect_status   = $e->getCode();
+			$redirect_location = $e->getMessage();
+		}
+
+		/* Assert. */
+		$this->assertTrue( isset( $redirect_status ) );
+		$this->assertStringContainsString( home_url( '/wp-login.php' ), $redirect_location );
+	}
+
+	public function testSelfEnrollmentNotAllowedMessage_WhenCourseDoesntAllowSelfEnrollment_AddsNotice(): void {
+		/* Arrange */
+		global $post;
+
+		$course_id        = $this->factory->course->create();
+		$post             = get_post( $course_id );
+		$notices          = $this->createMock( Sensei_Notices::class );
+		Sensei()->notices = $notices;
+
+		update_post_meta( $course_id, '_sensei_self_enrollment_not_allowed', true );
+
+		/* Expect & Act */
+		$notices->expects( self::once() )
+			->method( 'add_notice' )
+			->with( $this->stringContains( 'Please contact the course administrator to sign up for this course.' ) );
+		Sensei_Course::self_enrollment_not_allowed_message();
+	}
+
+	public function testSelfEnrollmentNotAllowedMessage_WhenCourseAllowsSelfEnrollment_DoesNotAddNotice(): void {
+		/* Arrange */
+		global $post;
+
+		$course_id        = $this->factory->course->create();
+		$post             = get_post( $course_id );
+		$notices          = $this->createMock( Sensei_Notices::class );
+		Sensei()->notices = $notices;
+
+		/* Expect & Act */
+		$notices->expects( self::never() )
+			->method( 'add_notice' );
+		Sensei_Course::self_enrollment_not_allowed_message();
+	}
+
+	public function testSelfEnrollmentNotAllowedMessage_WhenCourseDoesntAllowSelfEnrollmentAndUserIsEnrolled_DoesNotAddNotice(): void {
+		/* Arrange */
+		$this->login_as_student();
+		global $post;
+
+		$course_id        = $this->factory->course->create();
+		$post             = get_post( $course_id );
+		$notices          = $this->createMock( Sensei_Notices::class );
+		Sensei()->notices = $notices;
+
+		update_post_meta( $course_id, '_sensei_self_enrollment_not_allowed', true );
+
+		$this->manuallyEnrolStudentInCourse( get_current_user_id(), $course_id );
+
+		/* Expect & Act */
+		$notices->expects( self::never() )
+			->method( 'add_notice' );
+		Sensei_Course::self_enrollment_not_allowed_message();
 	}
 }

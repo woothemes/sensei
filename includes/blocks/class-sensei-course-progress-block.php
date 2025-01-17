@@ -46,7 +46,6 @@ class Sensei_Course_Progress_Block {
 	public function render_course_progress( $attributes ): string {
 
 		$course_id = $attributes['postId'] ?? get_the_ID();
-
 		if ( 'course' !== get_post_type( $course_id ) ) {
 			return '';
 		}
@@ -61,7 +60,7 @@ class Sensei_Course_Progress_Block {
 		$percentage    = $stats['completed_lessons_percentage'];
 
 		// translators: %1$d number of lessons completed, %2$d number of total lessons, %3$s percentage.
-		$attributes['label']      = sprintf( __( '%1$d of %2$d lessons completed (%3$s)', 'sensei-lms' ), $completed, $total_lessons, $percentage . '%' );
+		$attributes['label']      = sprintf( __( '%1$d of %2$d lessons completed (%3$s)', 'sensei-lms' ), $completed, $total_lessons, floor( $percentage ) . '%' );
 		$attributes['percentage'] = $percentage;
 
 		return \Sensei\Blocks\Shared\Progress_Bar::render( $attributes );

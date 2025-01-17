@@ -88,60 +88,63 @@ class Sensei_Class_Modules_Test extends WP_UnitTestCase {
 		$this->assertFalse( Sensei()->modules->do_link_to_module( $test_module, false ) );
 	}
 
-	/**
-	 * Testing Sensei_Core_Modules::get_term_author
-	 */
-	public function testGetTermAuthor() {
-
-		// setup assertions
-		$test_user_id = wp_create_user( 'teacherGetTermAuthor', 'teacherGetTermAuthor', 'teacherGetTermAuthor@test.com' );
-
-		// insert a general term
+	public function testGetTermAuthor_WhenNoAuthorAndSiteAdminEmailDoesNotMatchAnyUser_AddsTheFirstAdminUserInFallback() {
+		/* Arrange */
 		wp_insert_term( 'Get Started', 'module' );
-		// insert a term as if from the user
-		wp_insert_term(
-			'Get Started Today',
+
+		$term = wp_insert_term(
+			'A test term',
 			'module',
 			array(
 				'description' => 'A yummy apple.',
-				'slug'        => $test_user_id . '-get-started-today',
+				'slug'        => 'a-test-term',
 			)
 		);
+		update_site_option( 'admin_email', 'non-existant-user-mail@abc.com' );
 
-		// does the function exist?
-		$this->assertTrue( method_exists( 'Sensei_Core_Modules', 'get_term_authors' ), 'The function Sensei_Core_Modules::get_term_author does not exist ' );
+		$admins       = get_super_admins();
+		$admin        = get_user_by( 'login', $admins[0] );
+		$test_user_id = $this->factory->user->create(
+			[
+				'display_name' => 'Test User',
+				'user_email'   => 'test@a.com',
+			]
+		);
 
-		// does the taxonomy exist
-		$module_taxonomy = get_taxonomy( 'module' );
-		$this->assertTrue( $module_taxonomy->public, 'The module taxonomy is not loaded' );
+		/* Act */
+		$term_author_admin = Sensei_Core_Modules::get_term_author( 'a-test-term' );
+		update_term_meta( $term['term_id'], 'module_author', $test_user_id );
+		$term_author_teacher = Sensei_Core_Modules::get_term_author( 'a-test-term' );
 
-		// does it return empty array id for bogus term nam?
-		$term_authors = Sensei_Core_Modules::get_term_authors( 'bogusnonexistan' );
-		$this->assertTrue( empty( $term_authors ), 'The function should return false for an invalid term' );
+		/* Assert */
+		$this->assertTrue( $admin->ID === $term_author_admin->ID, 'The function should return the first admin user in fallback.' );
+		$this->assertFalse( 'non-existant-user-mail@abc.com' === $admin->user_email );
+		$this->assertTrue( $test_user_id === $term_author_teacher->ID, 'The function should return the teacher user if exists using term meta.' );
+	}
 
-		// does it return the admin user for a valid term ?
-		$admin        = get_user_by( 'email', get_bloginfo( 'admin_email' ) );
-		$term_authors = Sensei_Core_Modules::get_term_authors( 'Get Started' );
-		$this->assertTrue( $admin == $term_authors[0], 'The function should return admin user for normal module term.' );
+	public function testGetTermAuthor_WhenAuthorDoesNotExists_ReturnsFirstAdminUserAsFallback() {
+		/* Arrange */
+		wp_insert_term( 'Get Started', 'module' );
 
-		// does it return the expected new user for the given term registered with that id in front of the slug?
-		$term_authors = Sensei_Core_Modules::get_term_authors( 'Get Started Today' );
-		$this->assertTrue( get_userdata( $test_user_id ) == $term_authors[0], 'The function should admin user for normal module term.' );
-
-		// what about terms with the same name but different slug?
-		// It should return 2 authors as we've created 2 with the same name
-		// insert a term that is the same as the first one
-		wp_insert_term(
-			'Get Started',
+		$term = wp_insert_term(
+			'A test term',
 			'module',
 			array(
 				'description' => 'A yummy apple.',
-				'slug'        => $test_user_id . '-get-started',
+				'slug'        => 'a-test-term',
 			)
 		);
-		$term_authors = Sensei_Core_Modules::get_term_authors( 'Get Started' );
-		$this->assertTrue( 2 == count( $term_authors ), 'The function should admin user for normal module term.' );
 
+		$admin                = get_user_by( 'email', get_bloginfo( 'admin_email' ) );
+		$not_existing_user_id = 2000;
+
+		update_term_meta( $term['term_id'], 'module_author', $not_existing_user_id );
+
+		/* Act */
+		$term_author_admin = Sensei_Core_Modules::get_term_author( 'a-test-term' );
+
+		/* Assert */
+		$this->assertSame( $admin->ID, $term_author_admin->ID );
 	}
 
 	/**

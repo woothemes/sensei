@@ -1,7 +1,7 @@
 /**
  * WordPress dependencies
  */
-import { InnerBlocks } from '@wordpress/block-editor';
+import { InnerBlocks, useBlockProps } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
 import { useState, useCallback } from '@wordpress/element';
 
@@ -19,6 +19,7 @@ import QuizSettings from './quiz-settings';
 import { useUpdateQuizHasQuestionsMeta } from './use-update-quiz-has-questions-meta';
 import { isQuestionEmpty } from '../data';
 import QuizProgressBarEdit from './quiz-progress-bar-edit';
+import { Slot } from '@wordpress/components';
 
 const ALLOWED_BLOCKS = [
 	'sensei-lms/quiz-question',
@@ -67,12 +68,19 @@ const QuizEdit = ( props ) => {
 	const showPaginationProgressBar =
 		pagination?.paginationNumber && pagination?.showProgressBar;
 
+	const blockProps = useBlockProps();
+
 	return (
-		<>
+		<div { ...blockProps }>
 			<QuizValidationResult { ...props } />
 			<div className="sensei-lms-quiz-block__separator">
-				<span>{ __( 'Lesson Quiz', 'sensei-lms' ) }</span>
+				<Slot name="SenseiQuizHeader" />
+				<span>
+					<span>{ __( 'Lesson Quiz', 'sensei-lms' ) }</span>
+				</span>
 			</div>
+
+			<Slot name="SenseiQuizBlockTop" />
 
 			{ showPaginationProgressBar && (
 				<QuizProgressBarEdit pagination={ pagination } />
@@ -93,7 +101,7 @@ const QuizEdit = ( props ) => {
 
 			<div className="sensei-lms-quiz-block__separator" />
 			<QuizSettings { ...props } />
-		</>
+		</div>
 	);
 };
 

@@ -55,12 +55,13 @@ class Sensei_Course_List_Student_Course_Filter extends Sensei_Course_List_Filter
 
 		$attributes       = $block->attributes;
 		$query_id         = $block->context['queryId'];
-		$filter_param_key = self::PARAM_KEY . $query_id;
+		$is_inherited     = $block->context['query']['inherit'] ?? false;
+		$filter_param_key = $is_inherited ? 'student_course_filter' : self::PARAM_KEY . $query_id;
 		$default_option   = $attributes['defaultOptions']['student_course'] ?? 'all';
 		$selected_option  = isset( $_GET[ $filter_param_key ] ) ? sanitize_text_field( wp_unslash( $_GET[ $filter_param_key ] ) ) : $default_option; // phpcs:ignore WordPress.Security.NonceVerification -- Argument is used to filter courses.
 
 		return '<select data-param-key="' . esc_attr( $filter_param_key ) . '">' .
-			join(
+			implode(
 				'',
 				array_map(
 					function ( $key ) use ( $selected_option ) {

@@ -1,6 +1,7 @@
 {
 	"name": "sensei-lms/quiz-question",
 	"title": "Question",
+	"apiVersion": 2,
 	"description": "The building block of all quizzes.",
 	"parent": [
 		"sensei-lms/quiz"
@@ -44,7 +45,8 @@
 		"options": {
 			"type": "object",
 			"default": {
-				"grade": 1
+				"grade": 1,
+				"hideAnswerFeedback": ""
 			}
 		},
 		"editable": {

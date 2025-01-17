@@ -13,21 +13,103 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Sensei_Settings_API {
 
+	/**
+	 * Page token.
+	 *
+	 * @var string
+	 */
 	public $token;
+
+	/**
+	 * Legacy page token.
+	 *
+	 * @var string
+	 */
 	public $token_legacy;
+
+	/**
+	 * Page slug.
+	 *
+	 * @var string
+	 */
 	public $page_slug;
-	public $name;
-	public $menu_label;
+
+	/**
+	 * Settings.
+	 *
+	 * @var array
+	 */
 	public $settings;
+
+	/**
+	 * Settings sections.
+	 *
+	 * @var array
+	 */
 	public $sections;
+
+	/**
+	 * Settings fields.
+	 *
+	 * @var array
+	 */
 	public $fields;
+
+	/**
+	 * Errors.
+	 *
+	 * @var array
+	 */
 	public $errors;
 
+	/**
+	 * Whether the settings page has a range field.
+	 *
+	 * @var bool
+	 */
 	public $has_range;
+
+	/**
+	 * Whether the settings page has an imageselector field.
+	 *
+	 * @var bool
+	 */
 	public $has_imageselector;
+
+	/**
+	 * Whether the settings page has tabs.
+	 *
+	 * @var bool
+	 */
 	public $has_tabs;
+
+	/**
+	 * Settings tabs.
+	 *
+	 * @var array
+	 */
 	private $tabs;
+
+	/**
+	 * Settings version.
+	 *
+	 * @var string
+	 */
 	public $settings_version;
+
+	/**
+	 * Array of fields that have not been added to a section.
+	 *
+	 * @var array|null
+	 */
+	public $remaining_fields;
+
+	/**
+	 * Page's hook suffix.
+	 *
+	 * @var string|false
+	 */
+	public $hook = false;
 
 	/**
 	 * Constructor.
@@ -36,7 +118,6 @@ class Sensei_Settings_API {
 	 * @since  1.0.0
 	 */
 	public function __construct() {
-
 		$this->token        = 'sensei-settings';
 		$this->token_legacy = 'woothemes-sensei-settings';
 		$this->page_slug    = 'sensei-settings-api';
@@ -52,6 +133,49 @@ class Sensei_Settings_API {
 		$this->tabs              = array();
 		$this->settings_version  = '';
 
+		// Set default empty values for properties.
+		$this->settings = array();
+	}
+
+	/**
+	 * Graceful fallback for deprecated properties.
+	 *
+	 * @since 4.24.4
+	 *
+	 * @param string $key The key to get.
+	 *
+	 * @return mixed
+	 */
+	public function __get( $key ) {
+		if ( 'name' === $key ) {
+			_doing_it_wrong( __CLASS__ . '->name', 'The "name" property is deprecated.', '4.24.5' );
+
+			return $this->get_name();
+		}
+
+		if ( 'menu_label' === $key ) {
+			_doing_it_wrong( __CLASS__ . '->menu_label', 'The "menu_label" property is deprecated.', '4.24.5' );
+
+			return $this->get_menu_label();
+		}
+	}
+
+	/**
+	 * Get the name of the screen.
+	 *
+	 * @return string
+	 */
+	protected function get_name() {
+		return ''; // Should be overwritten by extension.
+	}
+
+	/**
+	 * Get the menu label.
+	 *
+	 * @return string
+	 */
+	protected function get_menu_label() {
+		return ''; // Should be overwritten by extension.
 	}
 
 	/**
@@ -199,16 +323,24 @@ class Sensei_Settings_API {
 			$html .= '<ul id="settings-sections" class="subsubsub hide-if-no-js">' . "\n";
 
 			$sections = array();
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce verification is not required here.
+			$current_tab = isset( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) ) : 'default-settings';
 
 			foreach ( $this->tabs as $k => $v ) {
 				$classes = 'tab';
 
-				if ( 'default-settings' === $k ) {
+				if ( $current_tab === $k ) {
 					$classes .= ' current';
 				}
 
+				if ( ! empty( $v['external'] ) ) {
+					$classes .= ' external';
+				}
+
 				$sections[ $k ] = array(
-					'href'  => '#' . esc_attr( $k ),
+					'href'  => isset( $v['href'] )
+						? esc_attr( $v['href'] )
+						: admin_url( 'admin.php?page=' . $this->token . '&tab=' . esc_attr( $k ) ),
 					'name'  => esc_attr( $v['name'] ),
 					'class' => esc_attr( $classes ),
 				);
@@ -248,7 +380,7 @@ class Sensei_Settings_API {
 	 * @return void
 	 */
 	private function create_tabs() {
-		if ( count( $this->sections ) > 0 ) {
+		if ( $this->sections ) {
 			$tabs = array();
 			foreach ( $this->sections as $k => $v ) {
 				$tabs[ $k ] = $v;
@@ -265,7 +397,7 @@ class Sensei_Settings_API {
 	 * @return void
 	 */
 	public function create_sections() {
-		if ( count( $this->sections ) > 0 ) {
+		if ( $this->sections ) {
 			foreach ( $this->sections as $k => $v ) {
 				add_settings_section( $k, $v['name'], array( $this, 'section_description' ), $this->token );
 			}
@@ -280,7 +412,7 @@ class Sensei_Settings_API {
 	 * @return void
 	 */
 	public function create_fields() {
-		if ( count( $this->sections ) > 0 ) {
+		if ( $this->sections ) {
 
 			foreach ( $this->fields as $k => $v ) {
 				$method = $this->determine_method( $v, 'form' );
@@ -312,7 +444,7 @@ class Sensei_Settings_API {
 	 * @access protected
 	 * @since  1.0.0
 	 * @param  array $data
-	 * @return callable,  array or string
+	 * @return callable|array|string
 	 */
 	protected function determine_method( $data, $type = 'form' ) {
 		$method = '';
@@ -390,7 +522,7 @@ class Sensei_Settings_API {
 	public function register_settings_screen() {
 
 		if ( current_user_can( 'manage_sensei' ) ) {
-			$hook = add_submenu_page( 'sensei', $this->name, $this->menu_label, 'manage_sensei', $this->page_slug, array( $this, 'settings_screen' ) );
+			$hook = add_submenu_page( 'sensei', $this->get_name(), $this->get_menu_label(), 'manage_sensei', $this->page_slug, array( $this, 'settings_screen' ) );
 
 			$this->hook = $hook;
 		}
@@ -414,43 +546,66 @@ class Sensei_Settings_API {
 	public function settings_screen() {
 		?>
 		<div id="woothemes-sensei" class="wrap <?php echo esc_attr( $this->token ); ?>">
-		<h1><?php echo esc_html( $this->name ); ?>
-					   <?php
-						if ( '' != $this->settings_version ) {
+			<div id="sensei-custom-navigation" class="sensei-custom-navigation">
+				<div class="sensei-custom-navigation__heading">
+					<div class="sensei-custom-navigation__title">
+						<h1>
+							<?php
+							echo esc_html( $this->get_name() );
+
+							if ( '' != $this->settings_version ) {
 								echo ' <span class="version">' . esc_html( $this->settings_version ) . '</span>';
-						}
-						?>
-			</h1>
+							}
+							?>
+						</h1>
+					</div>
+					<div class="sensei-custom-navigation__links">
+						<?php $this->settings_tabs(); ?>
+					</div>
+				</div>
+			</div>
 
-		<?php do_action( 'settings_before_form' ); ?>
+			<?php
+			/**
+			 * Fires before the settings form.
+			 *
+			 * @hook settings_before_form
+			 */
+			do_action( 'settings_before_form' );
+			?>
 
-		<form id="<?php echo esc_attr( $this->token ); ?>-form" action="options.php" method="post">
+			<form id="<?php echo esc_attr( $this->token ); ?>-form" action="options.php" method="post">
+				<?php
+				settings_fields( $this->token );
+				$page = 'sensei-settings';
 
-		<?php
-		$this->settings_tabs();
-		settings_fields( $this->token );
-		$page = 'sensei-settings';
-		foreach ( $this->sections as $section_id => $section ) {
+				foreach ( $this->sections as $section_id => $section ) {
+					echo '<section id="' . esc_attr( $section_id ) . '">';
 
-			echo '<section id="' . esc_attr( $section_id ) . '">';
+					if ( $section['name'] ) {
+						echo '<h2>' . esc_html( $section['name'] ) . '</h2>' . "\n";
+					}
 
-			if ( $section['name'] ) {
-				echo '<h2>' . esc_html( $section['name'] ) . '</h2>' . "\n";
-			}
-			$this->render_additional_section_elements( $section_id );
-			echo '<table class="form-table">';
-			do_settings_fields( $page, $section_id );
-			echo '</table>';
+					$this->render_additional_section_elements( $section_id );
+					echo '<table class="form-table">';
+					do_settings_fields( $page, $section_id );
+					echo '</table>';
+					echo '</section>';
+				}
 
-			echo '</section>';
+				submit_button();
+				?>
+			</form>
 
-		}
-
-		submit_button();
-		?>
-	</form>
-		<?php do_action( 'settings_after_form' ); ?>
-</div><!--/#woothemes-sensei-->
+			<?php
+			/**
+			 * Fires after the settings form.
+			 *
+			 * @hook settings_after_form
+			 */
+			do_action( 'settings_after_form' );
+			?>
+		</div><!--/#woothemes-sensei-->
 		<?php
 	}
 
@@ -468,9 +623,10 @@ class Sensei_Settings_API {
 		 *
 		 * @since 4.1.0
 		 *
-		 * @hook  sensei_settings_woocommerce_hide  Hook used to hide woocommerce promo banner and section.
+		 * @hook sensei_settings_woocommerce_hide  Hook used to hide woocommerce promo banner and section.
 		 *
-		 * @return {boolean}                        Returns a boolean value that defines if the woocommerce promo banner should be hidden.
+		 * @param {bool} $hide_woocommerce_settings Defines if the woocommerce promo banner should be hidden.
+		 * @return {bool} Returns a boolean value that defines if the woocommerce promo banner should be hidden.
 		 */
 		$hide_woocommerce_settings = apply_filters( 'sensei_settings_woocommerce_hide', false );
 		if ( 'woocommerce-settings' === $section_id && ! $hide_woocommerce_settings ) {
@@ -484,7 +640,8 @@ class Sensei_Settings_API {
 		 *
 		 * @hook  sensei_settings_content_drip_hide  Hook used to hide content drip promo banner and section.
 		 *
-		 * @return {boolean}                        Returns a boolean value that defines if the content drip promo banner should be hidden.
+		 * @param {bool} $hide_content_drip_settings Defines if the content drip promo banner should be hidden.
+		 * @return {bool} Returns a boolean value that defines if the content drip promo banner should be hidden.
 		 */
 		$hide_content_drip_settings = apply_filters( 'sensei_settings_content_drip_hide', false );
 		if ( 'sensei-content-drip-settings' === $section_id && ! $hide_content_drip_settings ) {
@@ -591,7 +748,10 @@ class Sensei_Settings_API {
 	public function form_field_text( $args ) {
 		$options = $this->get_settings();
 
-		echo '<input id="' . esc_attr( $args['key'] ) . '" name="' . esc_attr( $this->token ) . '[' . esc_attr( $args['key'] ) . ']" size="40" type="text" value="' . esc_attr( $options[ $args['key'] ] ) . '" />' . "\n";
+		$type     = in_array( $args['data']['type'] ?? '', [ 'email', 'text' ], true ) ? $args['data']['type'] : 'text';
+		$multiple = isset( $args['data']['multiple'] ) ? ' multiple ' : '';
+
+		echo '<input id="' . esc_attr( $args['key'] ) . '" name="' . esc_attr( $this->token ) . '[' . esc_attr( $args['key'] ) . ']" size="40" type="' . esc_attr( $type ) . '" ' . esc_attr( $multiple ) . ' value="' . esc_attr( $options[ $args['key'] ] ) . '" />' . "\n";
 		if ( isset( $args['data']['description'] ) ) {
 			echo '<span class="description">' . wp_kses_post( $args['data']['description'] ) . '</span>' . "\n";
 		}
@@ -697,7 +857,7 @@ class Sensei_Settings_API {
 			);
 
 			if ( isset( $args['data']['description'] ) ) {
-				echo '<p><span class="description">' . esc_html( $args['data']['description'] ) . '</span></p>' . "\n";
+				echo '<p><span class="description">' . wp_kses_post( $args['data']['description'] ) . '</span></p>' . "\n";
 			}
 		}
 	}
@@ -962,12 +1122,10 @@ class Sensei_Settings_API {
 				// Check if the field is valid.
 				$method = $this->determine_method( $v, 'check' );
 
-				if ( function_exists( $method ) ) {
+				if ( is_string( $method ) && function_exists( $method ) ) {
 					$is_valid = $method( $value );
-				} else {
-					if ( method_exists( $this, $method ) ) {
-						$is_valid = $this->$method( $value );
-					}
+				} elseif ( is_string( $method ) && method_exists( $this, $method ) ) {
+					$is_valid = $this->$method( $value );
 				}
 
 				if ( ! $is_valid ) {
@@ -977,12 +1135,10 @@ class Sensei_Settings_API {
 
 				$method = $this->determine_method( $v, 'validate' );
 
-				if ( function_exists( $method ) ) {
+				if ( is_string( $method ) && function_exists( $method ) ) {
 					$options[ $k ] = $method( $value );
-				} else {
-					if ( method_exists( $this, $method ) ) {
-						$options[ $k ] = $this->$method( $value );
-					}
+				} elseif ( is_string( $method ) && method_exists( $this, $method ) ) {
+					$options[ $k ] = $this->$method( $value );
 				}
 			}
 		}
@@ -1080,8 +1236,8 @@ class Sensei_Settings_API {
 	 *
 	 * @access protected
 	 * @since  1.0.0
-	 * @param  string $key
-	 * @param  array  $data
+	 * @param  string $key  Field key.
+	 * @param  array  $data Field data.
 	 * @return void
 	 */
 	protected function add_error( $key, $data ) {
@@ -1102,13 +1258,13 @@ class Sensei_Settings_API {
 	 * @return  void
 	 */
 	protected function parse_errors() {
-		if ( count( $this->errors ) > 0 ) {
+		if ( $this->errors ) {
 			foreach ( $this->errors as $k => $v ) {
 				add_settings_error( $this->token . '-errors', $k, $v, 'error' );
 			}
 		} else {
 			// translators: Placeholder is the name of the settings page.
-			$message = sprintf( __( '%s updated', 'sensei-lms' ), $this->name );
+			$message = sprintf( __( '%s updated', 'sensei-lms' ), $this->get_name() );
 			add_settings_error( $this->token . '-errors', $this->token, $message, 'updated' );
 		}
 	}

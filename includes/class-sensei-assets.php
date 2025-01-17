@@ -284,12 +284,12 @@ class Sensei_Assets {
 		 * Filters the icon href for the svg.
 		 *
 		 * @since 4.4.0
+		 *
 		 * @hook sensei_icon_href
 		 *
 		 * @param {string} $icon_href   The icon href.
 		 * @param {string} $sprite_file The sprite file URL.
 		 * @param {string} $name        The icon name.
-		 *
 		 * @return {string} The icon href.
 		 */
 		$icon_href = apply_filters( 'sensei_icon_href', "{$sprite_file}#sensei-sprite-{$name}", $sprite_file, $name );
@@ -310,7 +310,7 @@ class Sensei_Assets {
 	public function get_icon( string $name, string $class_names = '' ) : string {
 		$href = $this->get_icon_href( $name );
 
-		return '<svg class="' . esc_attr( $class_names ) . '"><use xlink:href="' . esc_url( $href ) . '"></use></svg>';
+		return '<svg class="' . esc_attr( $class_names ) . '"><use href="' . esc_url( $href ) . '"></use></svg>';
 	}
 
 	/**

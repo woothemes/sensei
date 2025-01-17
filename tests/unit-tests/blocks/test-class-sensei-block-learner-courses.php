@@ -18,6 +18,20 @@ class Sensei_Block_Learner_Courses_Test extends WP_UnitTestCase {
 	private $block;
 
 	/**
+	 * The course post.
+	 *
+	 * @var WP_Post
+	 */
+	private $course;
+
+	/**
+	 * Factory for setting up testing data.
+	 *
+	 * @var Sensei_Factory
+	 */
+	protected $factory;
+
+	/**
 	 * Set up the test.
 	 */
 	public function setUp(): void {
@@ -70,6 +84,21 @@ class Sensei_Block_Learner_Courses_Test extends WP_UnitTestCase {
 
 		$this->assertStringContainsString( $course->post_title, $result );
 
+	}
+
+	/**
+	 * The Learner Courses block renders the className.
+	 */
+	public function testBlockRenderingWithClassName() {
+		// Arrange
+		$class_name   = 'custom-classname';
+		$post_content = '<!-- wp:sensei-lms/learner-courses {"className":"' . $class_name . '"} /-->';
+
+		// Act
+		$result = do_blocks( $post_content );
+
+		// Assert
+		$this->assertStringContainsString( $class_name, $result );
 	}
 
 }

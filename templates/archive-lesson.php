@@ -21,6 +21,8 @@ get_sensei_header();
  * Action before lesson archive loop. This action runs within the archive-lesson.php.
  *
  * It will be executed even if there are no posts on the archive page.
+ *
+ * @hook sensei_archive_before_lesson_loop
  */
 do_action( 'sensei_archive_before_lesson_loop' );
 ?>
@@ -42,6 +44,8 @@ do_action( 'sensei_archive_before_lesson_loop' );
 		 * It will be executed even if there are no posts on the archive page.
 		 *
 		 * @since 1.9.0
+		 *
+		 * @hook sensei_archive_after_lesson_loop
 		 */
 		do_action( 'sensei_archive_after_lesson_loop' );
 	?>

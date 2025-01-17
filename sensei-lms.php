@@ -3,32 +3,15 @@
  * Plugin Name: Sensei LMS
  * Plugin URI: https://senseilms.com/
  * Description: Share your knowledge, grow your network, and strengthen your brand by launching an online course.
- * Version: 4.10.0
+ * Version: 4.24.5
  * Author: Automattic
  * Author URI: https://automattic.com
- * License: GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * Requires at least: 5.9
- * Tested up to: 6.1
- * Requires PHP: 7.2
+ * License: GPLv2 or later
+ * Requires at least: 6.5
+ * Tested up to: 6.7
+ * Requires PHP: 7.4
  * Text Domain: sensei-lms
  * Domain path: /lang/
- */
-
-/**
- * Copyright 2013-2022 Automattic
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License, version 2, as
- * published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -36,14 +19,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 if ( ! defined( 'SENSEI_LMS_VERSION' ) ) {
-	define( 'SENSEI_LMS_VERSION', '4.10.0' ); // WRCS: DEFINED_VERSION.
+	define( 'SENSEI_LMS_VERSION', '4.24.5' ); // WRCS: DEFINED_VERSION.
 }
 
 if ( ! defined( 'SENSEI_LMS_PLUGIN_FILE' ) ) {
 	define( 'SENSEI_LMS_PLUGIN_FILE', __FILE__ );
 }
 
-if ( class_exists( 'Sensei_Main' ) ) {
+if ( ! defined( 'SENSEI_LMS_PLUGIN_PATH' ) ) {
+	define( 'SENSEI_LMS_PLUGIN_PATH', plugin_dir_path( SENSEI_LMS_PLUGIN_FILE ) );
+}
+
+if ( class_exists( 'Sensei_Main', false ) ) {
 	if ( ! function_exists( 'is_sensei_activating' ) ) {
 		/**
 		 * Checks if Sensei is being activated.
@@ -79,6 +66,26 @@ if ( class_exists( 'Sensei_Main' ) ) {
 	}
 }
 
+/**
+ * Autoload the vendor dependencies. This includes the prefixed vendor dependencies as well.
+ */
+require SENSEI_LMS_PLUGIN_PATH . 'vendor/autoload.php';
+
+/**
+ * Load packages and libraries.
+ */
+if (
+	! (
+		// Check for Automattic private site in WPCOM (Like Learnomattic).
+		( defined( 'A8C__IS_A8C_PRIVATE_BLOG' ) && A8C__IS_A8C_PRIVATE_BLOG )
+		// Check for Automattic public site in WPCOM (learn.wordpress.com).
+		|| ( defined( 'A8C__IS_A8C_BLOG' ) && A8C__IS_A8C_BLOG )
+		|| ( defined( 'SENSEI_DO_NOT_LOAD_ACTION_SCHEDULER' ) && SENSEI_DO_NOT_LOAD_ACTION_SCHEDULER )
+	)
+) {
+	require SENSEI_LMS_PLUGIN_PATH . 'vendor/woocommerce/action-scheduler/action-scheduler.php';
+}
+
 require_once dirname( __FILE__ ) . '/includes/class-sensei-dependency-checker.php';
 if ( ! Sensei_Dependency_Checker::check_php_requirement() ) {
 	add_action( 'admin_notices', array( 'Sensei_Dependency_Checker', 'add_php_version_notice' ) );
@@ -94,16 +101,14 @@ if ( ! Sensei_Dependency_Checker::check_assets() ) {
 	add_action( 'admin_notices', array( 'Sensei_Dependency_Checker', 'add_assets_notice' ) );
 }
 
-require_once dirname( __FILE__ ) . '/includes/class-sensei-bootstrap.php';
-
-Sensei_Bootstrap::get_instance()->bootstrap();
-
 if ( ! function_exists( 'Sensei' ) ) {
 	/**
 	 * Returns the global Sensei Instance.
 	 * phpcs:disable WordPress.NamingConventions.ValidFunctionName.FunctionNameInvalid
 	 *
 	 * @since 1.8.0
+	 *
+	 * @return Sensei_Main
 	 */
 	function Sensei() {
 		// phpcs:enable
@@ -136,3 +141,5 @@ if ( ! function_exists( 'activate_sensei' ) ) {
 		Sensei()->activate();
 	}
 }
+
+\Sensei\Internal\Installer\Installer::instance( SENSEI_LMS_VERSION )->init();

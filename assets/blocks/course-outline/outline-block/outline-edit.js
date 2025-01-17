@@ -7,7 +7,12 @@ import {
 } from '@wordpress/block-editor';
 import { compose } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { createContext, useCallback, useEffect } from '@wordpress/element';
+import {
+	createContext,
+	useCallback,
+	useEffect,
+	useState,
+} from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -18,7 +23,12 @@ import { useCourseLessonsStatusSync } from '../status-preview/use-course-lessons
 import { COURSE_STORE } from '../course-outline-store';
 import { useBlocksCreator } from '../use-block-creator';
 import OutlineAppender from './outline-appender';
+import ExistingLessonsModal from './existing-lessons-modal';
 import OutlinePlaceholder from './outline-placeholder';
+import useSenseiProSettings from './use-sensei-pro-settings';
+import { applyFilters } from '@wordpress/hooks';
+
+const SENSEI_PRO_LINK = 'https://senseilms.com/sensei-pro/';
 
 const ALLOWED_BLOCKS = [
 	'sensei-lms/course-outline-module',
@@ -44,6 +54,21 @@ const OutlineEdit = ( props ) => {
 
 	const { loadStructure } = useDispatch( COURSE_STORE );
 
+	const { isActivated: isSenseiProActivated } = useSenseiProSettings();
+
+	/**
+	 * Filters if the course outline generator upsell should be removed or not.
+	 *
+	 * @since 4.17.0
+	 *
+	 * @param {boolean} removeCourseOutlineGeneratorUpsell Whether to remove the course outline generator upsell.
+	 * @return {boolean} Whether to remove the course outline generator upsell.
+	 */
+	const removeCourseOutlineGeneratorUpsell = applyFilters(
+		'senseiCourseOutlineGeneratorUpsellRemove',
+		isSenseiProActivated
+	);
+
 	useEffect( () => {
 		if ( ! attributes.isPreview ) {
 			loadStructure();
@@ -61,32 +86,65 @@ const OutlineEdit = ( props ) => {
 
 	useCourseLessonsStatusSync( clientId, attributes.isPreview );
 
+	const [
+		isExistingLessonsModalOpen,
+		setExistingLessonsModalOpen,
+	] = useState( false );
+
+	const closeExistingLessonsModal = () =>
+		setExistingLessonsModalOpen( false );
+
 	const AppenderComponent = useCallback(
-		() => <OutlineAppender clientId={ clientId } />,
+		() => (
+			<OutlineAppender
+				clientId={ clientId }
+				openModal={ () => setExistingLessonsModalOpen( true ) }
+			/>
+		),
 		[ clientId ]
 	);
 
-	return isEmpty ? (
-		<OutlinePlaceholder
-			addBlock={ ( type ) => setBlocks( [ { type } ], true ) }
-		/>
-	) : (
-		<OutlineAttributesContext.Provider
-			value={ {
-				outlineAttributes: attributes,
-				outlineSetAttributes: setAttributes,
-				outlineClassName: className,
-			} }
-		>
-			<OutlineSettings { ...props } />
+	const openTailoredModal = useCallback( () => {
+		if ( removeCourseOutlineGeneratorUpsell ) {
+			window.location.hash = 'generate-course-outline-using-ai';
+		} else {
+			window.location.href = SENSEI_PRO_LINK;
+		}
+	}, [ removeCourseOutlineGeneratorUpsell ] );
 
-			<section className={ className }>
-				<InnerBlocks
-					allowedBlocks={ ALLOWED_BLOCKS }
-					renderAppender={ AppenderComponent }
+	return (
+		<div>
+			{ isEmpty ? (
+				<OutlinePlaceholder
+					addBlock={ ( type ) => setBlocks( [ { type } ], true ) }
+					addBlocks={ setBlocks }
+					openTailoredModal={ openTailoredModal }
 				/>
-			</section>
-		</OutlineAttributesContext.Provider>
+			) : (
+				<OutlineAttributesContext.Provider
+					value={ {
+						outlineAttributes: attributes,
+						outlineSetAttributes: setAttributes,
+						outlineClassName: className,
+					} }
+				>
+					<OutlineSettings { ...props } />
+
+					<section className={ className }>
+						<InnerBlocks
+							allowedBlocks={ ALLOWED_BLOCKS }
+							renderAppender={ AppenderComponent }
+						/>
+					</section>
+				</OutlineAttributesContext.Provider>
+			) }
+			{ isExistingLessonsModalOpen && (
+				<ExistingLessonsModal
+					clientId={ clientId }
+					onClose={ closeExistingLessonsModal }
+				/>
+			) }
+		</div>
 	);
 };
 

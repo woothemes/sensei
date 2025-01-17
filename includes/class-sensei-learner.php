@@ -433,10 +433,22 @@ class Sensei_Learner {
 		$query_args   = array_merge( $default_args, $base_query_args );
 		$learner_term = self::get_learner_term( $user_id );
 
+		/**
+		 * Filters the term ID used in the query to fetch a learner's enrolled courses.
+		 *
+		 * @hook sensei_learner_get_enrolled_courses_query_args_term_id
+		 *
+		 * @since 4.23.1
+		 *
+		 * @param {int} $term_id The term ID.
+		 * @return {int} The term ID.
+		 */
+		$term_id = apply_filters( 'sensei_learner_get_enrolled_courses_query_args_term_id', $learner_term->term_id );
+
 		$query_args['post_type']   = 'course';
 		$query_args['tax_query'][] = [
 			'taxonomy'         => Sensei_PostTypes::LEARNER_TAXONOMY_NAME,
-			'terms'            => $learner_term->term_id,
+			'terms'            => $term_id,
 			'include_children' => false,
 		];
 
@@ -444,11 +456,11 @@ class Sensei_Learner {
 		 * Filters the arguments of the query which fetches a learner's enrolled courses.
 		 *
 		 * @since 3.3.0
+		 *
 		 * @hook sensei_learner_enrolled_courses_args
 		 *
 		 * @param {array} $query_args  The query args.
 		 * @param {int}   $user_id     The user id.
-		 *
 		 * @return {array} Query arguments.
 		 */
 		return apply_filters( 'sensei_learner_enrolled_courses_args', $query_args, $user_id );
@@ -461,13 +473,15 @@ class Sensei_Learner {
 	 */
 	private function before_enrolled_courses_query( $user_id ) {
 		/**
-		 * Fire before we query a user's enrolled courses. This needs to be called before
-		 * building the query arguments because `active` courses might be incomplete if we
-		 * haven't verified a user's enrolment is up-to-date.
+		 * Fire before we query a user's enrolled courses.
+		 * This needs to be called before building the query arguments,
+		 * because `active` courses might be incomplete if we haven't verified a user's enrolment is up-to-date.
 		 *
 		 * @since 3.0.0
 		 *
-		 * @param int $user_id User ID.
+		 * @hook sensei_before_learners_enrolled_courses_query
+		 *
+		 * @param {int} $user_id User ID.
 		 */
 		do_action( 'sensei_before_learners_enrolled_courses_query', $user_id );
 	}
@@ -481,7 +495,8 @@ class Sensei_Learner {
 	 * @return int[]
 	 */
 	private function get_course_ids_by_progress_status( $user_id, $status ) {
-		$course_ids      = [];
+		$course_ids = array();
+
 		$course_statuses = Sensei_Utils::sensei_check_for_activity(
 			[
 				'user_id' => $user_id,
@@ -499,6 +514,18 @@ class Sensei_Learner {
 		foreach ( $course_statuses as $status ) {
 			$course_ids[] = intval( $status->comment_post_ID );
 		}
+
+		/**
+		 * Filters the course IDs when getting them for a user by progress status.
+		 *
+		 * @hook sensei_learner_get_course_ids_by_progress_status_course_ids
+		 *
+		 * @param {int[]}  $course_ids Course IDs.
+		 * @param {int}    $user_id    User ID.
+		 * @param {string} $status     Progress status.
+		 * @return {int[]} Course IDs.
+		 */
+		$course_ids = apply_filters( 'sensei_learner_get_course_ids_by_progress_status_course_ids', $course_ids, $user_id, $status );
 
 		return $course_ids;
 	}
@@ -561,7 +588,7 @@ class Sensei_Learner {
 	 *
 	 * @param int $user_id User ID.
 	 *
-	 * @return bool|mixed|void
+	 * @return string
 	 */
 	public static function get_full_name( $user_id ) {
 
@@ -569,7 +596,7 @@ class Sensei_Learner {
 
 		if ( empty( $user_id ) || ! ( 0 < intval( $user_id ) )
 			|| ! ( get_userdata( $user_id ) ) ) {
-			return false;
+			return '';
 		}
 
 		// Get the user details.
@@ -589,8 +616,12 @@ class Sensei_Learner {
 		 * Filter the user full name from the get_learner_full_name function.
 		 *
 		 * @since 1.8.0
-		 * @param $full_name
-		 * @param $user_id
+		 *
+		 * @hook sensei_learner_full_name
+		 *
+		 * @param {string} $full_name The full name of the user.
+		 * @param {int}]   $user_id   The user ID.
+		 * @return {string} The full name of the user.
 		 */
 		return apply_filters( 'sensei_learner_full_name', $full_name, $user_id );
 
@@ -674,7 +705,14 @@ class Sensei_Learner {
 				'search' => '*' . $args['search'] . '*',
 				'fields' => 'ID',
 			);
-			// Filter for extending.
+			/**
+			 * Filter the user arguments used to search for learners.
+			 *
+			 * @hook sensei_learners_search_users
+			 *
+			 * @param {array} $user_args The user arguments.
+			 * @return {array} The filtered user arguments.
+			 */
 			$user_args = apply_filters( 'sensei_learners_search_users', $user_args );
 			if ( ! empty( $user_args ) ) {
 				$learners_search          = new WP_User_Query( $user_args );
@@ -682,6 +720,14 @@ class Sensei_Learner {
 			}
 		}
 
+		/**
+		 * Filter the arguments used to search for learners activity.
+		 *
+		 * @hook sensei_learners_filter_users
+		 *
+		 * @param {array} $activity_args The activity arguments.
+		 * @return {array} The filtered activity arguments.
+		 */
 		$activity_args = apply_filters( 'sensei_learners_filter_users', $activity_args );
 
 		// WP_Comment_Query doesn't support SQL_CALC_FOUND_ROWS, so instead do this twice.
@@ -752,21 +798,17 @@ class Sensei_Learner {
 		$learner_manager = self::instance();
 		$controller      = new Sensei_Learners_Admin_Bulk_Actions_Controller( new Sensei_Learner_Management( '' ), $learner_manager );
 		$base_query_args = [ 'posts_per_page' => -1 ];
-		$posts           = $learner_manager->get_enrolled_courses_query( $user_id, $base_query_args )->posts;
-		$courses         = 0;
-		if ( $posts ) {
-			// We only want to show courses after the third one in the UI.
-			$courses = array_slice( $posts, 3 );
-		}
+		$courses_query   = $learner_manager->get_enrolled_courses_query( $user_id, $base_query_args );
+
+		// We only want to show courses after the third one in the UI.
+		$courses = array_slice( $courses_query->posts, 3 );
 
 		$html_items = [];
-		if ( count( $courses ) > 0 ) {
-			foreach ( $courses as $course ) {
-				$html_items[] = '<a href="' . esc_url( $controller->get_learner_management_course_url( $course->ID ) ) .
-								'" class="sensei-students__enrolled-course" data-course-id="' . esc_attr( $course->ID ) . '">' .
-								esc_html( $course->post_title ) .
-								'</a>';
-			}
+		foreach ( $courses as $course ) {
+			$html_items[] = '<a href="' . esc_url( $controller->get_learner_management_course_url( $course->ID ) ) .
+							'" class="sensei-students__enrolled-course" data-course-id="' . intval( $course->ID ) . '">' .
+							esc_html( $course->post_title ) .
+							'</a>';
 		}
 		wp_send_json_success( $html_items );
 		exit();

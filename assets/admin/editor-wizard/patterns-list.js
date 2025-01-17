@@ -6,6 +6,7 @@ import {
 	BlockPreview,
 } from '@wordpress/block-editor';
 import { useSelect } from '@wordpress/data';
+import { applyFilters } from '@wordpress/hooks';
 import { __ } from '@wordpress/i18n';
 import { ENTER, SPACE } from '@wordpress/keycodes';
 import { getBlockType, getBlockFromExample } from '@wordpress/blocks';
@@ -59,6 +60,30 @@ const withoutLessonActions = ( block ) =>
 	'sensei-lms/lesson-actions' !== block.name;
 
 /**
+ * No patterns warning component.
+ */
+const NoPatternsWarning = () => {
+	/**
+	 * Filters the warning message when no layouts are available.
+	 *
+	 * @param {string} message Default warning message.
+	 * @return {string} Filtered warning message.
+	 */
+	const warningMessage = applyFilters(
+		'sensei.editorWizard.noLayoutsWarning',
+		__( 'No layouts available for this theme.', 'sensei-lms' )
+	);
+
+	return (
+		<div className="sensei-patterns-list__warning">
+			<div className="sensei-patterns-list__warning-title">
+				{ warningMessage }
+			</div>
+		</div>
+	);
+};
+
+/**
  * Patterns list component.
  *
  * @param {Object}   props          Component props.
@@ -66,10 +91,18 @@ const withoutLessonActions = ( block ) =>
  */
 const PatternsList = ( { onChoose } ) => {
 	const { patterns } = useSelect( ( select ) => ( {
-		patterns: select(
-			blockEditorStore
-		).__experimentalGetPatternsByBlockTypes( 'sensei-lms/post-content' ),
+		patterns:
+			select( blockEditorStore )?.getPatternsByBlockTypes(
+				'sensei-lms/post-content'
+			) ||
+			select( blockEditorStore ).__experimentalGetPatternsByBlockTypes(
+				'sensei-lms/post-content'
+			),
 	} ) );
+
+	if ( ! patterns || patterns.length === 0 ) {
+		return <NoPatternsWarning />;
+	}
 
 	return (
 		<div
@@ -83,7 +116,14 @@ const PatternsList = ( { onChoose } ) => {
 						categories && categories.includes( 'sensei-lms' )
 				)
 				.map(
-					( { name, title, description, blocks, viewportWidth } ) => (
+					( {
+						name,
+						title,
+						description,
+						blocks,
+						viewportWidth,
+						template,
+					} ) => (
 						// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
 						<div
 							key={ name }
@@ -92,12 +132,14 @@ const PatternsList = ( { onChoose } ) => {
 							role="option"
 							tabIndex={ 0 }
 							{ ...accessibleClick( () => {
-								onChoose( blocks, name );
+								onChoose( blocks, name, template );
 							} ) }
 						>
 							<div className="sensei-patterns-list__item-preview">
 								<BlockPreview
-									__experimentalPadding={ 10 }
+									additionalStyles={ [
+										{ css: 'body { padding: 30px; }' },
+									] }
 									blocks={ blocks
 										.filter( withoutLessonActions )
 										.map( withBlockExample ) }

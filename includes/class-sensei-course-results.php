@@ -47,6 +47,14 @@ class Sensei_Course_Results {
 	 */
 	public function setup_permastruct() {
 		// Setup course results URL base.
+		/**
+		 * Filter the course slug.
+		 *
+		 * @hook sensei_course_slug
+		 *
+		 * @param {string} $course_slug The course slug.
+		 * @return {string} Filtered course slug.
+		 */
 		$this->courses_url_base = apply_filters( 'sensei_course_slug', _x( 'course', 'post type single url slug', 'sensei-lms' ) );
 
 		// Setup permalinks structure.
@@ -134,7 +142,11 @@ class Sensei_Course_Results {
 	 * @since 1.9.0
 	 */
 	public static function fire_sensei_message_hook() {
-
+		/**
+		 * Fires when the frontend messages are displayed.
+		 *
+		 * @hook sensei_frontend_messages
+		 */
 		do_action( 'sensei_frontend_messages' );
 
 	}

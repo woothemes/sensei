@@ -2,7 +2,7 @@
  * WordPress dependencies
  */
 import { __, sprintf } from '@wordpress/i18n';
-import { TextControl } from '@wordpress/components';
+import { Notice, TextControl } from '@wordpress/components';
 import { useState, useEffect } from '@wordpress/element';
 
 /**
@@ -45,7 +45,7 @@ const purposes = [
 const getInstallDescription = ( slug, features ) => {
 	const feature = features.find( ( i ) => i.product_slug === slug );
 
-	if ( ! feature.is_activated ) {
+	if ( feature && ! feature.is_activated ) {
 		const action = feature.is_installed
 			? __( 'activated', 'sensei-lms' )
 			: __( 'installed for free', 'sensei-lms' );
@@ -65,7 +65,7 @@ const getInstallDescription = ( slug, features ) => {
  * Purpose step for Setup Wizard.
  */
 const Purpose = () => {
-	const { goTo } = useQueryStringRouter();
+	const { goNext } = useQueryStringRouter();
 
 	const {
 		stepData,
@@ -94,10 +94,6 @@ const Purpose = () => {
 		} ) );
 	};
 
-	const goToNextStep = () => {
-		goTo( 'theme' );
-	};
-
 	const submitPage = () => {
 		const features = purposes
 			.filter( ( i ) => i.feature && selected.includes( i.id ) )
@@ -105,7 +101,7 @@ const Purpose = () => {
 
 		submitStep(
 			{ purpose: { selected, other }, features: { selected: features } },
-			{ onSuccess: goToNextStep }
+			{ onSuccess: goNext }
 		);
 	};
 
@@ -157,6 +153,30 @@ const Purpose = () => {
 				</PurposeItem>
 			</ul>
 			<div className="sensei-setup-wizard__actions sensei-setup-wizard__actions--full-width">
+				{
+					// It should contain WooCommerce + other Sensei extensions.
+					featuresData.options.length <= 1 && (
+						<Notice
+							status="error"
+							className="sensei-setup-wizard__error-notice"
+							isDismissible={ false }
+							actions={ [
+								{
+									label: __(
+										'Refresh the page',
+										'sensei-lms'
+									),
+									url: window.location.href,
+								},
+							] }
+						>
+							{ __(
+								'An error happened while loading the Sensei extensions.',
+								'sensei-lms'
+							) }
+						</Notice>
+					)
+				}
 				{ errorNotice }
 				<button
 					disabled={ isSubmitting || isEmpty }
@@ -169,7 +189,7 @@ const Purpose = () => {
 					<button
 						disabled={ isSubmitting }
 						className="sensei-setup-wizard__button sensei-setup-wizard__button--link"
-						onClick={ goToNextStep }
+						onClick={ goNext }
 					>
 						{ __( 'Skip customization', 'sensei-lms' ) }
 					</button>

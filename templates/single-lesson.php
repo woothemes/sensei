@@ -28,19 +28,40 @@ if ( have_posts() ) {
 /**
  * Hook inside the single lesson above the content
  *
- * @param integer $lesson_id
+ * @since  1.9.0
+ *
+ * @hook sensei_single_lesson_content_inside_before
+ *
+ * @param {int} $lesson_id The lesson ID.
  *
  * @hooked deprecated_lesson_image_hook - 10
  * @hooked Sensei_Lesson::lesson_image() -  17
  * @hooked deprecate_lesson_single_main_content_hook - 20
- * @since  1.9.0
  */
 do_action( 'sensei_single_lesson_content_inside_before', get_the_ID() );
 
 if ( sensei_can_user_view_lesson() ) {
 
-	if ( 'top' === apply_filters( 'sensei_video_position', 'top', $post->ID ) ) {
+	/**
+	 * Filter video position.
+	 *
+	 * @hook sensei_video_position
+	 *
+	 * @param {string} $position The video position.
+	 * @param {int}    $post_id  The post ID.
+	 * @return {string} Filtered video position.
+	 */
+	$sensei_video_position = apply_filters( 'sensei_video_position', 'top', $post->ID );
 
+	if ( 'top' === $sensei_video_position ) {
+
+		/**
+		 * Fire action when a lesson video expected.
+		 *
+		 * @hook sensei_lesson_video
+		 *
+		 * @param {int} $post_id The post ID.
+		 */
 		do_action( 'sensei_lesson_video', $post->ID );
 
 	}
@@ -62,10 +83,13 @@ if ( sensei_can_user_view_lesson() ) {
 /**
  * Hook inside the single lesson template after the content
  *
- * @param integer $lesson_id
+ * @since  1.9.0
+ *
+ * @hook sensei_single_lesson_content_inside_after
+ *
+ * @param {int} $lesson_id The lesson ID.
  *
  * @hooked Sensei()->frontend->sensei_breadcrumb   - 30
- * @since  1.9.0
  */
 do_action( 'sensei_single_lesson_content_inside_after', get_the_ID() );
 

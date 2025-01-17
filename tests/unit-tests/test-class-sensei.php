@@ -1,5 +1,9 @@
 <?php
 
+use Sensei\Clock\Clock_Interface;
+use Sensei\Internal\Action_Scheduler\Action_Scheduler;
+use Sensei\Internal\Migration\Migration_Job_Scheduler;
+
 class Sensei_Globals_Test extends WP_UnitTestCase {
 	/**
 	 * Setup function.
@@ -46,111 +50,6 @@ class Sensei_Globals_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Tests to make sure the version is set on new installs but the legacy update flag option isn't set.
-	 */
-	public function testUpdateNewInstall() {
-		$this->resetUpdateOptions();
-
-		Sensei()->update();
-
-		$this->assertEquals( Sensei()->version, get_option( 'sensei-version' ) );
-		$this->assertEmpty( get_option( 'sensei_enrolment_legacy' ), 'Legacy update flag option should not be set on new installs' );
-	}
-
-	/**
-	 * Tests to make sure the version and legacy update flag option are set when both course and progress
-	 * artifacts exist.
-	 */
-	public function testUpdateOldInstallWithProgress() {
-		$user_id   = $this->factory->user->create();
-		$course_id = $this->factory->course->create();
-		Sensei_Utils::user_start_course( $user_id, $course_id );
-
-		$this->resetUpdateOptions();
-
-		Sensei()->update();
-
-		$this->assertEquals( Sensei()->version, get_option( 'sensei-version' ) );
-		$this->assertNotEmpty( get_option( 'sensei_enrolment_legacy' ), 'Legacy update flag option should be set on updates even when course and progress artifacts exist' );
-	}
-
-	/**
-	 * Tests to make sure the version is set on v1 updates and the legacy update flag option is set when there are
-	 * progress artifacts.
-	 */
-	public function testUpdatev1UpdateWithProgress() {
-		$user_id   = $this->factory->user->create();
-		$course_id = $this->factory->course->create();
-		Sensei_Utils::user_start_course( $user_id, $course_id );
-
-		$this->resetUpdateOptions();
-
-		update_option( 'woothemes-sensei-version', '1.9.0' );
-		update_option( 'woothemes-sensei-settings', [ 'settings' => true ] );
-
-		Sensei()->update();
-
-		$this->assertEquals( Sensei()->version, get_option( 'sensei-version' ) );
-		$this->assertNotEmpty( get_option( 'sensei_enrolment_legacy' ), 'Legacy update flag option should be set during v1 updates with progress artifacts' );
-	}
-
-	/**
-	 * Tests to make sure the version is set on v1 updates and the legacy update flag option is NOT set when there are
-	 * no progress artifacts.
-	 */
-	public function testUpdatev1UpdateWithoutProgress() {
-		$this->resetUpdateOptions();
-
-		update_option( 'woothemes-sensei-version', '1.9.0' );
-		update_option( 'woothemes-sensei-settings', [ 'settings' => true ] );
-
-		Sensei()->update();
-
-		$this->assertEquals( Sensei()->version, get_option( 'sensei-version' ) );
-		$this->assertEmpty( get_option( 'sensei_enrolment_legacy' ), 'Legacy update flag option should NOT be set during v1 updates without progress artifacts' );
-	}
-
-	/**
-	 * Tests to make sure the version is set on v2 updates and the legacy update flag option is set, even without
-	 * progress artifacts.
-	 */
-	public function testUpdatev2UpdateWithoutProgress() {
-		$this->resetUpdateOptions();
-
-		update_option( 'sensei-version', '2.4.0' );
-
-		Sensei()->update();
-
-		$this->assertEquals( Sensei()->version, get_option( 'sensei-version' ) );
-		$this->assertNotEmpty( get_option( 'sensei_enrolment_legacy' ), 'Legacy update flag option should be set during v2 updates with known previous version' );
-	}
-
-	/**
-	 * Tests to make sure the version is set on v2 updates and the legacy update flag option is set when the previous
-	 * version wasn't known but there were progress artifacts.
-	 */
-	public function testUpdatev2UpdateWithProgress() {
-		$user_id   = $this->factory->user->create();
-		$course_id = $this->factory->course->create();
-		Sensei_Utils::user_start_course( $user_id, $course_id );
-
-		$this->resetUpdateOptions();
-
-		Sensei()->update();
-
-		$this->assertEquals( Sensei()->version, get_option( 'sensei-version' ) );
-		$this->assertNotEmpty( get_option( 'sensei_enrolment_legacy' ), 'Legacy update flag option should be set during v2 updates with progress' );
-	}
-
-	/**
-	 * Resets the update options.
-	 */
-	private function resetUpdateOptions() {
-		delete_option( 'sensei-version' );
-		delete_option( 'sensei_enrolment_legacy' );
-	}
-
-	/**
 	 * Testing the version numbers before releasing the plugin.
 	 *
 	 * The version number in the plugin information block should match the version number specified in the code.
@@ -161,6 +60,66 @@ class Sensei_Globals_Test extends WP_UnitTestCase {
 
 		/* Assert. */
 		$this->assertEquals( $plugin_data['Version'], Sensei()->version, 'The version number in the global Sensei object is not equal to the plugin version' );
+	}
+
+	/**
+	 * Tests that feed content is not displayed if the user doesn't have access to the lesson.
+	 *
+	 * @covers Sensei_Main::maybe_remove_feed_content
+	 */
+	public function testMaybeRemoveFeedContent_NoAccessForLesson_ReturnsFilteredContent() {
+		/* Arrange. */
+		$original_content = 'This is some content.';
+		$lesson           = $this->factory->lesson->create_and_get();
+		$GLOBALS['post']  = $lesson;
+
+		add_filter( 'sensei_can_user_view_lesson', '__return_false' );
+
+		/* Act. */
+		$filtered_content = Sensei()->maybe_remove_feed_content( $original_content );
+		remove_filter( 'sensei_can_user_view_lesson', '__return_false' );
+
+		/* Assert. */
+		$this->assertEquals( $filtered_content, '' );
+	}
+
+	/**
+	 * Tests that feed content is unchanged if the user has access to the lesson.
+	 *
+	 * @covers Sensei_Main::maybe_remove_feed_content
+	 */
+	public function testMaybeRemoveFeedContent_HasAccessForLesson_ReturnsOriginalContent() {
+		/* Arrange. */
+		$original_content = 'This is some content.';
+		$lesson           = $this->factory->lesson->create_and_get();
+		$GLOBALS['post']  = $lesson;
+
+		add_filter( 'sensei_can_user_view_lesson', '__return_true' );
+
+		/* Act. */
+		$filtered_content = Sensei()->maybe_remove_feed_content( $original_content );
+		remove_filter( 'sensei_can_user_view_lesson', '__return_true' );
+
+		/* Assert. */
+		$this->assertEquals( $original_content, $filtered_content );
+	}
+
+	/**
+	 * Tests that feed content is unchanged if the post is not a lesson.
+	 *
+	 * @covers Sensei_Main::maybe_remove_feed_content
+	 */
+	public function testMaybeRemoveFeedContent_NotALesson_ReturnsOriginalContent() {
+		/* Arrange. */
+		$original_content = 'This is some content.';
+		$course           = $this->factory->course->create_and_get();
+		$GLOBALS['post']  = $course;
+
+		/* Act. */
+		$filtered_content = Sensei()->maybe_remove_feed_content( $original_content );
+
+		/* Assert. */
+		$this->assertEquals( $original_content, $filtered_content );
 	}
 
 	/**
@@ -268,6 +227,111 @@ class Sensei_Globals_Test extends WP_UnitTestCase {
 		remove_filter( 'sensei_comment_counts_include_sensei_comments', '__return_false' );
 
 		$this->assertEquals( (array) $stats_without_sensei, (array) $stats, 'Stats should be what we passed back' );
+	}
+
+	public function testInitMigrationScheduler_NoActionScheduler_DoesntInitializeMigrationScheduler() {
+		/* Arrange. */
+		$sensei                      = Sensei();
+		$sensei->action_scheduler    = null;
+		$sensei->migration_scheduler = null;
+
+		/* Act. */
+		$sensei->init_migration_scheduler();
+
+		/* Assert. */
+		$this->assertNull( $sensei->migration_scheduler );
+	}
+
+	public function testInitMigrationScheduler_WithActionScheduler_DoesntInitializeMigrationScheduler() {
+		/* Arrange. */
+		$sensei                      = Sensei();
+		$sensei->action_scheduler    = $this->createMock( Action_Scheduler::class );
+		$sensei->migration_scheduler = null;
+
+		/* Act. */
+		$sensei->init_migration_scheduler();
+
+		/* Assert. */
+		$this->assertInstanceOf( Migration_Job_Scheduler::class, $sensei->migration_scheduler );
+	}
+
+	public function testActivate_WhenSenseiIsActivated_CreatesAllSenseiPages() {
+		/* Assert. */
+		$this->assertTrue( ( (int) Sensei()->settings->get( 'course_page' ) ) > 0 );
+		$this->assertTrue( ( (int) Sensei()->settings->get( 'my_course_page' ) ) > 0 );
+		$this->assertTrue( ( (int) Sensei()->settings->get( 'course_completed_page' ) ) > 0 );
+	}
+
+	public function testConstructor_Always_InitializesClockProperty() {
+		/* Arrange. */
+		$sensei = Sensei();
+
+		/* Assert. */
+		$this->assertInstanceOf( Clock_Interface::class, $sensei->clock );
+	}
+
+	public function testConstruct_Always_AddsActionOnUpdateOptionWplang() {
+		/* Arrange. */
+		$sensei = Sensei();
+
+		/* Assert. */
+		$this->assertSame( 10, has_action( 'update_option_WPLANG', [ $sensei, 'maybe_initiate_rewrite_rules_flush_after_language_change' ] ) );
+	}
+
+	public function testConstruct_Always_AddsActionOnUpgraderProcessComplete() {
+		/* Arrange. */
+		$sensei = Sensei();
+
+		/* Assert. */
+		$this->assertSame( 10, has_action( 'upgrader_process_complete', [ $sensei, 'maybe_initiate_rewrite_rules_flush_on_translation_update' ] ) );
+	}
+
+	public function testMaybeInitiateRewriteRulesFlushAfterLanguageChange_WhenLanguageChanged_UpdatesOption() {
+		/* Arrange. */
+		$sensei = Sensei();
+		update_option( 'sensei_flush_rewrite_rules', '0' );
+
+		/* Act. */
+		$sensei->maybe_initiate_rewrite_rules_flush_after_language_change( 'a', 'b' );
+
+		/* Assert. */
+		$this->assertSame( '1', get_option( 'sensei_flush_rewrite_rules' ) );
+	}
+
+	public function testMaybeInitiateRewriteRulesFlushAfterLanguageChange_WhenLanguageNotChanged_DoesntUpdateOption() {
+		/* Arrange. */
+		$sensei = Sensei();
+		update_option( 'sensei_flush_rewrite_rules', '0' );
+
+		/* Act. */
+		$sensei->maybe_initiate_rewrite_rules_flush_after_language_change( 'a', 'a' );
+
+		/* Assert. */
+		$this->assertSame( '0', get_option( 'sensei_flush_rewrite_rules' ) );
+	}
+
+	public function testMaybeInitiateRewriteRulesFlushOnTranslationUpdate_WhenNonTranslationUpdate_DoesntUpdateOption() {
+		/* Arrange. */
+		$sensei = Sensei();
+		update_option( 'sensei_flush_rewrite_rules', '0' );
+
+		/* Act. */
+		$sensei->maybe_initiate_rewrite_rules_flush_on_translation_update( new stdClass(), array( 'type' => 'a' ) );
+
+		/* Assert. */
+		$this->assertSame( '0', get_option( 'sensei_flush_rewrite_rules' ) );
+	}
+
+	public function testMaybeInitiateRewriteRulesFlushOnTranslationUpdate_WhenTranslationUpdate_UpdatesOption() {
+		/* Arrange. */
+		$sensei = Sensei();
+		update_option( 'sensei_flush_rewrite_rules', '0' );
+
+		/* Act. */
+		$sensei->maybe_initiate_rewrite_rules_flush_on_translation_update( new stdClass(), array( 'type' => 'translation' ) );
+
+		/* Assert. */
+		$this->assertSame( '1', get_option( 'sensei_flush_rewrite_rules' ) );
 	}
 
 	/**

@@ -1,14 +1,17 @@
 /**
  * WordPress dependencies
  */
-import { select as selectData, registerStore } from '@wordpress/data';
+import { select as selectData } from '@wordpress/data';
 
 /**
  * Internal dependencies
  */
 import { Status } from './index';
 import { select, controls } from '@wordpress/data-controls';
-import { createReducerFromActionMap } from '../../../shared/data/store-helpers';
+import {
+	createStore,
+	createReducerFromActionMap,
+} from '../../../shared/data/store-helpers';
 
 const DEFAULT_STATE = {
 	completedLessons: [],
@@ -311,9 +314,7 @@ const reducers = {
 	DEFAULT: ( action, state ) => state,
 };
 
-export const COURSE_STATUS_STORE = 'sensei/course-status';
-
-registerStore( COURSE_STATUS_STORE, {
+export const COURSE_STATUS_STORE = createStore( 'sensei/course-status', {
 	reducer: createReducerFromActionMap( reducers, DEFAULT_STATE ),
 	actions,
 	selectors,

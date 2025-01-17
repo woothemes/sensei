@@ -35,6 +35,13 @@ class Quiz_Content {
 
 		ob_start();
 
+		/**
+		 * Fires before rendering the quiz content.
+		 *
+		 * @hook sensei_single_quiz_content_inside_before
+		 *
+		 * @param {int} $quiz_id The quiz ID.
+		 */
 		do_action( 'sensei_single_quiz_content_inside_before', get_the_ID() );
 
 		if ( ! sensei_can_user_view_lesson() ) {
@@ -43,11 +50,18 @@ class Quiz_Content {
 
 		self::render_questions_loop();
 
+		/**
+		 * Fires after rendering the quiz content.
+		 *
+		 * @hook sensei_single_quiz_content_inside_after
+		 *
+		 * @param {int} $quiz_id The quiz ID.
+		 */
 		do_action( 'sensei_single_quiz_content_inside_after', get_the_ID() );
 
 		$content = ob_get_clean();
 
-		return ( "<form id='sensei-quiz-form' method='post' enctype='multipart/form-data' class='sensei-form'>{$content}</form>" );
+		return ( "<form id='sensei-quiz-form' method='post' enctype='multipart/form-data' class='sensei-form wp-block-sensei-lms-quiz'>{$content}</form>" );
 	}
 
 	/**
@@ -55,6 +69,13 @@ class Quiz_Content {
 	 */
 	private static function render_questions_loop() {
 
+		/**
+		 * Fires before rendering the quiz questions.
+		 *
+		 * @hook sensei_single_quiz_questions_before
+		 *
+		 * @param {int} $quiz_id The quiz ID.
+		 */
 		do_action( 'sensei_single_quiz_questions_before', get_the_id() );
 
 		echo "<ol id='sensei-quiz-list'>";
@@ -63,12 +84,26 @@ class Quiz_Content {
 			sensei_setup_the_question();
 			?>
 			<li
-				class="sensei-quiz-question <?php sensei_the_question_class(); ?>"
-				value="<?php echo esc_attr( sensei_get_the_question_number() ); ?>"
+				class="sensei-quiz-question wp-block-sensei-lms-quiz-question <?php sensei_the_question_class(); ?>"
+				value="<?php echo intval( sensei_get_the_question_number() ); ?>"
 			>
 				<?php
+				/**
+				 * Fires before rendering the quiz question.
+				 *
+				 * @hook sensei_quiz_question_inside_before
+				 *
+				 * @param {int} $question_id The question ID.
+				 */
 				do_action( 'sensei_quiz_question_inside_before', sensei_get_the_question_id() );
 				sensei_the_question_content();
+				/**
+				 * Fires after rendering the quiz question.
+				 *
+				 * @hook sensei_quiz_question_inside_after
+				 *
+				 * @param {int} $question_id The question ID.
+				 */
 				do_action( 'sensei_quiz_question_inside_after', sensei_get_the_question_id() );
 				?>
 			</li>
@@ -81,6 +116,14 @@ class Quiz_Content {
 		// of the quiz post content. Because we will render it separately
 		// in the footer of the "Learning Mode" screen.
 		remove_action( 'sensei_single_quiz_questions_after', [ 'Sensei_Quiz', 'the_quiz_pagination' ], 9 );
+
+		/**
+		 * Fires after rendering the quiz questions.
+		 *
+		 * @hook sensei_single_quiz_questions_after
+		 *
+		 * @param {int} $quiz_id The quiz ID.
+		 */
 		do_action( 'sensei_single_quiz_questions_after', get_the_id() );
 	}
 

@@ -8,6 +8,7 @@ const CopyPlugin = require( 'copy-webpack-plugin' );
 const SVGSpritemapPlugin = require( 'svg-spritemap-webpack-plugin' );
 const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config.js' );
 const TerserPlugin = require( 'terser-webpack-plugin' );
+const { DefinePlugin } = require( 'webpack' );
 
 /**
  * WordPress dependencies
@@ -35,12 +36,14 @@ const files = [
 	'js/admin/message-menu-fix.js',
 	'js/admin/meta-box-quiz-editor.js',
 	'js/admin/lesson-edit.js',
+	'js/admin/lesson-ai.js',
 	'js/admin/ordering.js',
 	'js/admin/sensei-notice-dismiss.js',
 	'js/admin/custom-navigation.js',
 	'js/admin/reports.js',
 	'js/frontend/course-archive.js',
 	'js/frontend/course-video/video-blocks-extension.js',
+	'js/file-upload-question-type.js',
 	'js/grading-general.js',
 	'js/image-selectors.js',
 	'js/learners-bulk-actions.js',
@@ -48,8 +51,10 @@ const files = [
 	'js/modules-admin.js',
 	'js/ranges.js',
 	'js/settings.js',
+	'js/admin/settings/experimental-features.js',
 	'js/user-dashboard.js',
 	'js/stop-double-submission.js',
+	'js/question-answer-tinymce-editor.js',
 	'setup-wizard/index.js',
 	'setup-wizard/style.scss',
 	'home/index.js',
@@ -67,21 +72,30 @@ const files = [
 	'blocks/single-course-style.scss',
 	'blocks/single-course-style-editor.scss',
 	'blocks/single-lesson.js',
+	'blocks/lesson-action-blocks.js',
 	'blocks/global-blocks.js',
 	'blocks/global-blocks-style.scss',
 	'blocks/global-blocks-style-editor.scss',
+	'blocks/single-lesson-style.scss',
 	'blocks/single-lesson-style-editor.scss',
 	'blocks/course-list-filter-block/course-list-filter.js',
 	'blocks/quiz/index.js',
 	'blocks/quiz/ordering-promo/index.js',
 	'blocks/quiz/quiz.editor.scss',
+	'blocks/quiz/style.scss',
 	'blocks/shared.js',
 	'blocks/shared-style.scss',
 	'blocks/shared-style-editor.scss',
 	'blocks/frontend.js',
-	'blocks/core-pattern-polyfill/core-pattern-polyfill.js',
+	'blocks/email-editor.js',
+	'css/email-notifications/email-editor-style.scss',
+	'css/email-notifications/email-style.scss',
+	'admin/course-pre-publish-panel/index.js',
 	'admin/editor-wizard/index.js',
 	'admin/editor-wizard/style.scss',
+	'admin/tour/course-tour/index.js',
+	'admin/tour/lesson-tour/index.js',
+	'admin/tour/style.scss',
 	'admin/exit-survey/index.js',
 	'admin/exit-survey/exit-survey.scss',
 	'admin/students/student-action-menu/index.js',
@@ -110,14 +124,25 @@ const files = [
 	'css/learning-mode-compat.scss',
 	'css/learning-mode.editor.scss',
 	'css/learning-mode.theme.scss',
+	'css/question-answer-tinymce-editor.css',
 	'css/sensei-theme-blocks.scss',
 	'css/sensei-course-theme/sidebar-mobile-menu.scss',
+	'css/showcase-upsell.scss',
 	'course-theme/learning-mode.js',
 	'course-theme/course-theme.editor.js',
 	'course-theme/blocks/index.js',
 	'course-theme/themes/default-theme.scss',
 	'course-theme/learning-mode-templates/index.js',
 	'course-theme/learning-mode-templates/styles.scss',
+	'css/3rd-party/themes/astra/learning-mode.scss',
+	'css/3rd-party/themes/course/learning-mode.scss',
+	'css/3rd-party/themes/course/blue.scss',
+	'css/3rd-party/themes/course/dark.scss',
+	'css/3rd-party/themes/course/default.scss',
+	'css/3rd-party/themes/course/gold.scss',
+	'css/3rd-party/themes/course/style.scss',
+	'css/3rd-party/themes/divi/learning-mode.scss',
+	'css/3rd-party/themes/divi/learning-mode.editor.scss',
 ];
 
 function getName( filename ) {
@@ -244,6 +269,14 @@ function getWebpackConfig( env, argv ) {
 				injectPolyfill: true,
 				combineAssets: COMBINE_ASSETS,
 				outputFormat: COMBINE_ASSETS ? 'json' : 'php',
+				requestToExternal( request ) {
+					// The extraction logic will only extract a package if requestToExternal
+					// explicitly returns undefined for the given request. Null
+					// shortcuts the logic such that react-i18n will be bundled.
+					if ( request === '@wordpress/react-i18n' ) {
+						return null;
+					}
+				},
 			} ),
 			new GenerateChunksMapPlugin( {
 				output: path.resolve(
@@ -271,7 +304,19 @@ function getWebpackConfig( env, argv ) {
 					prefix: 'sensei-sprite-',
 				},
 			} ),
+			new DefinePlugin( {
+				__i18n_text_domain__: JSON.stringify( 'default' ),
+			} ),
 		],
+		resolve: {
+			...webpackConfig.resolve,
+			// Remove "calypso:src" from the mainFields list to avoid using the source files.
+			mainFields: [ 'browser', 'module', 'main' ],
+			fallback: {
+				fs: false,
+				path: false,
+			},
+		},
 	};
 }
 

@@ -36,7 +36,7 @@ class Sensei_Course_Structure {
 	 *
 	 * @return static
 	 */
-	public static function instance( int $course_id ) : self {
+	public static function instance( int $course_id ): self {
 		if ( ! isset( self::$instances[ $course_id ] ) ) {
 			self::$instances[ $course_id ] = new static( $course_id );
 		}
@@ -143,7 +143,7 @@ class Sensei_Course_Structure {
 	 *     @type array  $lessons     An array of the module lessons. See Sensei_Course_Structure::prepare_lesson().
 	 * }
 	 */
-	private function prepare_module( WP_Term $module_term, $lesson_post_status ) : array {
+	private function prepare_module( WP_Term $module_term, $lesson_post_status ): array {
 		$lessons      = $this->get_module_lessons( $module_term->term_id, $lesson_post_status );
 		$author       = Sensei_Core_Modules::get_term_author( $module_term->slug );
 		$default_slug = $this->get_module_slug( $module_term->name );
@@ -180,13 +180,14 @@ class Sensei_Course_Structure {
 	 *     @type bool   $draft True if the lesson is a draft.
 	 * }
 	 */
-	private function prepare_lesson( WP_Post $lesson_post ) : array {
+	private function prepare_lesson( WP_Post $lesson_post ): array {
 		return [
-			'type'    => 'lesson',
-			'id'      => $lesson_post->ID,
-			'title'   => $lesson_post->post_title,
-			'draft'   => 'draft' === $lesson_post->post_status,
-			'preview' => Sensei_Utils::is_preview_lesson( $lesson_post->ID ),
+			'type'           => 'lesson',
+			'id'             => $lesson_post->ID,
+			'title'          => $lesson_post->post_title,
+			'draft'          => 'draft' === $lesson_post->post_status,
+			'preview'        => Sensei_Utils::is_preview_lesson( $lesson_post->ID ),
+			'initialContent' => get_post_meta( $lesson_post->ID, '_initial_content', true ),
 		];
 	}
 
@@ -198,7 +199,7 @@ class Sensei_Course_Structure {
 	 *
 	 * @return WP_Post[]
 	 */
-	private function get_module_lessons( int $module_term_id, $lesson_post_status ) : array {
+	private function get_module_lessons( int $module_term_id, $lesson_post_status ): array {
 		$lessons_query = Sensei()->modules->get_lessons_query( $this->course_id, $module_term_id, $lesson_post_status );
 
 		return $lessons_query instanceof WP_Query ? $lessons_query->posts : [];
@@ -209,7 +210,7 @@ class Sensei_Course_Structure {
 	 *
 	 * @return WP_Term[]
 	 */
-	private function get_modules() : array {
+	private function get_modules(): array {
 		$modules = Sensei()->modules->get_course_modules( $this->course_id );
 
 		if ( is_wp_error( $modules ) ) {
@@ -502,6 +503,23 @@ class Sensei_Course_Structure {
 	}
 
 	/**
+	 * Get initial content markup.
+	 * This is the content that is shown to the user when they first view the lesson.
+	 *
+	 * @param string $text_content Text content.
+	 *
+	 * @return string Markup or empty.
+	 */
+	private function get_lesson_content_markup( $text_content ) {
+		$markup = '';
+		if ( $text_content ) {
+			$markup = '<!-- wp:paragraph -->' . wpautop( $text_content ) . '<!-- /wp:paragraph -->';
+		}
+
+		return $markup;
+	}
+
+	/**
 	 * Create a lesson.
 	 *
 	 * @param array $item Item to create.
@@ -510,23 +528,38 @@ class Sensei_Course_Structure {
 	 */
 	private function create_lesson( array $item ) {
 		$post_args = [
-			'post_title'  => $item['title'],
-			'post_type'   => 'lesson',
-			'post_status' => 'draft',
-			'meta_input'  => [
-				'_lesson_course' => $this->course_id,
-				'_new_post'      => true,
+			'post_title'   => $item['title'],
+			'post_type'    => 'lesson',
+			'post_status'  => 'draft',
+			'post_content' => $this->get_lesson_content_markup( $item['initialContent'] ?? '' ),
+			'meta_input'   => [
+				'_lesson_course'   => $this->course_id,
+				'_new_post'        => true,
+				'_initial_content' => $item['initialContent'],
 			],
 		];
 
-		$post_id = wp_insert_post( $post_args );
-		if ( ! $post_id ) {
+		$lesson_id = wp_insert_post( $post_args );
+
+		if ( ! $lesson_id ) {
 			return false;
 		}
 
-		$this->create_quiz( $post_id );
+		/**
+		 * Fires after a lesson is created while saving the course structure.
+		 *
+		 * @since 4.20.1
+		 *
+		 * @hook sensei_course_structure_lesson_created
+		 *
+		 * @param {int} $lesson_id Lesson post ID.
+		 * @param {int} $course_id Course post ID.
+		 */
+		do_action( 'sensei_course_structure_lesson_created', $lesson_id, $this->course_id );
 
-		return $post_id;
+		$this->create_quiz( $lesson_id );
+
+		return $lesson_id;
 	}
 
 	/**
@@ -549,8 +582,37 @@ class Sensei_Course_Structure {
 		];
 
 		$quiz_id = wp_insert_post( $post_args );
+		if ( ! $quiz_id ) {
+			return;
+		}
+
 		update_post_meta( $lesson_id, '_lesson_quiz', $quiz_id );
 
+		/**
+		 * Fires after a quiz is created while saving the course structure.
+		 *
+		 * @since 4.20.1
+		 *
+		 * @deprecated 4.22.0 Use sensei_quiz_create instead.
+		 *
+		 * @hook sensei_course_structure_quiz_created
+		 *
+		 * @param {int} $quiz_id   Quiz post ID.
+		 * @param {int} $lesson_id Course post ID.
+		 */
+		do_action_deprecated( 'sensei_course_structure_quiz_created', array( $quiz_id, $lesson_id ), '4.22.0', 'sensei_quiz_create' );
+
+		/**
+		 * Fires after a quiz is created while saving the course structure.
+		 *
+		 * @since 4.22.0
+		 *
+		 * @hook sensei_quiz_create
+		 *
+		 * @param {int} $quiz_id   Quiz post ID.
+		 * @param {int} $lesson_id Course post ID.
+		 */
+		do_action( 'sensei_quiz_create', $quiz_id, $lesson_id );
 	}
 
 	/**
@@ -613,7 +675,7 @@ class Sensei_Course_Structure {
 	 *     @type array $2 $module_titles All the module titles.
 	 * }
 	 */
-	private function flatten_structure( array $structure ) : array {
+	private function flatten_structure( array $structure ): array {
 		$lesson_ids    = [];
 		$module_ids    = [];
 		$module_titles = [];
@@ -807,6 +869,7 @@ class Sensei_Course_Structure {
 					);
 				}
 			}
+			$item['initialContent'] = ! empty( $raw_item['initialContent'] ) ? trim( wp_kses_post( $raw_item['initialContent'] ) ) : null;
 		}
 
 		return $item;
@@ -874,7 +937,7 @@ class Sensei_Course_Structure {
 		&& [ 0 ] !== $order ) {
 			usort(
 				$structure,
-				function( $a, $b ) use ( $order, $type ) {
+				function ( $a, $b ) use ( $order, $type ) {
 					// One of the types is not being sorted.
 					if ( $type !== $a['type'] || $type !== $b['type'] ) {
 						// If types are equal, keep in the current positions.

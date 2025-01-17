@@ -32,6 +32,7 @@ class Sensei_Global_Blocks extends Sensei_Blocks_Initializer {
 		new Sensei_Course_Progress_Block();
 		new Sensei_Course_Overview_Block();
 		new Sensei_Course_List_Block();
+		new Sensei_Course_Actions_Block();
 	}
 
 	/**
@@ -65,5 +66,9 @@ class Sensei_Global_Blocks extends Sensei_Blocks_Initializer {
 			'sensei-global-blocks-editor-style',
 			'blocks/global-blocks-style-editor.css'
 		);
+
+		if ( Sensei_Utils::is_site_editor() ) {
+			Sensei()->assets->enqueue( 'sensei-lesson-action-blocks', 'blocks/lesson-action-blocks.js', [ 'sensei-global-blocks' ], true );
+		}
 	}
 }

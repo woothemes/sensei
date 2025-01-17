@@ -101,6 +101,7 @@ class Sensei_Enrolment_Provider_Journal_Store implements JsonSerializable {
 		}
 	}
 
+	#[\ReturnTypeWillChange]
 	/**
 	 * Return object that can be serialized by `json_encode()`.
 	 *
@@ -121,7 +122,10 @@ class Sensei_Enrolment_Provider_Journal_Store implements JsonSerializable {
 		 *
 		 * @since 3.0.0
 		 *
-		 * @param bool $enable_journal True to enable.
+		 * @hook sensei_enable_enrolment_provider_journal
+		 *
+		 * @param {bool} $enable_journal True to enable.
+		 * @return {bool} Filtered value.
 		 */
 		if ( ! apply_filters( 'sensei_enable_enrolment_provider_journal', false ) ) {
 			return false;

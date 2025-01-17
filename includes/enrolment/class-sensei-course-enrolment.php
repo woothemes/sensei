@@ -103,9 +103,6 @@ class Sensei_Course_Enrolment {
 	 * @return bool
 	 */
 	public function is_enrolled( $user_id, $check_cache = true ) {
-		if ( ! $user_id ) {
-			return false;
-		}
 
 		/**
 		 * Allow complete side-stepping of enrolment handling in Sensei.
@@ -117,14 +114,21 @@ class Sensei_Course_Enrolment {
 		 *
 		 * @since 3.0.0
 		 *
-		 * @param bool|null $is_enrolled If a boolean, that value will be used. Null values will keep default behavior.
-		 * @param int       $user_id     User ID.
-		 * @param int       $course_id   Course post ID.
-		 * @param bool      $check_cache Advise hooked method if cached values should be trusted.
+		 * @hook sensei_is_enrolled
+		 *
+		 * @param {bool|null} $is_enrolled If a boolean, that value will be used. Null values will keep default behavior.
+		 * @param {int}       $user_id     User ID.
+		 * @param {int}       $course_id   Course post ID.
+		 * @param {bool}      $check_cache Advise hooked method if cached values should be trusted.
+		 * @return {bool|null} Filtered value.
 		 */
 		$is_enrolled = apply_filters( 'sensei_is_enrolled', null, $user_id, $this->course_id, $check_cache );
 		if ( null !== $is_enrolled ) {
 			return $is_enrolled;
+		}
+
+		if ( ! $user_id ) {
+			return false;
 		}
 
 		// User is not enrolled if the course is not published or he is removed.
@@ -255,9 +259,11 @@ class Sensei_Course_Enrolment {
 		 *
 		 * @since 3.0.0
 		 *
-		 * @param int  $user_id     User ID.
-		 * @param int  $course_id   Course post ID.
-		 * @param bool $is_enrolled New enrolment status.
+		 * @hook sensei_course_enrolment_status_changed
+		 *
+		 * @param {int}  $user_id     User ID.
+		 * @param {int}  $course_id   Course post ID.
+		 * @param {bool} $is_enrolled New enrolment status.
 		 */
 		do_action( 'sensei_course_enrolment_status_changed', $user_id, $this->course_id, $is_enrolled );
 
@@ -313,9 +319,11 @@ class Sensei_Course_Enrolment {
 		 *
 		 * @since 3.0.0
 		 *
-		 * @param Sensei_Course_Enrolment_Provider_Results $enrolment_results Enrolment results object.
-		 * @param int                                      $course_id         Course post ID.
-		 * @param int                                      $user_id           User ID.
+		 * @hook sensei_enrolment_results_calculated
+		 *
+		 * @param {Sensei_Course_Enrolment_Provider_Results} $enrolment_results Enrolment results object.
+		 * @param {int}                                      $course_id         Course post ID.
+		 * @param {int}                                      $user_id           User ID.
 		 */
 		do_action( 'sensei_enrolment_results_calculated', $enrolment_results, $this->course_id, $user_id );
 
@@ -337,11 +345,14 @@ class Sensei_Course_Enrolment {
 		 *
 		 * @since 3.0.0
 		 *
-		 * @param bool                                     $store_results      Whether to store the results.
-		 * @param int                                      $user_id            User ID.
-		 * @param int                                      $course_id          Course post ID.
-		 * @param bool                                     $had_existing_value True if a stale enrolment result is already stored.
-		 * @param Sensei_Course_Enrolment_Provider_Results $enrolment_results  Enrolment results object.
+		 * @hook sensei_course_enrolment_store_results
+		 *
+		 * @param {bool}                                     $store_results      Whether to store the results.
+		 * @param {int}                                      $user_id            User ID.
+		 * @param {int}                                      $course_id          Course post ID.
+		 * @param {bool}                                     $had_existing_value True if a stale enrolment result is already stored.
+		 * @param {Sensei_Course_Enrolment_Provider_Results} $enrolment_results  Enrolment results object.
+		 * @return {bool} Filtered value.
 		 */
 		$store_results = apply_filters( 'sensei_course_enrolment_store_results', true, $user_id, $this->course_id, $had_existing_value, $enrolment_results );
 
@@ -593,8 +604,10 @@ class Sensei_Course_Enrolment {
 		 *
 		 * @since 3.13.3
 		 *
-		 * @param int $course_id Course that the user will be enrolled to.
-		 * @param int $user_id   User ID.
+		 * @hook sensei_admin_enrol_user
+		 *
+		 * @param {int} $course_id Course that the user will be enrolled to.
+		 * @param {int} $user_id   User ID.
 		 */
 		do_action( 'sensei_admin_enrol_user', $this->course_id, $user_id );
 
