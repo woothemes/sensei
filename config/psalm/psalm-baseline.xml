@@ -107,10 +107,9 @@
     <DocblockTypeContradiction occurrences="1">
       <code>false === $mysql_date</code>
     </DocblockTypeContradiction>
-    <InvalidScalarArgument occurrences="5">
+    <InvalidScalarArgument occurrences="4">
       <code>$_POST['data']['comment_id']</code>
       <code>$_POST['data']['post_id']</code>
-      <code>$lesson_id</code>
       <code>wp_unslash( $_GET['course_id'] ?? 0 )</code>
       <code>wp_unslash( $_GET['lesson_id'] ?? 0 )</code>
     </InvalidScalarArgument>
@@ -187,9 +186,6 @@
     <InvalidArgument occurrences="1">
       <code>'course-category'</code>
     </InvalidArgument>
-    <PossibleRawObjectIteration occurrences="1">
-      <code>$cats</code>
-    </PossibleRawObjectIteration>
     <PossiblyFalseArgument occurrences="6">
       <code>$name</code>
       <code>$post_id</code>
@@ -201,9 +197,6 @@
     <PossiblyFalseReference occurrences="1">
       <code>is_enrolled</code>
     </PossiblyFalseReference>
-    <PossiblyInvalidIterator occurrences="1">
-      <code>$cats</code>
-    </PossiblyInvalidIterator>
     <PossiblyInvalidMethodCall occurrences="1">
       <code>get_provider_results</code>
     </PossiblyInvalidMethodCall>
@@ -338,60 +331,6 @@
     <UndefinedInterfaceMethod occurrences="1">
       <code>output</code>
     </UndefinedInterfaceMethod>
-  </file>
-  <file src="includes/admin/class-senseilms-plugin-updater.php">
-    <ArgumentTypeCoercion occurrences="1">
-      <code>'\SenseiLMS_Licensing\SenseiLMS_Plugin_Updater'</code>
-    </ArgumentTypeCoercion>
-    <InvalidReturnStatement occurrences="1">
-      <code>$res</code>
-    </InvalidReturnStatement>
-    <InvalidReturnType occurrences="1">
-      <code>false|object</code>
-    </InvalidReturnType>
-    <PossiblyInvalidPropertyFetch occurrences="18">
-      <code>$remote-&gt;author</code>
-      <code>$remote-&gt;banners</code>
-      <code>$remote-&gt;download_url</code>
-      <code>$remote-&gt;download_url</code>
-      <code>$remote-&gt;icons</code>
-      <code>$remote-&gt;last_updated</code>
-      <code>$remote-&gt;name</code>
-      <code>$remote-&gt;requires</code>
-      <code>$remote-&gt;requires</code>
-      <code>$remote-&gt;requires_php</code>
-      <code>$remote-&gt;requires_php</code>
-      <code>$remote-&gt;sections</code>
-      <code>$remote-&gt;slug</code>
-      <code>$remote-&gt;slug</code>
-      <code>$remote-&gt;tested</code>
-      <code>$remote-&gt;tested</code>
-      <code>$remote-&gt;version</code>
-      <code>$remote-&gt;version</code>
-    </PossiblyInvalidPropertyFetch>
-    <UndefinedClass occurrences="1">
-      <code>\SenseiLMS_Licensing\License_Manager</code>
-    </UndefinedClass>
-    <UndefinedPropertyFetch occurrences="18">
-      <code>$remote-&gt;author</code>
-      <code>$remote-&gt;banners</code>
-      <code>$remote-&gt;download_url</code>
-      <code>$remote-&gt;download_url</code>
-      <code>$remote-&gt;icons</code>
-      <code>$remote-&gt;last_updated</code>
-      <code>$remote-&gt;name</code>
-      <code>$remote-&gt;requires</code>
-      <code>$remote-&gt;requires</code>
-      <code>$remote-&gt;requires_php</code>
-      <code>$remote-&gt;requires_php</code>
-      <code>$remote-&gt;sections</code>
-      <code>$remote-&gt;slug</code>
-      <code>$remote-&gt;slug</code>
-      <code>$remote-&gt;tested</code>
-      <code>$remote-&gt;tested</code>
-      <code>$remote-&gt;version</code>
-      <code>$remote-&gt;version</code>
-    </UndefinedPropertyFetch>
   </file>
   <file src="includes/admin/content-duplicators/class-course-lessons-duplicator.php">
     <PossiblyInvalidArgument occurrences="1">
@@ -590,12 +529,6 @@
       <code>! self::$instance</code>
       <code>self::$instance</code>
     </DocblockTypeContradiction>
-    <InvalidArgument occurrences="1">
-      <code>true</code>
-    </InvalidArgument>
-    <MissingClosureParamType occurrences="1">
-      <code>$attributes</code>
-    </MissingClosureParamType>
     <UnresolvableInclude occurrences="1">
       <code>require __DIR__ . "/{$post_type}/{$block_pattern}.php"</code>
     </UnresolvableInclude>
@@ -963,13 +896,12 @@
       <code>$course-&gt;ID</code>
       <code>$post-&gt;ID</code>
     </PossiblyInvalidPropertyFetch>
-    <PossiblyNullArgument occurrences="6">
+    <PossiblyNullArgument occurrences="5">
       <code>$course_structure</code>
       <code>$event_name</code>
       <code>$post_id</code>
       <code>$post_id</code>
       <code>$post_type-&gt;cap-&gt;edit_posts</code>
-      <code>$screen</code>
     </PossiblyNullArgument>
     <PossiblyNullPropertyFetch occurrences="3">
       <code>$post_type-&gt;cap</code>
@@ -1789,18 +1721,13 @@
       <code>$user_id</code>
       <code>$which</code>
     </MissingParamType>
-    <MissingPropertyType occurrences="3">
+    <MissingPropertyType occurrences="2">
       <code>$file</code>
-      <code>$name</code>
       <code>$page_slug</code>
     </MissingPropertyType>
     <PossiblyFalseArgument occurrences="1">
       <code>wp_json_encode( $args )</code>
     </PossiblyFalseArgument>
-    <PossiblyInvalidCast occurrences="2">
-      <code>$clean_lesson_id</code>
-      <code>$clean_user_id</code>
-    </PossiblyInvalidCast>
     <PossiblyNullArgument occurrences="3">
       <code>get_post_type_object( 'course' )-&gt;cap-&gt;edit_post</code>
       <code>get_post_type_object( 'lesson' )-&gt;cap-&gt;edit_post</code>
@@ -2237,14 +2164,13 @@
       <code>WP_Query</code>
       <code>integer</code>
     </InvalidReturnType>
-    <InvalidScalarArgument occurrences="7">
+    <InvalidScalarArgument occurrences="6">
       <code>$course_id</code>
       <code>$course_id</code>
       <code>$possible_user_id</code>
       <code>$post_after-&gt;post_author</code>
       <code>$term</code>
       <code>$term</code>
-      <code>esc_attr( $_POST['course_id'] )</code>
     </InvalidScalarArgument>
     <MissingParamType occurrences="21">
       <code>$args</code>
@@ -2423,18 +2349,6 @@
       <code>get_queried_object()-&gt;ID</code>
       <code>get_queried_object()-&gt;post_type</code>
     </PossiblyNullPropertyFetch>
-    <PropertyNotSetInConstructor occurrences="10">
-      <code>$course</code>
-      <code>$lesson</code>
-      <code>$messages</code>
-      <code>$question</code>
-      <code>$quiz</code>
-      <code>WooThemes_Sensei_PostTypes</code>
-      <code>WooThemes_Sensei_PostTypes</code>
-      <code>WooThemes_Sensei_PostTypes</code>
-      <code>WooThemes_Sensei_PostTypes</code>
-      <code>WooThemes_Sensei_PostTypes</code>
-    </PropertyNotSetInConstructor>
     <RedundantConditionGivenDocblockType occurrences="1">
       <code>$post instanceof WP_Post</code>
     </RedundantConditionGivenDocblockType>
@@ -2550,16 +2464,15 @@
       <code>$attachment_src[1]</code>
       <code>$attachment_src[2]</code>
     </PossiblyInvalidArrayAccess>
-    <PossiblyInvalidArrayAssignment occurrences="2">
-      <code>$lessons[ $lesson_id ]</code>
-      <code>$lessons[ $lesson_id ]</code>
-    </PossiblyInvalidArrayAssignment>
     <PossiblyInvalidIterator occurrences="1">
       <code>$cats</code>
     </PossiblyInvalidIterator>
     <PossiblyInvalidPropertyFetch occurrences="1">
       <code>$user_lesson_status-&gt;comment_approved</code>
     </PossiblyInvalidPropertyFetch>
+    <PossiblyUndefinedArrayOffset occurrences="1">
+      <code>$lesson['link']</code>
+    </PossiblyUndefinedArrayOffset>
     <TypeDoesNotContainType occurrences="1">
       <code>$is_quiz_graded</code>
     </TypeDoesNotContainType>
@@ -2941,6 +2854,10 @@
     <DocblockTypeContradiction occurrences="1">
       <code>0</code>
     </DocblockTypeContradiction>
+    <DuplicateArrayKey occurrences="2">
+      <code>$published_quiz_ids</code>
+      <code>$published_quiz_ids</code>
+    </DuplicateArrayKey>
     <InvalidArgument occurrences="11">
       <code>$key</code>
       <code>$published_quiz_ids</code>
@@ -3071,12 +2988,11 @@
       <code>require_once ABSPATH . 'wp-admin/includes/image.php'</code>
       <code>require_once ABSPATH . 'wp-admin/includes/plugin-install.php'</code>
     </MissingFile>
-    <MissingParamType occurrences="15">
+    <MissingParamType occurrences="14">
       <code>$attributes</code>
       <code>$course_id</code>
       <code>$data_key</code>
       <code>$file</code>
-      <code>$from_course</code>
       <code>$key</code>
       <code>$options</code>
       <code>$plugin_class_to_look_for</code>
@@ -3202,7 +3118,8 @@
     <MissingPropertyType occurrences="1">
       <code>$this-&gt;post_types-&gt;role_caps</code>
     </MissingPropertyType>
-    <PossiblyFalseArgument occurrences="2">
+    <PossiblyFalseArgument occurrences="3">
+      <code>get_the_ID()</code>
       <code>get_the_ID()</code>
       <code>get_the_ID()</code>
     </PossiblyFalseArgument>
@@ -3561,9 +3478,6 @@
       <code>null === $first</code>
       <code>null === $second</code>
     </DocblockTypeContradiction>
-    <InvalidAttribute occurrences="1">
-      <code>\ReturnTypeWillChange</code>
-    </InvalidAttribute>
     <InvalidReturnStatement occurrences="1">
       <code>wp_delete_attachment( $file_id, true )</code>
     </InvalidReturnStatement>
@@ -3622,9 +3536,6 @@
       <code>! self::$instance</code>
       <code>self::$instance</code>
     </DocblockTypeContradiction>
-    <InvalidAttribute occurrences="1">
-      <code>\ReturnTypeWillChange</code>
-    </InvalidAttribute>
     <InvalidReturnStatement occurrences="2">
       <code>$this-&gt;create_job( $user_id, Sensei_Export_Job::class )</code>
       <code>$this-&gt;create_job( $user_id, Sensei_Import_Job::class )</code>
@@ -4190,20 +4101,14 @@
     <InvalidGlobal occurrences="1">
       <code>global $sensei_email_data;</code>
     </InvalidGlobal>
-    <MissingPropertyType occurrences="6">
-      <code>$heading</code>
+    <MissingPropertyType occurrences="4">
       <code>$learner</code>
       <code>$recipient</code>
-      <code>$subject</code>
       <code>$teacher</code>
       <code>$template</code>
     </MissingPropertyType>
   </file>
   <file src="includes/emails/class-sensei-email-teacher-new-course-assignment.php">
-    <MissingParamType occurrences="2">
-      <code>$course_id</code>
-      <code>$teacher_id</code>
-    </MissingParamType>
     <MissingPropertyType occurrences="6">
       <code>$heading</code>
       <code>$learner</code>
@@ -4299,9 +4204,6 @@
     </RedundantPropertyInitializationCheck>
   </file>
   <file src="includes/enrolment/class-sensei-course-enrolment-provider-results.php">
-    <InvalidAttribute occurrences="1">
-      <code>\ReturnTypeWillChange</code>
-    </InvalidAttribute>
     <InvalidScalarArgument occurrences="1">
       <code>$version</code>
     </InvalidScalarArgument>
@@ -4380,9 +4282,6 @@
     <DocblockTypeContradiction occurrences="1">
       <code>is_wp_error( $result )</code>
     </DocblockTypeContradiction>
-    <InvalidAttribute occurrences="1">
-      <code>\ReturnTypeWillChange</code>
-    </InvalidAttribute>
     <InvalidScalarArgument occurrences="1">
       <code>$timestamp</code>
     </InvalidScalarArgument>
@@ -4396,9 +4295,6 @@
       <code>false</code>
       <code>false</code>
     </FalsableReturnStatement>
-    <InvalidAttribute occurrences="1">
-      <code>\ReturnTypeWillChange</code>
-    </InvalidAttribute>
     <InvalidFalsableReturnType occurrences="1">
       <code>array</code>
     </InvalidFalsableReturnType>
@@ -4410,17 +4306,9 @@
     <InvalidArgument occurrences="1">
       <code>$provider_states</code>
     </InvalidArgument>
-    <InvalidAttribute occurrences="1">
-      <code>\ReturnTypeWillChange</code>
-    </InvalidAttribute>
     <InvalidPropertyAssignmentValue occurrences="1">
       <code>$provider_states</code>
     </InvalidPropertyAssignmentValue>
-  </file>
-  <file src="includes/enrolment/class-sensei-enrolment-provider-state.php">
-    <InvalidAttribute occurrences="1">
-      <code>\ReturnTypeWillChange</code>
-    </InvalidAttribute>
   </file>
   <file src="includes/hooks/template.php">
     <ArgumentTypeCoercion occurrences="1">
@@ -4455,7 +4343,6 @@
     </UndefinedDocblockClass>
   </file>
   <file src="includes/internal/emails/class-email-list-table.php">
-    <ArgumentTypeCoercion occurrences="1"/>
     <MoreSpecificImplementedParamType occurrences="1">
       <code>$post</code>
     </MoreSpecificImplementedParamType>
@@ -4463,8 +4350,7 @@
       <code>$post</code>
       <code>$post</code>
     </ParamNameMismatch>
-    <PossiblyNullArgument occurrences="2">
-      <code>get_edit_post_link( $post )</code>
+    <PossiblyNullArgument occurrences="1">
       <code>get_edit_post_link( $post-&gt;ID )</code>
     </PossiblyNullArgument>
     <PropertyNotSetInConstructor occurrences="4">
@@ -4512,9 +4398,6 @@
     </UndefinedDocblockClass>
   </file>
   <file src="includes/internal/emails/class-email-preview.php">
-    <PossiblyFalseArgument occurrences="1">
-      <code>get_the_ID()</code>
-    </PossiblyFalseArgument>
     <PossiblyNullArgument occurrences="2">
       <code>$this-&gt;get_email_post_for_preview()</code>
       <code>$this-&gt;get_email_post_for_preview()</code>
@@ -5004,13 +4887,6 @@
     </TypeDoesNotContainType>
   </file>
   <file src="includes/rest-api/class-sensei-rest-api-course-progress-controller.php">
-    <InvalidClass occurrences="1">
-      <code>WP_HTTP</code>
-    </InvalidClass>
-    <PossiblyInvalidArrayAssignment occurrences="2">
-      <code>$result[ $student_id ][ $course_id ]</code>
-      <code>$result[ $student_id ][ $course_id ]</code>
-    </PossiblyInvalidArrayAssignment>
     <PossiblyNullArgument occurrences="1">
       <code>$edit_course_cap</code>
     </PossiblyNullArgument>
@@ -5047,8 +4923,7 @@
       <code>WP_HTTP</code>
       <code>WP_HTTP</code>
     </InvalidClass>
-    <PossiblyInvalidArrayAssignment occurrences="2">
-      <code>$result[ $user_id ][ $course_id ]</code>
+    <PossiblyInvalidArrayAssignment occurrences="1">
       <code>$result[ $user_id ][ $course_id ]</code>
     </PossiblyInvalidArrayAssignment>
     <PossiblyNullArgument occurrences="1">
@@ -5283,12 +5158,6 @@
     </UndefinedPropertyFetch>
   </file>
   <file src="includes/rest-api/class-sensei-rest-api-question-helpers-trait.php">
-    <ArgumentTypeCoercion occurrences="1">
-      <code>$post_args</code>
-    </ArgumentTypeCoercion>
-    <InvalidArgument occurrences="1">
-      <code>$post_args</code>
-    </InvalidArgument>
     <PossibleRawObjectIteration occurrences="1">
       <code>$question_categories</code>
     </PossibleRawObjectIteration>
@@ -5351,9 +5220,10 @@
       <code>true|WP_Error</code>
     </InvalidReturnType>
     <MissingClosureParamType occurrences="1">
-      <code>$object</code>
+      <code>$question</code>
     </MissingClosureParamType>
-    <PossiblyInvalidArgument occurrences="2">
+    <PossiblyInvalidArgument occurrences="3">
+      <code>$post</code>
       <code>$post</code>
       <code>$question_id</code>
     </PossiblyInvalidArgument>
@@ -5377,10 +5247,12 @@
       <code>$current_user</code>
       <code>$current_user</code>
     </RedundantConditionGivenDocblockType>
-    <UndefinedPropertyAssignment occurrences="1">
+    <UndefinedPropertyAssignment occurrences="2">
+      <code>$response-&gt;data</code>
       <code>$response-&gt;data</code>
     </UndefinedPropertyAssignment>
-    <UndefinedPropertyFetch occurrences="1">
+    <UndefinedPropertyFetch occurrences="2">
+      <code>$response-&gt;data</code>
       <code>$response-&gt;data</code>
     </UndefinedPropertyFetch>
   </file>
@@ -5403,6 +5275,21 @@
     </PossiblyNullArgument>
     <PropertyNotSetInConstructor occurrences="1">
       <code>Sensei_REST_API_Send_Message_Controller</code>
+    </PropertyNotSetInConstructor>
+  </file>
+  <file src="includes/rest-api/class-sensei-rest-api-sensei-emails-controller.php">
+    <InvalidReturnStatement occurrences="1">
+      <code>$parent_check</code>
+    </InvalidReturnStatement>
+    <InvalidReturnType occurrences="1">
+      <code>true|WP_Error</code>
+    </InvalidReturnType>
+    <PropertyNotSetInConstructor occurrences="5">
+      <code>Sensei_REST_API_Sensei_Emails_Controller</code>
+      <code>Sensei_REST_API_Sensei_Emails_Controller</code>
+      <code>Sensei_REST_API_Sensei_Emails_Controller</code>
+      <code>Sensei_REST_API_Sensei_Emails_Controller</code>
+      <code>Sensei_REST_API_Sensei_Emails_Controller</code>
     </PropertyNotSetInConstructor>
   </file>
   <file src="includes/rest-api/class-sensei-rest-api-setup-wizard-controller.php">
@@ -5824,21 +5711,16 @@
     </DocblockTypeContradiction>
   </file>
   <file src="includes/wpml/trait-quiz-translation-helper.php">
-    <InvalidArgument occurrences="1">
-      <code>$args</code>
-    </InvalidArgument>
-    <PossiblyInvalidPropertyFetch occurrences="1">
-      <code>$question-&gt;ID</code>
-    </PossiblyInvalidPropertyFetch>
     <InvalidArgument occurrences="2">
       <code>$args</code>
       <code>$args</code>
     </InvalidArgument>
-    <PossiblyInvalidPropertyFetch occurrences="4">
+    <PossiblyInvalidPropertyFetch occurrences="5">
       <code>$existing_term-&gt;description</code>
       <code>$existing_term-&gt;name</code>
       <code>$existing_term-&gt;slug</code>
       <code>$question-&gt;ID</code>
+      <code>$question-&gt;post_type</code>
     </PossiblyInvalidPropertyFetch>
     <UndefinedMethod occurrences="1">
       <code>$new_term</code>

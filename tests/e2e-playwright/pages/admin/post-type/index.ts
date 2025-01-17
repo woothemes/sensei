@@ -98,12 +98,12 @@ export default class PostType {
 
 	async submitForPreview(): Promise< void > {
 		await this.page
-			.locator( '[aria-label="Editor top bar"] >> text=Publish' )
+			.locator( 'button:has-text("Submit for Review")' )
 			.click();
 
 		return this.page
 			.locator(
-				'[aria-label="Editor publish"] >> text=Submit For Review'
+				'.editor-post-publish-panel button:has-text("Submit for Review")'
 			)
 			.first()
 			.click();

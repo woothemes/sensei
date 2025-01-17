@@ -53,10 +53,12 @@ class Language_Details {
 			$language_code = $this->get_current_language();
 		}
 
+		$trix = $this->get_element_trid( $lesson_id, 'post_lesson' );
+
 		$args = array(
 			'element_id'    => $lesson_id,
 			'element_type'  => 'post_lesson',
-			'trid'          => false,
+			'trid'          => $trix,
 			'language_code' => $language_code,
 		);
 		$this->set_element_language_details( $args );
@@ -80,10 +82,12 @@ class Language_Details {
 			$language_code = $this->get_current_language();
 		}
 
+		$trix = $this->get_element_trid( $quiz_id, 'post_quiz' );
+
 		$args = array(
 			'element_id'    => $quiz_id,
 			'element_type'  => 'post_quiz',
-			'trid'          => false,
+			'trid'          => $trix,
 			'language_code' => $language_code,
 		);
 		$this->set_element_language_details( $args );
@@ -106,10 +110,12 @@ class Language_Details {
 		$question_id   = (int) $question_id;
 		$language_code = $this->get_current_language();
 
+		$trix = $this->get_element_trid( $question_id, 'post_question' );
+
 		$args = array(
 			'element_id'    => $question_id,
 			'element_type'  => 'post_question',
-			'trid'          => false,
+			'trid'          => $trix,
 			'language_code' => $language_code,
 		);
 		$this->set_element_language_details( $args );
@@ -134,10 +140,12 @@ class Language_Details {
 		$question_id   = (int) $question_id;
 		$language_code = $this->get_current_language();
 
+		$trix = $this->get_element_trid( $question_id, 'post_multiple_question' );
+
 		$args = array(
 			'element_id'    => $question_id,
 			'element_type'  => 'post_multiple_question',
-			'trid'          => false,
+			'trid'          => $trix,
 			'language_code' => $language_code,
 		);
 		$this->set_element_language_details( $args );

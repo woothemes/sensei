@@ -80,6 +80,14 @@ class Sensei_Utils {
 			return false;
 		}
 
+		/**
+		 * This action runs before logging the activity.
+		 *
+		 * @hook sensei_log_activity_before
+		 *
+		 * @param {array} $args Initial arguments.
+		 * @param {array} $data Processed data to log.
+		 */
 		do_action( 'sensei_log_activity_before', $args, $data );
 
 		// Custom Logic
@@ -98,6 +106,15 @@ class Sensei_Utils {
 			wp_update_comment( $data );
 		}
 
+		/**
+		 * Fires after logging the activity.
+		 *
+		 * @hook sensei_log_activity_after
+		 *
+		 * @param {array} $args Initial arguments.
+		 * @param {array} $data Processed data to log.
+		 * @param {int}   $comment_id The comment ID of the logged activity.
+		 */
 		do_action( 'sensei_log_activity_after', $args, $data, $comment_id );
 
 		Sensei()->flush_comment_counts_cache( $args['post_id'] );
@@ -436,6 +453,17 @@ class Sensei_Utils {
 
 		$quiz_passmark = absint( get_post_meta( $quiz_id, '_quiz_passmark', true ) );
 
+		/**
+		 * Fires when a user quiz is graded.
+		 *
+		 * @hook sensei_user_quiz_grade
+		 *
+		 * @param {int}    $user_id         ID of user being graded.
+		 * @param {int}    $quiz_id         ID of quiz.
+		 * @param {float}  $grade           Grade received.
+		 * @param {int}    $quiz_passmark   Passmark for quiz.
+		 * @param {string} $quiz_grade_type Type of grading.
+		 */
 		do_action( 'sensei_user_quiz_grade', $user_id, $quiz_id, $grade, $quiz_passmark, $quiz_grade_type );
 
 		return true;
@@ -596,8 +624,10 @@ class Sensei_Utils {
 			 *
 			 * @since 1.7.0
 			 *
-			 * @param int $user_id
-			 * @param int $lesson_id
+			 * @hook sensei_user_lesson_end
+			 *
+			 * @param {int} $user_id The user ID.
+			 * @param {int} $lesson_id The lesson ID.
 			 */
 			do_action( 'sensei_user_lesson_end', $user_id, $lesson_id );
 		}
@@ -608,8 +638,9 @@ class Sensei_Utils {
 	/**
 	 * Remove user from lesson, deleting all data from the corresponding quiz
 	 *
-	 * @param int $lesson_id
-	 * @param int $user_id
+	 * @param int  $lesson_id The lesson ID.
+	 * @param int  $user_id The user ID.
+	 * @param bool $from_course Whether the user is being removed from a course.
 	 * @return boolean
 	 */
 	public static function sensei_remove_user_from_lesson( $lesson_id = 0, $user_id = 0, $from_course = false ) {
@@ -638,6 +669,14 @@ class Sensei_Utils {
 		}
 
 		if ( ! $from_course ) {
+			/**
+			 * Fires when user progress is reset in a lesson.
+			 *
+			 * @hook sensei_user_lesson_reset
+			 *
+			 * @param {int} $user_id The user ID.
+			 * @param {int} $lesson_id The lesson ID.
+			 */
 			do_action( 'sensei_user_lesson_reset', $user_id, $lesson_id );
 		}
 
@@ -673,6 +712,14 @@ class Sensei_Utils {
 			Sensei()->course_progress_repository->delete( $course_progress );
 		}
 
+		/**
+		 * Fires when user progress is reset in a course.
+		 *
+		 * @hook sensei_user_course_reset
+		 *
+		 * @param {int} $user_id The user ID.
+		 * @param {int} $course_id The course ID.
+		 */
 		do_action( 'sensei_user_course_reset', $user_id, $course_id );
 
 		return true;
@@ -1552,6 +1599,14 @@ class Sensei_Utils {
 
 		// Allow further actions.
 		if ( 'complete' === $course_progress->get_status() && true === $trigger_completion_action ) {
+			/**
+			 * Fires when a user completes a course.
+			 *
+			 * @hook sensei_user_course_end
+			 *
+			 * @param {int} $user_id   User ID.
+			 * @param {int} $course_id Course ID.
+			 */
 			do_action( 'sensei_user_course_end', $user_id, $course_id );
 		}
 
@@ -1942,6 +1997,16 @@ class Sensei_Utils {
 				}
 			}
 
+			/**
+			 * Fires when a lesson status is updated.
+			 *
+			 * @hook sensei_lesson_status_updated
+			 *
+			 * @param {string} $status     The status.
+			 * @param {int}    $user_id    The user ID.
+			 * @param {int}    $lesson_id  The lesson ID.
+			 * @param {int}    $comment_id The status comment ID.
+			 */
 			do_action( 'sensei_lesson_status_updated', $status, $user_id, $lesson_id, $comment_id );
 		}
 		return $comment_id;
@@ -1983,16 +2048,16 @@ class Sensei_Utils {
 			/**
 			 * Fires when a course status is updated.
 			 *
-			 * @hook sensei_course_status_updated
-			 *
 			 * @since 1.7.0
 			 * @since 4.20.1 $previous_status parameter added.
 			 *
-			 * @param string      $status          The status.
-			 * @param int         $user_id         The user ID.
-			 * @param int         $course_id       The course ID.
-			 * @param int         $comment_id      The comment ID.
-			 * @param string|null $previous_status The previous status. Null if previous status was not set.
+			 * @hook sensei_course_status_updated
+			 *
+			 * @param {string}      $status          The status.
+			 * @param {int}         $user_id         The user ID.
+			 * @param {int}         $course_id       The course ID.
+			 * @param {int}         $comment_id      The comment ID.
+			 * @param {string|null} $previous_status The previous status. Null if previous status was not set.
 			 */
 			do_action( 'sensei_course_status_updated', $status, $user_id, $course_id, $comment_id, $previous_status );
 		}
@@ -2584,6 +2649,14 @@ class Sensei_Utils {
 			update_comment_meta( $course_progress->get_id(), $key, $value );
 		}
 
+		/**
+		 * Fires when a user starts a course.
+		 *
+		 * @hook sensei_user_course_start
+		 *
+		 * @param {int} $user_id The user ID.
+		 * @param {int} $course_id The course ID.
+		 */
 		do_action( 'sensei_user_course_start', $user_id, $course_id );
 
 		return $course_progress->get_id();
@@ -2844,8 +2917,9 @@ class Sensei_Utils {
 	public static function output_query_params_as_inputs( array $excluded = [], string $url = '', bool $echo = true ) {
 		// phpcs:ignore WordPress.Security.NonceVerification -- The nonce should be checked before calling this method.
 		$query_params = $_GET;
+
 		if ( $url ) {
-			parse_str( wp_parse_url( $url, PHP_URL_QUERY ), $query_params );
+			parse_str( (string) wp_parse_url( $url, PHP_URL_QUERY ), $query_params );
 		}
 
 		$output = '';

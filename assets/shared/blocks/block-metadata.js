@@ -1,4 +1,10 @@
 /**
+ * External dependencies
+ */
+import { pick, mapValues } from 'lodash';
+import createSelector from 'rememo';
+
+/**
  * WordPress dependencies
  */
 import { createHigherOrderComponent } from '@wordpress/compose';
@@ -9,10 +15,7 @@ import {
 	useContext,
 	useMemo,
 } from '@wordpress/element';
-/**
- * External dependencies
- */
-import { pick, mapValues } from 'lodash';
+
 /**
  * Internal dependencies
  */
@@ -76,12 +79,15 @@ const store = {
 		 * @param {string}   [key]     Only return metadata for the given key.
 		 * @return {Object} Blocks metadata, indexed by block ID.
 		 */
-		getMultipleBlockMeta: ( state, clientIds = [], key = null ) => {
-			const blocks = clientIds?.length
-				? pick( state, clientIds )
-				: { ...state };
-			return key ? mapValues( blocks, key ) : blocks;
-		},
+		getMultipleBlockMeta: createSelector(
+			( state, clientIds = [], key = null ) => {
+				const blocks = clientIds?.length
+					? pick( state, clientIds )
+					: state;
+				return key ? mapValues( blocks, key ) : blocks;
+			},
+			( state ) => [ state ]
+		),
 	},
 };
 

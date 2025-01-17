@@ -20,8 +20,9 @@ export default function handleEmailBlocksEditor() {
 	 * Update the blocks to remove extra settings when used in email editor.
 	 *
 	 * @param {Object} settings Block settings.
+	 * @param {string} name     Block name.
 	 */
-	function removeIrrelevantSettings( settings ) {
+	function removeIrrelevantSettings( settings, name ) {
 		const supports = { ...( settings.supports ? settings.supports : {} ) };
 
 		// Remove font family setting.
@@ -46,6 +47,20 @@ export default function handleEmailBlocksEditor() {
 			supports.align = supports.align.filter( ( item ) => {
 				return item !== 'wide';
 			} );
+		}
+
+		// Alignment is not supported for buttons block in emails.
+		if ( name === 'core/buttons' ) {
+			if ( has( supports, 'layout' ) ) {
+				supports.layout = false;
+			}
+		}
+
+		// Alingment is not supported for image block in emails.
+		if ( name === 'core/image' ) {
+			if ( has( supports, 'align' ) ) {
+				supports.align = false;
+			}
 		}
 
 		return {

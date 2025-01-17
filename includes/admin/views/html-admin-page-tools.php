@@ -29,8 +29,9 @@ require __DIR__ . '/html-admin-page-tools-header.php';
 					/**
 					 * Display additional information for a specific tool, such as status.
 					 *
-					 * @hook sensei_tools_listing_after_{$tool_id}
 					 * @since 3.7.0
+					 *
+					 * @hook sensei_tools_listing_after_{$tool_id}
 					 *
 					 * @param {Sensei_Tool_Interface} $tool Tool object.
 					 */

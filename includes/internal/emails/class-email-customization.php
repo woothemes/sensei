@@ -227,9 +227,9 @@ class Email_Customization {
 		/**
 		 * Action done after disabling legacy emails.
 		 *
-		 * @hook sensei_disable_legacy_emails
-		 *
 		 * @since 4.12.0
+		 *
+		 * @hook sensei_disable_legacy_emails
 		 */
 		do_action( 'sensei_disable_legacy_emails' );
 	}

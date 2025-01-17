@@ -415,6 +415,11 @@ class Sensei_Grading_Main extends Sensei_List_Table {
 	 * @return void
 	 */
 	public function data_table_header() {
+		/**
+		 * Fires before the filter dropdowns in the grading list table.
+		 *
+		 * @hook sensei_grading_before_dropdown_filters
+		 */
 		do_action( 'sensei_grading_before_dropdown_filters' );
 
 		echo '<select id="grading-course-options" name="grading_course" class="chosen_select widefat">' . "\n";

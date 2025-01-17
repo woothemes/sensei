@@ -491,10 +491,15 @@ class Sensei_Utils_Test extends WP_UnitTestCase {
 	 * @return array
 	 */
 	public function lastActivityDateTestingData() {
+		global $wp_version;
+
+		// Account for the string change introduced in https://core.trac.wordpress.org/ticket/61535
+		$minutes_text = version_compare( $wp_version, '6.6.2', '<=' ) ? 'mins' : 'minutes';
+
 		return [
 			'days'    => [ ( 5 * 24 * 60 * 60 ), '5 days ago' ],
 			'hours'   => [ 60 * 5 * 60, '5 hours ago' ],
-			'minutes' => [ 20 * 60, '20 mins ago' ],
+			'minutes' => [ 20 * 60, sprintf( '20 %s ago', $minutes_text ) ],
 			'seconds' => [ 20, '20 seconds ago' ],
 			'date'    => [ 8 * 24 * 60 * 60, null ],
 		];

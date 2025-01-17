@@ -259,9 +259,11 @@ class Sensei_Course_Enrolment {
 		 *
 		 * @since 3.0.0
 		 *
-		 * @param int  $user_id     User ID.
-		 * @param int  $course_id   Course post ID.
-		 * @param bool $is_enrolled New enrolment status.
+		 * @hook sensei_course_enrolment_status_changed
+		 *
+		 * @param {int}  $user_id     User ID.
+		 * @param {int}  $course_id   Course post ID.
+		 * @param {bool} $is_enrolled New enrolment status.
 		 */
 		do_action( 'sensei_course_enrolment_status_changed', $user_id, $this->course_id, $is_enrolled );
 
@@ -317,9 +319,11 @@ class Sensei_Course_Enrolment {
 		 *
 		 * @since 3.0.0
 		 *
-		 * @param Sensei_Course_Enrolment_Provider_Results $enrolment_results Enrolment results object.
-		 * @param int                                      $course_id         Course post ID.
-		 * @param int                                      $user_id           User ID.
+		 * @hook sensei_enrolment_results_calculated
+		 *
+		 * @param {Sensei_Course_Enrolment_Provider_Results} $enrolment_results Enrolment results object.
+		 * @param {int}                                      $course_id         Course post ID.
+		 * @param {int}                                      $user_id           User ID.
 		 */
 		do_action( 'sensei_enrolment_results_calculated', $enrolment_results, $this->course_id, $user_id );
 
@@ -600,8 +604,10 @@ class Sensei_Course_Enrolment {
 		 *
 		 * @since 3.13.3
 		 *
-		 * @param int $course_id Course that the user will be enrolled to.
-		 * @param int $user_id   User ID.
+		 * @hook sensei_admin_enrol_user
+		 *
+		 * @param {int} $course_id Course that the user will be enrolled to.
+		 * @param {int} $user_id   User ID.
 		 */
 		do_action( 'sensei_admin_enrol_user', $this->course_id, $user_id );
 

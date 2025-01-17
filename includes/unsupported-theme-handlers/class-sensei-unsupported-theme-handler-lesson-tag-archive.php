@@ -72,7 +72,14 @@ class Sensei_Unsupported_Theme_Handler_Lesson_Tag_Archive
 			Sensei_Templates::get_template( 'archive-lesson.php' );
 		}
 		remove_action( 'sensei_pagination', array( 'Sensei_Lesson', 'output_comments' ), 90 );
+
+		/**
+		 * Fires when the pagination is displayed.
+		 *
+		 * @hook sensei_pagination
+		 */
 		do_action( 'sensei_pagination' );
+
 		$content = ob_get_clean();
 
 		return $content;

@@ -24,7 +24,7 @@
 	"prefer-stable": true,
 	"autoload": {
 		"classmap": [
-			"third-party/",
+			"vendor/sensei-lms/third-party-libs/",
 			"includes/"
 		],
 		"files": [
@@ -38,13 +38,13 @@
 	},
 	"scripts": {
 		"prefix-dependencies": [
-			"@php ./vendor/humbug/php-scoper/bin/php-scoper add-prefix --output-dir=third-party --config=config/scoper.inc.php --force --quiet"
+			"@php ./vendor/humbug/php-scoper/bin/php-scoper add-prefix --output-dir=vendor/sensei-lms/third-party-libs --config=config/scoper.inc.php --force --quiet"
 		],
 		"pre-install-cmd": [
-			"mkdir -p third-party"
+			"mkdir -p vendor/sensei-lms/third-party-libs"
 		],
 		"pre-update-cmd": [
-			"mkdir -p third-party"
+			"mkdir -p vendor/sensei-lms/third-party-libs"
 		],
 		"post-autoload-dump": [
 			"Sensei\\Config\\Composer\\Actions::prefix_dependencies",
@@ -82,7 +82,6 @@
 			"!/sensei-lms.php",
 			"!/wpml-config.xml",
 			"!/vendor",
-			"!/third-party",
 			".DS_Store",
 			".*",
 			"*.test.js",

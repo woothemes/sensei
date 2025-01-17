@@ -1,4 +1,7 @@
 <?php
+
+use Sensei\Internal\Emails\Email_Post_Type;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
@@ -57,13 +60,6 @@ class Sensei_PostTypes {
 	public $messages;
 
 	/**
-	 * Labels for post types.
-	 *
-	 * @var array
-	 */
-	public $labels;
-
-	/**
 	 * Array of post ID's for which to fire an "initial publish" action.
 	 *
 	 * @var array
@@ -78,26 +74,23 @@ class Sensei_PostTypes {
 	public function __construct() {
 
 		// Setup Post Types
-		$this->labels = array();
-		$this->token  = 'woothemes-sensei-posttypes';
+		$this->token = 'woothemes-sensei-posttypes';
 
-		$this->setup_post_type_labels_base();
-
-		add_action( 'init', array( $this, 'setup_course_post_type' ), 100 );
+		add_action( 'init', array( $this, 'setup_course_post_type' ), 10 );
 		add_action( 'template_redirect', array( $this, 'redirect_course_archive_page' ) );
-		add_action( 'init', array( $this, 'setup_lesson_post_type' ), 100 );
-		add_action( 'init', array( $this, 'setup_quiz_post_type' ), 100 );
-		add_action( 'init', array( $this, 'setup_question_post_type' ), 100 );
-		add_action( 'init', array( $this, 'setup_multiple_question_post_type' ), 100 );
-		add_action( 'init', array( $this, 'setup_sensei_message_post_type' ), 100 );
+		add_action( 'init', array( $this, 'setup_lesson_post_type' ), 10 );
+		add_action( 'init', array( $this, 'setup_quiz_post_type' ), 10 );
+		add_action( 'init', array( $this, 'setup_question_post_type' ), 10 );
+		add_action( 'init', array( $this, 'setup_multiple_question_post_type' ), 10 );
+		add_action( 'init', array( $this, 'setup_sensei_message_post_type' ), 10 );
 
 		// Setup Taxonomies
-		add_action( 'init', array( $this, 'setup_learner_taxonomy' ), 100 );
-		add_action( 'init', array( $this, 'setup_course_category_taxonomy' ), 100 );
-		add_action( 'init', array( $this, 'setup_quiz_type_taxonomy' ), 100 );
-		add_action( 'init', array( $this, 'setup_question_type_taxonomy' ), 100 );
-		add_action( 'init', array( $this, 'setup_question_category_taxonomy' ), 100 );
-		add_action( 'init', array( $this, 'setup_lesson_tag_taxonomy' ), 100 );
+		add_action( 'init', array( $this, 'setup_learner_taxonomy' ), 10 );
+		add_action( 'init', array( $this, 'setup_course_category_taxonomy' ), 10 );
+		add_action( 'init', array( $this, 'setup_quiz_type_taxonomy' ), 10 );
+		add_action( 'init', array( $this, 'setup_question_type_taxonomy' ), 10 );
+		add_action( 'init', array( $this, 'setup_question_category_taxonomy' ), 10 );
+		add_action( 'init', array( $this, 'setup_lesson_tag_taxonomy' ), 10 );
 
 		// Load Post Type Objects
 		$default_post_types = array(
@@ -121,6 +114,7 @@ class Sensei_PostTypes {
 
 		// REST API functionality.
 		add_action( 'rest_api_init', [ $this, 'setup_rest_api' ] );
+		add_filter( 'rest_post_search_query', [ $this, 'exclude_post_types_from_rest_search' ] );
 
 		// Add protections on feeds for certain CPTs.
 		add_action( 'wp', [ $this, 'protect_feeds' ] );
@@ -133,7 +127,23 @@ class Sensei_PostTypes {
 		add_action( 'admin_menu', array( $this, 'add_submenus' ) );
 
 		$this->setup_initial_publish_action();
+	}
 
+	/**
+	 * Graceful fallback for deprecated properties.
+	 *
+	 * @since 4.24.4
+	 *
+	 * @param string $key The key to get.
+	 *
+	 * @return mixed
+	 */
+	public function __get( $key ) {
+		if ( 'labels' === $key ) {
+			_doing_it_wrong( __CLASS__ . '->labels', 'The "labels" property is deprecated.', '4.24.5' );
+
+			return $this->get_main_post_type_labels();
+		}
 	}
 
 	/**
@@ -154,7 +164,6 @@ class Sensei_PostTypes {
 			$this->$posttype_token->token = $posttype_token;
 
 		}
-
 	}
 
 	/**
@@ -170,6 +179,28 @@ class Sensei_PostTypes {
 
 		// Hide post content for students who aren't enrolled.
 		add_filter( 'post_password_required', [ $this, 'lesson_is_protected' ], 10, 2 );
+	}
+
+	/**
+	 * Exclude post types from the REST API search.
+	 *
+	 * @since 4.24.4
+	 * @access private
+	 *
+	 * @param array $args The query args.
+	 * @return array The modified query args.
+	 */
+	public function exclude_post_types_from_rest_search( $args ) {
+		$excluded_post_types = [
+			'sensei_message',
+			Email_Post_Type::POST_TYPE,
+		];
+
+		if ( isset( $args['post_type'] ) ) {
+			$args['post_type'] = array_diff( (array) $args['post_type'], $excluded_post_types );
+		}
+
+		return $args;
 	}
 
 	/**
@@ -233,7 +264,7 @@ class Sensei_PostTypes {
 		$with_front = Sensei()->get_legacy_flag( Sensei_Main::LEGACY_FLAG_WITH_FRONT ) ? true : false;
 
 		$args = array(
-			'labels'                => $this->create_post_type_labels( $this->labels['course']['singular'], $this->labels['course']['plural'], $this->labels['course']['menu'] ),
+			'labels'                => $this->get_all_post_type_labels( 'course' ),
 			'public'                => true,
 			'publicly_queryable'    => true,
 			'show_ui'               => true,
@@ -276,7 +307,6 @@ class Sensei_PostTypes {
 		 * @return {array} The filtered arguments.
 		 */
 		register_post_type( 'course', apply_filters( 'sensei_register_post_type_course', $args ) );
-
 	}
 
 	/**
@@ -329,14 +359,13 @@ class Sensei_PostTypes {
 		// as the page URI
 		if ( is_a( $settings_course_page, 'WP_Post' ) && ! $this->has_old_shortcodes( $settings_course_page->post_content ) ) {
 
-			 return get_page_uri( $settings_course_page->ID );
+			return get_page_uri( $settings_course_page->ID );
 
 		} else {
 
 			return 'courses';
 
 		}
-
 	}
 
 	/**
@@ -355,7 +384,6 @@ class Sensei_PostTypes {
 		|| has_shortcode( $content, 'featuredcourses' )
 		|| has_shortcode( $content, 'freecourses' )
 		|| has_shortcode( $content, 'paidcourses' ) );
-
 	}
 
 	/**
@@ -380,7 +408,7 @@ class Sensei_PostTypes {
 		$with_front = Sensei()->get_legacy_flag( Sensei_Main::LEGACY_FLAG_WITH_FRONT ) ? true : false;
 
 		$args = array(
-			'labels'                => $this->create_post_type_labels( $this->labels['lesson']['singular'], $this->labels['lesson']['plural'], $this->labels['lesson']['menu'] ),
+			'labels'                => $this->get_all_post_type_labels( 'lesson' ),
 			'public'                => true,
 			'publicly_queryable'    => true,
 			'show_ui'               => true,
@@ -423,7 +451,6 @@ class Sensei_PostTypes {
 		 * @return {array} The filtered arguments.
 		 */
 		register_post_type( 'lesson', apply_filters( 'sensei_register_post_type_lesson', $args ) );
-
 	}
 
 	/**
@@ -438,11 +465,7 @@ class Sensei_PostTypes {
 		$with_front = Sensei()->get_legacy_flag( Sensei_Main::LEGACY_FLAG_WITH_FRONT ) ? true : false;
 
 		$args = array(
-			'labels'              => $this->create_post_type_labels(
-				$this->labels['quiz']['singular'],
-				$this->labels['quiz']['plural'],
-				$this->labels['quiz']['menu']
-			),
+			'labels'              => $this->get_all_post_type_labels( 'quiz' ),
 			'public'              => true,
 			'publicly_queryable'  => true,
 			'show_ui'             => true,
@@ -487,7 +510,6 @@ class Sensei_PostTypes {
 		 * @return {array} The filtered arguments.
 		 */
 		register_post_type( 'quiz', apply_filters( 'sensei_register_post_type_quiz', $args ) );
-
 	}
 
 	/**
@@ -501,7 +523,7 @@ class Sensei_PostTypes {
 		$with_front = Sensei()->get_legacy_flag( Sensei_Main::LEGACY_FLAG_WITH_FRONT ) ? true : false;
 
 		$args = array(
-			'labels'                => $this->create_post_type_labels( $this->labels['question']['singular'], $this->labels['question']['plural'], $this->labels['question']['menu'] ),
+			'labels'                => $this->get_all_post_type_labels( 'question' ),
 			'public'                => false,
 			'publicly_queryable'    => false,
 			'show_ui'               => true,
@@ -533,7 +555,6 @@ class Sensei_PostTypes {
 		 * @return {array} The filtered arguments.
 		 */
 		register_post_type( 'question', apply_filters( 'sensei_register_post_type_question', $args ) );
-
 	}
 
 	/**
@@ -545,7 +566,7 @@ class Sensei_PostTypes {
 	public function setup_multiple_question_post_type() {
 
 		$args = array(
-			'labels'              => $this->create_post_type_labels( $this->labels['multiple_question']['singular'], $this->labels['multiple_question']['plural'], $this->labels['multiple_question']['menu'] ),
+			'labels'              => $this->get_all_post_type_labels( 'multiple_question' ),
 			'public'              => false,
 			'publicly_queryable'  => false,
 			'show_ui'             => false,
@@ -589,7 +610,7 @@ class Sensei_PostTypes {
 		if ( ! isset( Sensei()->settings->settings['messages_disable'] ) || ! Sensei()->settings->settings['messages_disable'] ) {
 
 			$args = array(
-				'labels'                => $this->create_post_type_labels( $this->labels['sensei_message']['singular'], $this->labels['sensei_message']['plural'], $this->labels['sensei_message']['menu'] ),
+				'labels'                => $this->get_all_post_type_labels( 'sensei_message' ),
 				'public'                => true,
 				'publicly_queryable'    => true,
 				'show_ui'               => true,
@@ -687,9 +708,9 @@ class Sensei_PostTypes {
 			'query_var'         => true,
 			'show_in_nav_menus' => true,
 			'capabilities'      => array(
-				'manage_terms' => 'manage_categories',
-				'edit_terms'   => 'edit_courses',
-				'delete_terms' => 'manage_categories',
+				'manage_terms' => 'manage_course_categories',
+				'edit_terms'   => 'manage_course_categories',
+				'delete_terms' => 'manage_course_categories',
 				'assign_terms' => 'edit_courses',
 			),
 			'rewrite'           => array(
@@ -706,7 +727,6 @@ class Sensei_PostTypes {
 		);
 
 		register_taxonomy( 'course-category', array( 'course' ), $args );
-
 	}
 
 	/**
@@ -839,9 +859,9 @@ class Sensei_PostTypes {
 			'show_admin_column' => true,
 			'show_in_rest'      => true,
 			'capabilities'      => array(
-				'manage_terms' => 'manage_categories',
-				'edit_terms'   => 'edit_questions',
-				'delete_terms' => 'manage_categories',
+				'manage_terms' => 'manage_question_categories',
+				'edit_terms'   => 'manage_question_categories',
+				'delete_terms' => 'manage_question_categories',
 				'assign_terms' => 'edit_questions',
 			),
 			'rewrite'           => array(
@@ -892,9 +912,9 @@ class Sensei_PostTypes {
 			'query_var'         => true,
 			'show_in_nav_menus' => true,
 			'capabilities'      => array(
-				'manage_terms' => 'manage_categories',
-				'edit_terms'   => 'edit_lessons',
-				'delete_terms' => 'manage_categories',
+				'manage_terms' => 'manage_lesson_categories',
+				'edit_terms'   => 'manage_lesson_categories',
+				'delete_terms' => 'manage_lesson_categories',
 				'assign_terms' => 'edit_lessons',
 			),
 			'rewrite'           => array(
@@ -914,65 +934,64 @@ class Sensei_PostTypes {
 	}
 
 	/**
-	 * Setup the singular, plural and menu label names for the post types.
+	 * Get the singular, plural and menu label names for the post types.
 	 *
-	 * @since  1.0.0
+	 * @param string|null $post_type The post type.
+	 *
+	 * @return array
 	 */
-	private function setup_post_type_labels_base() {
-		$this->labels = array(
-			'course'   => array(),
-			'lesson'   => array(),
-			'quiz'     => array(),
-			'question' => array(),
+	private function get_main_post_type_labels( $post_type = null ) {
+		$labels = array(
+			'course'            => array(
+				'singular' => __( 'Course', 'sensei-lms' ),
+				'plural'   => __( 'Courses', 'sensei-lms' ),
+				'menu'     => __( 'Courses', 'sensei-lms' ),
+			),
+			'lesson'            => array(
+				'singular' => __( 'Lesson', 'sensei-lms' ),
+				'plural'   => __( 'Lessons', 'sensei-lms' ),
+				'menu'     => __( 'Lessons', 'sensei-lms' ),
+			),
+			'quiz'              => array(
+				'singular' => __( 'Quiz', 'sensei-lms' ),
+				'plural'   => __( 'Quizzes', 'sensei-lms' ),
+				'menu'     => __( 'Quizzes', 'sensei-lms' ),
+			),
+			'question'          => array(
+				'singular' => __( 'Question', 'sensei-lms' ),
+				'plural'   => __( 'Questions', 'sensei-lms' ),
+				'menu'     => __( 'Questions', 'sensei-lms' ),
+			),
+			'multiple_question' => array(
+				'singular' => __( 'Multiple Question', 'sensei-lms' ),
+				'plural'   => __( 'Multiple Questions', 'sensei-lms' ),
+				'menu'     => __( 'Multiple Questions', 'sensei-lms' ),
+			),
+			'sensei_message'    => array(
+				'singular' => __( 'Message', 'sensei-lms' ),
+				'plural'   => __( 'Messages', 'sensei-lms' ),
+				'menu'     => __( 'Messages', 'sensei-lms' ),
+			),
 		);
 
-		$this->labels['course']            = array(
-			'singular' => __( 'Course', 'sensei-lms' ),
-			'plural'   => __( 'Courses', 'sensei-lms' ),
-			'menu'     => __( 'Courses', 'sensei-lms' ),
-		);
-		$this->labels['lesson']            = array(
-			'singular' => __( 'Lesson', 'sensei-lms' ),
-			'plural'   => __( 'Lessons', 'sensei-lms' ),
-			'menu'     => __( 'Lessons', 'sensei-lms' ),
-		);
-		$this->labels['quiz']              = array(
-			'singular' => __( 'Quiz', 'sensei-lms' ),
-			'plural'   => __( 'Quizzes', 'sensei-lms' ),
-			'menu'     => __( 'Quizzes', 'sensei-lms' ),
-		);
-		$this->labels['question']          = array(
-			'singular' => __( 'Question', 'sensei-lms' ),
-			'plural'   => __( 'Questions', 'sensei-lms' ),
-			'menu'     => __( 'Questions', 'sensei-lms' ),
-		);
-		$this->labels['multiple_question'] = array(
-			'singular' => __( 'Multiple Question', 'sensei-lms' ),
-			'plural'   => __( 'Multiple Questions', 'sensei-lms' ),
-			'menu'     => __( 'Multiple Questions', 'sensei-lms' ),
-		);
-		$this->labels['sensei_message']    = array(
-			'singular' => __( 'Message', 'sensei-lms' ),
-			'plural'   => __( 'Messages', 'sensei-lms' ),
-			'menu'     => __( 'Messages', 'sensei-lms' ),
-		);
-
+		return $post_type ? $labels[ $post_type ] : $labels;
 	}
 
 	/**
 	 * Create the labels for a specified post type.
 	 *
-	 * @since  1.0.0
-	 * @param  string $singular The label for a singular instance of the post type
-	 * @param  string $plural   The label for a plural instance of the post type
-	 * @param  string $menu     The menu item label
-	 * @return array            An array of the labels to be used
+	 * @param  string $post_type The post type.
+	 * @return array             An array of the labels to be used
 	 */
-	private function create_post_type_labels( $singular, $plural, $menu ) {
+	private function get_all_post_type_labels( $post_type ) {
+		$labels   = $this->get_main_post_type_labels( $post_type );
+		$singular = $labels['singular'];
+		$plural   = $labels['plural'];
+		$menu     = $labels['menu'];
 
 		$lower_case_plural = function_exists( 'mb_strtolower' ) ? mb_strtolower( $plural, 'UTF-8' ) : strtolower( $plural );
 
-		$labels = array(
+		return array(
 			'name'               => $plural,
 			'singular_name'      => $singular,
 			'add_new'            => __( 'Add New', 'sensei-lms' ),
@@ -995,8 +1014,6 @@ class Sensei_PostTypes {
 			'parent_item_colon'  => '',
 			'menu_name'          => $menu,
 		);
-
-		return $labels;
 	}
 
 	/**
@@ -1026,36 +1043,35 @@ class Sensei_PostTypes {
 	private function create_post_type_messages( $post_type ) {
 		global $post, $post_ID;
 
-		if ( ! isset( $this->labels[ $post_type ] ) ) {
-			return array(); }
+		$labels = $this->get_main_post_type_labels( $post_type );
 
 		$messages = array(
 			0  => '',
 			// translators: Placeholders are the singular label for the post type and the post's permalink, respectively.
-			1  => sprintf( __( '%1$s updated. %2$sView %1$s%3$s.', 'sensei-lms' ), $this->labels[ $post_type ]['singular'], '<a href="' . esc_url( get_permalink( $post_ID ) ) . '">', '</a>' ),
+			1  => sprintf( __( '%1$s updated. %2$sView %1$s%3$s.', 'sensei-lms' ), $labels['singular'], '<a href="' . esc_url( get_permalink( $post_ID ) ) . '">', '</a>' ),
 			2  => __( 'Custom field updated.', 'sensei-lms' ),
 			3  => __( 'Custom field deleted.', 'sensei-lms' ),
 			// translators: Placeholder is the singular label for the post type.
-			4  => sprintf( __( '%1$s updated.', 'sensei-lms' ), $this->labels[ $post_type ]['singular'] ),
+			4  => sprintf( __( '%1$s updated.', 'sensei-lms' ), $labels['singular'] ),
 			// translators: Placeholders are the singular label for the post type and the post's revision, respectively.
-			5  => isset( $_GET['revision'] ) ? sprintf( __( '%1$s restored to revision from %2$s.', 'sensei-lms' ), $this->labels[ $post_type ]['singular'], wp_post_revision_title( (int) $_GET['revision'], false ) ) : false,
+			5  => isset( $_GET['revision'] ) ? sprintf( __( '%1$s restored to revision from %2$s.', 'sensei-lms' ), $labels['singular'], wp_post_revision_title( (int) $_GET['revision'], false ) ) : false,
 			// translators: Placeholders are the singular label for the post type and the post's permalink, respectively.
-			6  => sprintf( __( '%1$s published. %2$sView %1$s%3$s.', 'sensei-lms' ), $this->labels[ $post_type ]['singular'], '<a href="' . esc_url( get_permalink( $post_ID ) ) . '">', '</a>' ),
+			6  => sprintf( __( '%1$s published. %2$sView %1$s%3$s.', 'sensei-lms' ), $labels['singular'], '<a href="' . esc_url( get_permalink( $post_ID ) ) . '">', '</a>' ),
 			// translators: Placeholder is the singular label for the post type.
-			7  => sprintf( __( '%1$s saved.', 'sensei-lms' ), $this->labels[ $post_type ]['singular'] ),
+			7  => sprintf( __( '%1$s saved.', 'sensei-lms' ), $labels['singular'] ),
 			// translators: Placeholders are the singular label for the post type and the post's preview link, respectively.
-			8  => sprintf( __( '%1$s submitted. %2$sPreview %1$s%3$s.', 'sensei-lms' ), $this->labels[ $post_type ]['singular'], '<a target="_blank" href="' . esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ) . '">', '</a>' ),
+			8  => sprintf( __( '%1$s submitted. %2$sPreview %1$s%3$s.', 'sensei-lms' ), $labels['singular'], '<a target="_blank" href="' . esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ) . '">', '</a>' ),
 			/*
-			  * translators: Placeholders are as follows (in order):
-			  *
-			  * - The singular label for the post type.
-			  * - The formatted post date.
-			  * - The opening tag for the post's permalink.
-			  * - The closing tag for the post's permalink.
-			  */
-			9  => sprintf( __( '%1$s scheduled for: %2$s. %3$sPreview %4$s%5$s.', 'sensei-lms' ), $this->labels[ $post_type ]['singular'], '<strong>' . date_i18n( __( 'M j, Y @ G:i', 'sensei-lms' ), strtotime( $post->post_date ) ) . '</strong>', '<a target="_blank" href="' . esc_url( get_permalink( $post_ID ) ) . '">', $this->labels[ $post_type ]['singular'], '</a>' ),
+			 * translators: Placeholders are as follows (in order):
+			 *
+			 * - The singular label for the post type.
+			 * - The formatted post date.
+			 * - The opening tag for the post's permalink.
+			 * - The closing tag for the post's permalink.
+			 */
+			9  => sprintf( __( '%1$s scheduled for: %2$s. %3$sPreview %4$s%5$s.', 'sensei-lms' ), $labels['singular'], '<strong>' . date_i18n( __( 'M j, Y @ G:i', 'sensei-lms' ), strtotime( $post->post_date ) ) . '</strong>', '<a target="_blank" href="' . esc_url( get_permalink( $post_ID ) ) . '">', $labels['singular'], '</a>' ),
 			// translators: Placeholders are the singular label for the post type and the post's preview link, respectively.
-			10 => sprintf( __( '%1$s draft updated. %2$sPreview %3$s%4$s.', 'sensei-lms' ), $this->labels[ $post_type ]['singular'], '<a target="_blank" href="' . esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ) . '">', $this->labels[ $post_type ]['singular'], '</a>' ),
+			10 => sprintf( __( '%1$s draft updated. %2$sPreview %3$s%4$s.', 'sensei-lms' ), $labels['singular'], '<a target="_blank" href="' . esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ) . '">', $labels['singular'], '</a>' ),
 		);
 
 		return $messages;
@@ -1153,7 +1169,6 @@ class Sensei_PostTypes {
 
 			);
 		}
-
 	}
 
 	/**
@@ -1222,9 +1237,11 @@ class Sensei_PostTypes {
 		Sensei()->learners->learners_admin_menu();
 
 		/**
-		 * Filter used to add new menu item.
+		 * Fires when the Sensei Pro Groups menu item should be added.
 		 *
 		 * @since 4.5.0
+		 *
+		 * @hook sensei_pro_groups_menu_item
 		 */
 		do_action( 'sensei_pro_groups_menu_item', [] );
 
@@ -1338,12 +1355,22 @@ class Sensei_PostTypes {
 	 * Fire the scheduled "initial publish" actions. This is run on `shutdown`.
 	 *
 	 * @since 2.1.0
-	 * @access private
+	 *
+	 * @internal
 	 */
 	public function fire_scheduled_initial_publish_actions() {
 		foreach ( array_unique( $this->initial_publish_post_ids ) as $post_id ) {
 			$post = get_post( $post_id );
 			if ( $post ) {
+				/**
+				 * Fires the scheduled "initial publish" actions for a post on `shutdown`.
+				 *
+				 * @since 2.1.0
+				 *
+				 * @hook sensei_{$post_type}_initial_publish
+				 *
+				 * @param {WP_Post} $post The post.
+				 */
 				do_action( "sensei_{$post->post_type}_initial_publish", $post );
 				$this->mark_post_already_published( $post->ID );
 			}
@@ -1439,7 +1466,6 @@ class Sensei_PostTypes {
 	private function check_post_already_published( $post_id ) {
 		return get_post_meta( $post_id, '_sensei_already_published', true );
 	}
-
 }
 
 /**

@@ -10,16 +10,16 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - name: Checkout code
-              uses: actions/checkout@v3
+              uses: actions/checkout@v4
               with:
                   fetch-depth: 0
 
             - name: Get cached composer directories
-              uses: actions/cache@v3
+              uses: actions/cache@v4
               with:
                   path: ~/.cache/composer/
                   key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock') }}
-            - uses: actions/cache@v3
+            - uses: actions/cache@v4
               with:
                   path: vendor/
                   key: ${{ runner.os }}-vendor-${{ hashFiles('composer.lock') }}
@@ -59,7 +59,7 @@ jobs:
             matrix:
                 wp: ['latest']
                 wpmu: [0]
-                php: ['7.4', '8.0']
+                php: ['7.4', '8.2']
                 include:
                     - php: 7.4
                       wp: '6.1'
@@ -83,15 +83,19 @@ jobs:
                     - 3306:3306
                 options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=5
         steps:
+            - name: Install SVN
+              run: |
+                  sudo apt update
+                  sudo apt install subversion
             - name: Checkout code
-              uses: actions/checkout@v3
+              uses: actions/checkout@v4
 
             - name: Get cached composer directories
-              uses: actions/cache@v3
+              uses: actions/cache@v4
               with:
                   path: ~/.cache/composer/
                   key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock') }}
-            - uses: actions/cache@v3
+            - uses: actions/cache@v4
               with:
                   path: vendor/
                   key: ${{ runner.os }}-vendor-${{ hashFiles('composer.lock') }}

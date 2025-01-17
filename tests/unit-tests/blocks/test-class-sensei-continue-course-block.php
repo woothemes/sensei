@@ -18,6 +18,20 @@ class Sensei_Continue_Course_Block_Test extends WP_UnitTestCase {
 	private $block;
 
 	/**
+	 * The course post.
+	 *
+	 * @var WP_Post
+	 */
+	private $course;
+
+	/**
+	 * Factory for setting up testing data.
+	 *
+	 * @var Sensei_Factory
+	 */
+	protected $factory;
+
+	/**
 	 * Block content.
 	 */
 	const CONTENT = '<!-- wp:sensei-lms/button-continue-course -->

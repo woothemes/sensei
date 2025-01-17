@@ -36,8 +36,8 @@ class Sensei_REST_API_Questions_Controller extends WP_REST_Posts_Controller {
 			'question',
 			'question-type-slug',
 			[
-				'get_callback' => function( $object ) {
-					return Sensei()->question->get_question_type( $object['id'] );
+				'get_callback' => function ( $question ) {
+					return Sensei()->question->get_question_type( $question['id'] );
 				},
 				'context'      => [ 'view' ],
 				'schema'       => [
@@ -147,9 +147,15 @@ class Sensei_REST_API_Questions_Controller extends WP_REST_Posts_Controller {
 		}
 
 		// Return the updated question.
-		$response = $this->prepare_item_for_response( get_post( $question_id ), $request );
-		return rest_ensure_response( $response );
+		$post = $this->get_post( $question_id );
+		if ( is_wp_error( $post ) ) {
+			return $post;
+		}
 
+		$block = $this->serialize_question_as_block( $post );
+
+		$response->data['content']['raw'] = $block;
+		return rest_ensure_response( $response );
 	}
 
 	/**

@@ -1,7 +1,7 @@
 {
   "name": "sensei-lms",
   "title": "Sensei LMS",
-  "version": "4.23.1",
+  "version": "4.24.5",
   "description": "Sensei LMS",
   "author": "Automattic",
   "license": "GPL-2.0-or-later",
@@ -54,6 +54,7 @@
     "memize": "1.1.0",
     "qrcode.react": "3.1.0",
     "react-animate-height": "2.0.23",
+    "rememo": "4.0.2",
     "terser-webpack-plugin": "5.3.1",
     "uuid": "7.0.3",
     "whatwg-fetch": "3.6.2"
@@ -75,7 +76,7 @@
     "@es-joy/jsdoccomment": "0.36.1",
     "@faker-js/faker": "8.0.2",
     "@lifeomic/attempt": "3.0.3",
-    "@playwright/test": "1.36.1",
+    "@playwright/test": "1.45.3",
     "@svgr/webpack": "6.1.2",
     "@testing-library/dom": "7.30.3",
     "@testing-library/jest-dom": "5.11.10",
@@ -88,7 +89,7 @@
     "@wordpress/babel-preset-default": "wp-5.9",
     "@wordpress/dependency-extraction-webpack-plugin": "3.5.0",
     "@wordpress/e2e-test-utils": "wp-5.9",
-    "@wordpress/env": "wp-6.0",
+    "@wordpress/env": "10.3.0",
     "@wordpress/eslint-plugin": "wp-5.9",
     "@wordpress/jest-preset-default": "wp-5.9",
     "@wordpress/postcss-themes": "wp-5.9",
@@ -125,7 +126,7 @@
   },
   "scripts": {
     "archive": "composer archive --file=$npm_package_name --format=zip",
-    "build": "npm run build:assets && npm run build:dependencies && npm run archive",
+    "build": "npm run build:assets && rm assets/dist/css/jquery-ui.js && npm run build:dependencies && npm run archive",
     "build:analyzer": "npm run --silent build:assets -- --json > node_modules/.cache/sensei-lms/build-stats.json && npx webpack-bundle-analyzer node_modules/.cache/sensei-lms/build-stats.json assets/dist",
     "build:assets": "rm -rf ./assets/dist && cross-env NODE_ENV=production npx calypso-build",
     "build:dependencies": "composer install && composer install --no-dev --prefer-dist --optimize-autoloader --no-scripts",

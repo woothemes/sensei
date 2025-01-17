@@ -200,6 +200,21 @@ trait WPML_API {
 	}
 
 	/**
+	 * Copy post to language.
+	 *
+	 * @see https://wpml.org/wpml-hook/wpml_copy_post_to_language/
+	 *
+	 * @param int    $post_id           Post ID.
+	 * @param string $target_language   Target language.
+	 * @param bool   $mark_as_duplicate Mark as duplicate.
+	 * @return int   Translated post ID.
+	 */
+	public function copy_post_to_language( $post_id, $target_language, $mark_as_duplicate ) {
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+		return (int) apply_filters( 'wpml_copy_post_to_language', $post_id, $target_language, $mark_as_duplicate );
+	}
+
+	/**
 	 * Sync custom field.
 	 *
 	 * @see https://wpml.org/wpml-hook/wpml_sync_custom_field/

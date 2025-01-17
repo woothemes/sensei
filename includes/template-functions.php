@@ -124,6 +124,11 @@ add_filter( 'pre_get_posts', 'sensei_course_archive_filter', 10, 1 );
  * @return html
  */
 function sensei_complete_lesson_button() {
+	/**
+	 * This hook fires when the complete lesson button is displayed.
+	 *
+	 * @hook sensei_complete_lesson_button
+	 */
 	do_action( 'sensei_complete_lesson_button' );
 }
 
@@ -134,6 +139,11 @@ function sensei_complete_lesson_button() {
  * @return html
  */
 function sensei_reset_lesson_button() {
+	/**
+	 * This hook fires when the reset lesson button is displayed.
+	 *
+	 * @hook sensei_reset_lesson_button
+	 */
 	do_action( 'sensei_reset_lesson_button' );
 }
 
@@ -745,9 +755,9 @@ function sensei_the_question_content() {
 			/**
 			 * Fires before the question answers are displayed inside the answers block.
 			 *
-			 * @hook sensei_quiz_question_answers_inside_before
-			 *
 			 * @since 4.17.0
+			 *
+			 * @hook sensei_quiz_question_answers_inside_before
 			 *
 			 * @param {int} $question_id The ID of the question.
 			 */
@@ -758,9 +768,9 @@ function sensei_the_question_content() {
 			/**
 			 * Fires after the question answers are displayed inside the answers block.
 			 *
-			 * @hook sensei_quiz_question_answers_inside_after
-			 *
 			 * @since 4.17.0
+			 *
+			 * @hook sensei_quiz_question_answers_inside_after
 			 *
 			 * @param {int} $question_id The ID of the question.
 			 */
@@ -889,6 +899,11 @@ function sensei_the_single_lesson_meta() {
 	$is_preview       = $lesson_id && Sensei_Utils::is_preview_lesson( $lesson_id );
 
 	// Complete Lesson Logic
+	/**
+	 * Fires in sensei_the_single_lesson_meta function.
+	 *
+	 * @hook sensei_complete_lesson
+	 */
 	do_action( 'sensei_complete_lesson' );
 	// Check that the course has been started
 	if ( Sensei()->access_settings()
@@ -910,19 +925,49 @@ function sensei_the_single_lesson_meta() {
 			 */
 			if ( apply_filters( 'sensei_video_position', 'top', get_the_ID() ) == 'bottom' ) {
 
+				/**
+				 * Fire action when a lesson video expected.
+				 *
+				 * @hook sensei_lesson_video
+				 *
+				 * @param {int} $lesson_id The lesson ID.
+				 */
 				do_action( 'sensei_lesson_video', get_the_ID() );
 
 			}
 			?>
-			<?php do_action( 'sensei_frontend_messages' ); ?>
+			<?php
+			/**
+			 * Fires in sensei_the_single_lesson_meta function.
+			 *
+			 * @hook sensei_frontend_messages
+			 */
+			do_action( 'sensei_frontend_messages' );
+			?>
 
 		</section>
 
-		<?php do_action( 'sensei_lesson_back_link', $lesson_course_id ); ?>
+		<?php
+		/**
+		 * Fires in sensei_the_single_lesson_meta function, when the back link is displayed.
+		 *
+		 * @hook sensei_lesson_back_link
+		 *
+		 * @param {int} $course_id The course ID.
+		 */
+		do_action( 'sensei_lesson_back_link', $lesson_course_id );
+		?>
 
 		<?php
 	}
 
+	/**
+	 * Fires when the lesson meta is displayed.
+	 *
+	 * @hook sensei_lesson_meta_extra
+	 *
+	 * @param {int} $lesson_id The lesson ID.
+	 */
 	do_action( 'sensei_lesson_meta_extra', get_the_ID() );
 
 }
@@ -960,7 +1005,9 @@ function get_sensei_header() {
 	get_header();
 
 	/**
-	 * sensei_before_main_content hook
+	 * Fires before the main content is output in the header.
+	 *
+	 * @hook sensei_before_main_content
 	 *
 	 * @hooked sensei_output_content_wrapper - 10 (outputs opening divs for the content)
 	 */
@@ -995,21 +1042,27 @@ function get_sensei_footer() {
 	}
 
 	/**
-	 * sensei_pagination hook
+	 * Fires when the pagination is displayed in the footer.
+	 *
+	 * @hook sensei_pagination
 	 *
 	 * @hooked sensei_pagination - 10 (outputs pagination)
 	 */
 	do_action( 'sensei_pagination' );
 
 	/**
-	 * sensei_after_main_content hook
+	 * Fires after the main content is output in the footer.
+	 *
+	 * @hook sensei_after_main_content
 	 *
 	 * @hooked sensei_output_content_wrapper_end - 10 (outputs closing divs for the content)
 	 */
 	do_action( 'sensei_after_main_content' );
 
 	/**
-	 * sensei_sidebar hook
+	 * Fires when the sidebar is displayed in the footer.
+	 *
+	 * @hook sensei_sidebar
 	 *
 	 * @hooked sensei_get_sidebar - 10
 	 */

@@ -97,7 +97,7 @@ function sensei_load_learning_mode_style_for_divi_theme() {
 	$course_id       = Sensei_Utils::get_current_course();
 	$is_target_theme = 'divi' === strtolower( wp_get_theme()->get_template() );
 
-	if ( empty( $course_id ) || ! $is_target_theme ) {
+	if ( empty( $course_id ) || ! $is_target_theme || 'course' === get_post_type() ) {
 		return false;
 	}
 

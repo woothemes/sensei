@@ -24,63 +24,71 @@ trait Quiz_Translation_Helper {
 	/**
 	 * Update quiz translations.
 	 *
-	 * @param int $master_lesson_id Master lesson ID.
+	 * @param int    $master_lesson_id Master lesson ID.
+	 * @param string $target_language  Target language.
 	 */
-	private function update_quiz_translations( $master_lesson_id ) {
+	private function update_quiz_translations( $master_lesson_id, $target_language ) {
 		$master_quiz_id = Sensei()->lesson->lesson_quizzes( $master_lesson_id, 'any', 'ids' );
 		if ( empty( $master_quiz_id ) ) {
 			return;
 		}
 
-		$questions = Sensei()->quiz->get_questions( $master_quiz_id );
+		$questions       = Sensei()->quiz->get_questions( $master_quiz_id );
+		$question_id_map = array();
 		foreach ( $questions as $question ) {
-			$this->admin_make_post_duplicates( $question->ID );
+			$has_translation                  = $this->has_translation_in_language( $question->ID, 'post_' . $question->post_type, $target_language );
+			$question_id_map[ $question->ID ] = $has_translation
+				? $this->get_object_id( $question->ID, $question->post_type, false, $target_language )
+				: $this->copy_post_to_language( $question->ID, $target_language, true );
 		}
 
 		// Create translations for the quiz if they don't exist.
-		$is_quiz_translated = $this->element_has_translations( $master_quiz_id, 'quiz' );
-		if ( ! $is_quiz_translated ) {
-			$this->admin_make_post_duplicates( $master_quiz_id );
+		$is_quiz_translated = $this->has_translation_in_language( $master_quiz_id, 'post_quiz', $target_language );
+		$translated_quiz_id = $is_quiz_translated
+			? $this->get_object_id( $master_quiz_id, 'quiz', false, $target_language )
+			: $this->copy_post_to_language( $master_quiz_id, $target_language, true );
+
+		if ( empty( $translated_quiz_id ) ) {
+			return;
 		}
 
-		$quiz_translations = $this->get_post_duplicates( $master_quiz_id );
-		foreach ( $quiz_translations as $translation_lang => $translated_quiz_id ) {
-			$quiz_lesson_id = $this->get_object_id( $master_lesson_id, 'lesson', false, $translation_lang );
+		$quiz_lesson_id = $this->get_object_id( $master_lesson_id, 'lesson', false, $target_language );
 
-			// Update _quiz_lesson and _lesson_quiz field.
-			update_post_meta( $translated_quiz_id, '_quiz_lesson', $quiz_lesson_id );
-			update_post_meta( $quiz_lesson_id, '_lesson_quiz', $translated_quiz_id );
+		// Update _quiz_lesson and _lesson_quiz field.
+		update_post_meta( $translated_quiz_id, '_quiz_lesson', $quiz_lesson_id );
+		update_post_meta( $quiz_lesson_id, '_lesson_quiz', $translated_quiz_id );
 
-			update_post_meta( $quiz_lesson_id, '_quiz_has_questions', count( $questions ) > 0 );
+		update_post_meta( $quiz_lesson_id, '_quiz_has_questions', count( $questions ) > 0 );
 
-			// Add relationship between quiz and questions.
-			if ( ! empty( $questions ) ) {
-				foreach ( $questions as $question ) {
-					$translated_question_id = $this->get_object_id( $question->ID, $question->post_type, false, $translation_lang );
-					if ( empty( $translated_question_id ) ) {
-						continue;
-					}
+		// Add relationship between quiz and questions.
+		if ( empty( $questions ) ) {
+			return;
+		}
 
-					if ( 'multiple_question' === $question->post_type ) {
-						$category = (int) get_post_meta( $question->ID, 'category', true );
-						$number   = (int) get_post_meta( $question->ID, 'number', true );
-
-						$this->create_translation_for_question_category( $category, $translation_lang );
-
-						$translated_category_id = $this->get_object_id( $category, 'question-category', false, $translation_lang );
-
-						update_post_meta( $translated_question_id, 'category', $translated_category_id );
-						update_post_meta( $translated_question_id, 'number', $number );
-
-						$this->create_translations_for_question_category_questions( $category );
-					}
-
-					update_post_meta( $translated_question_id, '_quiz_id', $translated_quiz_id );
-
-					$question_order = get_post_meta( $question->ID, '_quiz_question_order' . $master_quiz_id, true );
-					update_post_meta( $translated_question_id, '_quiz_question_order' . $translated_quiz_id, $question_order );
-				}
+		foreach ( $questions as $question ) {
+			$translated_question_id = $question_id_map[ $question->ID ] ?? null;
+			if ( empty( $translated_question_id ) ) {
+				continue;
 			}
+
+			if ( 'multiple_question' === $question->post_type ) {
+				$category = (int) get_post_meta( $question->ID, 'category', true );
+				$number   = (int) get_post_meta( $question->ID, 'number', true );
+
+				$this->create_translation_for_question_category( $category, $target_language );
+
+				$translated_category_id = $this->get_object_id( $category, 'question-category', false, $target_language );
+
+				update_post_meta( $translated_question_id, 'category', $translated_category_id );
+				update_post_meta( $translated_question_id, 'number', $number );
+
+				$this->create_translations_for_question_category_questions( $category, $target_language );
+			}
+
+			update_post_meta( $translated_question_id, '_quiz_id', $translated_quiz_id );
+
+			$question_order = get_post_meta( $question->ID, '_quiz_question_order' . $master_quiz_id, true );
+			update_post_meta( $translated_question_id, '_quiz_question_order' . $translated_quiz_id, $question_order );
 		}
 	}
 
@@ -144,9 +152,10 @@ trait Quiz_Translation_Helper {
 	/**
 	 * Create translations for questions in the category.
 	 *
-	 * @param int $question_category_id Question category ID.
+	 * @param int    $question_category_id Question category ID.
+	 * @param string $target_language Target language.
 	 */
-	private function create_translations_for_question_category_questions( $question_category_id ) {
+	private function create_translations_for_question_category_questions( $question_category_id, $target_language ) {
 		$args = array(
 			'post_type'        => 'question',
 			'posts_per_page'   => -1,
@@ -168,7 +177,11 @@ trait Quiz_Translation_Helper {
 		}
 
 		foreach ( $category_questions as $question ) {
-			$this->admin_make_post_duplicates( $question->ID );
+			$has_translation = $this->has_translation_in_language( $question->ID, 'post_' . $question->post_type, $target_language );
+			if ( $has_translation ) {
+				continue;
+			}
+			$this->copy_post_to_language( $question->ID, $target_language, true );
 		}
 	}
 }

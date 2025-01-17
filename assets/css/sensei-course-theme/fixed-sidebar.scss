@@ -23,6 +23,7 @@ $min_desktop_width: 783px;
 			display: flex;
 			flex-direction: column;
 			padding: 32px 24px 40px 24px;
+			row-gap: 40px;
 		}
 
 		&__header ~ &__columns &__sidebar {

@@ -132,6 +132,8 @@ class Installer {
 		 * Fires after the installation completes.
 		 *
 		 * @since 4.16.1
+		 *
+		 * @hook sensei_lms_installed
 		 */
 		do_action( 'sensei_lms_installed' );
 	}

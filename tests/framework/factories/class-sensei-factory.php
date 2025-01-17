@@ -45,41 +45,64 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 	protected $basic_test_question_ids;
 
 	/**
+	 * Course factory.
+	 *
 	 * @var WP_UnitTest_Factory_For_Course
 	 */
 	public $course;
 
 	/**
+	 * Lesson factory.
+	 *
 	 * @var WP_UnitTest_Factory_For_Lesson
 	 */
 	public $lesson;
 
 	/**
+	 * Quiz factory.
+	 *
 	 * @var WP_UnitTest_Factory_For_Quiz
 	 */
 	public $quiz;
 
 	/**
+	 * Question factory.
+	 *
 	 * @var WP_UnitTest_Factory_For_Question
 	 */
 	public $question;
 
 	/**
+	 * Multiple question factory.
+	 *
 	 * @var WP_UnitTest_Factory_For_Multiple_Question
 	 */
 	public $multiple_question;
 
 	/**
+	 * Module factory.
+	 *
 	 * @var WP_UnitTest_Factory_For_Module
 	 */
 	public $module;
 
 	/**
+	 * Question category factory.
+	 *
 	 * @var WP_UnitTest_Factory_For_Question_Category
 	 */
 	public $question_category;
 
 	/**
+	 * Course category factory.
+	 *
+	 * @var Sensei_UnitTest_Factory_For_Course_Category
+	 */
+	public $course_category;
+
+	/**
+	 * Message factory.
+	 *
 	 * @var WP_UnitTest_Factory_For_Message
 	 */
 	public $message;
@@ -261,6 +284,11 @@ class Sensei_Factory extends WP_UnitTest_Factory {
 				}
 			}
 			$this->attach_lessons_multiple_questions( $multiple_question_count, $lesson_id, $args['multiple_question_args'], $args['quiz_args'] );
+		}
+
+		if ( $course_id && count( $lesson_ids ) ) {
+			$admin = new Sensei_Admin();
+			$admin->save_lesson_order( implode( ',', $lesson_ids ), $course_id );
 		}
 
 		return array(

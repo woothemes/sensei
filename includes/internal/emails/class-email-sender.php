@@ -125,7 +125,7 @@ class Email_Sender {
 			/*
 			 * For documentation of the filter check class-sensei-emails.php file.
 			 */
-			if ( apply_filters( 'sensei_send_emails', true, $recipient, $subject, $message, $email_name ) ) {
+			if ( apply_filters( 'sensei_send_emails', true, $recipient, $subject, $message, $email_name, $replacement ) ) {
 				wp_mail(
 					$recipient,
 					$subject,
@@ -229,17 +229,18 @@ class Email_Sender {
 	 *
 	 * @internal
 	 *
-	 * @param string $string The string.
+	 * @param string $content Content to replace the placeholders in.
 	 * @param array  $placeholders The placeholders.
 	 *
 	 * @return string
 	 */
-	private function replace_placeholders( string $string, array $placeholders ): string {
+	private function replace_placeholders( string $content, array $placeholders ): string {
 		foreach ( $placeholders as $placeholder => $value ) {
-			$string = str_replace( '[' . $placeholder . ']', $value, $string );
+			// Strip out URL protocol if necessary. Partial solution for https://github.com/Automattic/sensei/issues/7621.
+			$content = preg_replace( '~(https?://)?\[' . $placeholder . '\]~', $value, $content );
 		}
 
-		return $string;
+		return $content;
 	}
 
 	/**
@@ -250,14 +251,15 @@ class Email_Sender {
 	 * @return string
 	 */
 	private function load_email_styles(): string {
-		$css_dist_path = Sensei()->assets->dist_path( 'css/email-notifications/email-style.css' );
+		$styles = wp_get_global_stylesheet();
 
+		$css_dist_path = Sensei()->assets->dist_path( 'css/email-notifications/email-style.css' );
 		if ( file_exists( $css_dist_path ) ) {
 			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Local file usage.
-			return file_get_contents( $css_dist_path );
+			$styles .= file_get_contents( $css_dist_path );
 		}
 
-		return '';
+		return $styles;
 	}
 
 	/**
@@ -322,7 +324,7 @@ class Email_Sender {
 	 *
 	 * @return array Headers.
 	 */
-	private function get_email_headers():array {
+	private function get_email_headers(): array {
 		$settings = $this->settings->get_settings();
 		$headers  = [
 			'Content-Type: text/html; charset=UTF-8',

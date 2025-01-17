@@ -502,7 +502,7 @@ class Sensei_Class_Teacher_Test extends WP_UnitTestCase {
 		$this->assertPostAuthor( $new_teacher_id, $course['lesson_ids'], 'All lessons must be from teacher B now' );
 	}
 
-	public function testFilterLearnersQuery_WhenUserIsNoATeacher_ReturnsSameInput() {
+	public function testFilterLearnersQuery_WhenUserIsNotATeacher_ReturnsSameInput() {
 		// Arrange.
 		set_current_screen( 'sensei-lms_page_sensei_learners' ); // Pretend we're on the students admin screen.
 

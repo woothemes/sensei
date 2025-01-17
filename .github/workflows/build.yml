@@ -1,6 +1,6 @@
 name: Plugin Build
 
-on: 
+on:
     - pull_request
     - workflow_call
 
@@ -9,12 +9,15 @@ jobs:
         name: Plugin Build
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v3
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 18
+            - uses: actions/checkout@v4
             - name: Get npm cache directory
               id: npm-cache
               run: |
                   echo "dir=$(npm config get cache)" >> $GITHUB_OUTPUT
-            - uses: actions/cache@v3
+            - uses: actions/cache@v4
               with:
                   path: ${{ steps.npm-cache.outputs.dir }}
                   key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
@@ -29,7 +32,7 @@ jobs:
             - name: Decompress plugin
               run: unzip sensei-lms.zip -d sensei-lms
             - name: Store Artifact
-              uses: actions/upload-artifact@v3
+              uses: actions/upload-artifact@v4
               with:
                   name: sensei-lms-${{ github.event.pull_request.head.sha }}
                   path: ${{ github.workspace }}/sensei-lms/
@@ -55,10 +58,10 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                php: [7.4, 8.1]
+                php: [7.4, 8.2]
         steps:
             - name: Download Build Artifact
-              uses: actions/download-artifact@v3
+              uses: actions/download-artifact@v4
               with:
                   name: sensei-lms-${{ github.event.pull_request.head.sha }}
 

@@ -731,8 +731,8 @@ class Sensei_Core_Modules {
 			}
 		}
 
-		// Encode and return results for processing & selection
-		echo json_encode( $found_courses );
+		// Encode and return results for processing & selection.
+		echo wp_json_encode( $found_courses );
 		die();
 	}
 
@@ -1158,6 +1158,16 @@ class Sensei_Core_Modules {
 		$module_progress = $this->calculate_user_module_progress( $user_id, $module_id, $course_id );
 		update_user_meta( intval( $user_id ), '_module_progress_' . intval( $course_id ) . '_' . intval( $module_id ), intval( $module_progress ) );
 
+		/**
+		 * Action hook triggered after module progress is saved for a user.
+		 *
+		 * @hook sensei_module_save_user_progress
+		 *
+		 * @param {int}   $course_id       ID of course.
+		 * @param {int}   $module_id       ID of module.
+		 * @param {int}   $user_id         ID of user.
+		 * @param {float} $module_progress Module progress percentage.
+		 */
 		do_action( 'sensei_module_save_user_progress', $course_id, $module_id, $user_id, $module_progress );
 	}
 
@@ -1261,7 +1271,7 @@ class Sensei_Core_Modules {
 			'', // Hide the submenu.
 			__( 'Order Modules', 'sensei-lms' ),
 			__( 'Order Modules', 'sensei-lms' ),
-			'edit_lessons',
+			'edit_courses',
 			$this->order_page_slug,
 			array( $this, 'module_order_screen' )
 		);
@@ -1275,18 +1285,27 @@ class Sensei_Core_Modules {
 	public function handle_order_modules() {
 		check_admin_referer( 'order_modules' );
 
-		$ordered = false;
-		if ( isset( $_POST['module-order'] ) && 0 < strlen( $_POST['module-order'] ) ) {
-			$ordered = $this->save_course_module_order( esc_attr( $_POST['module-order'] ), esc_attr( $_POST['course_id'] ) );
+		$course_id    = isset( $_POST['course_id'] ) ? intval( $_POST['course_id'] ) : 0;
+		$module_order = isset( $_POST['module-order'] ) ? sanitize_text_field( wp_unslash( $_POST['module-order'] ) ) : '';
+
+		if (
+			! Sensei_Course::can_current_user_edit_course( $course_id )
+		) {
+			wp_die( esc_html__( 'Insufficient permissions', 'sensei-lms' ) );
 		}
 
-		wp_redirect(
+		$ordered = false;
+		if ( 0 < strlen( $module_order ) ) {
+			$ordered = $this->save_course_module_order( esc_attr( $module_order ), $course_id );
+		}
+
+		wp_safe_redirect(
 			esc_url_raw(
 				add_query_arg(
 					array(
 						'page'      => $this->order_page_slug,
 						'ordered'   => $ordered,
-						'course_id' => $_POST['course_id'],
+						'course_id' => $course_id,
 					),
 					admin_url( 'admin.php' )
 				)
@@ -2180,9 +2199,9 @@ class Sensei_Core_Modules {
 			'hierarchical'       => true,
 			'show_admin_column'  => false,
 			'capabilities'       => array(
-				'manage_terms' => 'manage_categories',
-				'edit_terms'   => 'edit_courses',
-				'delete_terms' => 'manage_categories',
+				'manage_terms' => 'manage_modules',
+				'edit_terms'   => 'manage_modules',
+				'delete_terms' => 'manage_modules',
 				'assign_terms' => 'edit_courses',
 			),
 			'show_in_nav_menus'  => false,
@@ -2270,25 +2289,26 @@ class Sensei_Core_Modules {
 	 * Will return the admin user author could not be determined.
 	 *
 	 * @since 1.8.0
+	 * @deprecated 4.24.5
 	 *
 	 * @param string $term_name
 	 * @return array $owners { type WP_User }. Empty array if none if found.
 	 */
 	public static function get_term_authors( $term_name ) {
+		_deprecated_function( __METHOD__, '4.24.5' );
 
 		$terms = get_terms(
-			array( 'module' ),
 			array(
-				'name__like' => $term_name,
 				'hide_empty' => false,
+				'name__like' => $term_name,
+				'taxonomy'   => 'module',
 			)
 		);
 
 		$owners = array();
+
 		if ( empty( $terms ) ) {
-
 			return $owners;
-
 		}
 
 		// setup the admin user

@@ -63,7 +63,7 @@ class Lesson_Translation {
 		}
 
 		$this->update_translated_lesson_properties( $new_lesson_id, $master_lesson_id );
-		$this->update_quiz_translations( $master_lesson_id );
+		$this->update_quiz_translations( $master_lesson_id, $details['language_code'] );
 		$this->update_question_translations_from_lesson( $new_lesson_id );
 	}
 }

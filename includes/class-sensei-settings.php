@@ -33,12 +33,8 @@ class Sensei_Settings extends Sensei_Settings_API {
 
 		// Setup Admin Settings data
 		if ( is_admin() ) {
-
-			$this->has_tabs   = true;
-			$this->name       = __( 'Sensei LMS Settings', 'sensei-lms' );
-			$this->menu_label = __( 'Settings', 'sensei-lms' );
-			$this->page_slug  = 'sensei-settings';
-
+			$this->has_tabs  = true;
+			$this->page_slug = 'sensei-settings';
 		}
 
 		$this->register_hook_listener();
@@ -74,6 +70,24 @@ class Sensei_Settings extends Sensei_Settings_API {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Get the name of the screen.
+	 *
+	 * @return string
+	 */
+	protected function get_name() {
+		return __( 'Sensei LMS Settings', 'sensei-lms' );
+	}
+
+	/**
+	 * Get the menu label.
+	 *
+	 * @return string
+	 */
+	protected function get_menu_label() {
+		return __( 'Settings', 'sensei-lms' );
 	}
 
 	/**
@@ -127,8 +141,8 @@ class Sensei_Settings extends Sensei_Settings_API {
 		$this->settings_version = Sensei()->version; // Use the global plugin version on this settings screen.
 		$this->hook             = add_submenu_page(
 			'sensei',
-			$this->name,
-			$this->menu_label,
+			$this->get_name(),
+			$this->get_menu_label(),
 			'manage_sensei',
 			$this->page_slug,
 			array( $this, 'settings_screen' )
@@ -174,7 +188,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 					<div class="sensei-custom-navigation__title">
 						<h1>
 							<?php
-							echo esc_html( $this->name );
+							echo esc_html( $this->get_name() );
 
 							if ( '' !== $this->settings_version ) {
 								echo ' <span class="version">' . esc_html( $this->settings_version ) . '</span>';
@@ -190,8 +204,9 @@ class Sensei_Settings extends Sensei_Settings_API {
 					/**
 					 * Fires after the navigation links are displayed.
 					 *
-					 * @hook  sensei_settings_after_links
 					 * @since 4.12.0
+					 *
+					 * @hook  sensei_settings_after_links
 					 *
 					 * @param {string} $tab_name The tab slug.
 					 */
@@ -998,7 +1013,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 
 			if ( isset( $matches[1] ) ) {
 				$id                = $matches[1];
-				$page_items[ $id ] = trim( strip_tags( $v ) );
+				$page_items[ $id ] = trim( wp_strip_all_tags( $v ) );
 			}
 		}
 
@@ -1013,10 +1028,10 @@ class Sensei_Settings extends Sensei_Settings_API {
 	 *
 	 * @since 1.9.0
 	 *
-	 * @deprecated $$next-version$$ Use flush_rewrite_rules_on_update instance method instead.
+	 * @deprecated 1.24.0 Use flush_rewrite_rules_on_update instance method instead.
 	 */
 	public static function flush_rewrite_rules() {
-		_deprecated_function( __METHOD__, '$$next-version$$', 'Use flush_rewrite_rules_on_update instance method instead' );
+		_deprecated_function( __METHOD__, '1.24.0', 'Use flush_rewrite_rules_on_update instance method instead' );
 
 		$settings = new self();
 		$settings->flush_rewrite_rules_on_update();
@@ -1028,7 +1043,7 @@ class Sensei_Settings extends Sensei_Settings_API {
 	 *
 	 * @internal
 	 *
-	 * @since $$next-version$$
+	 * @since 1.24.0
 	 */
 	public function flush_rewrite_rules_on_update() {
 		$nonce_action = $this->token . '-options';

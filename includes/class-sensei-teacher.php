@@ -198,6 +198,9 @@ class Sensei_Teacher {
 				'read_private_courses'           => true,
 				'delete_published_courses'       => true,
 
+				// Modules
+				'manage_modules'                 => true,
+
 				// Quiz
 				'publish_quizzes'                => true,
 				'edit_quizzes'                   => true,
@@ -207,6 +210,7 @@ class Sensei_Teacher {
 
 				// Questions
 				'publish_questions'              => true,
+				'manage_question_categories'     => true,
 				'edit_questions'                 => true,
 				'edit_published_questions'       => true,
 				'edit_private_questions'         => true,
@@ -230,7 +234,7 @@ class Sensei_Teacher {
 
 		foreach ( $caps as $cap => $grant ) {
 
-			// load the capability on to the teacher role
+			// load the capability on to the teacher role.
 			$this->teacher_role->add_cap( $cap, $grant );
 
 		}
@@ -837,7 +841,19 @@ class Sensei_Teacher {
 			return $learners_sql;
 		}
 
-		$teacher_course_ids = $this->get_teacher_courses( get_current_user_id(), true );
+		/**
+		 * Filter the course IDs associated with a given teacher.
+		 *
+		 * @since 4.24.4
+		 *
+		 * @hook sensei_teacher_course_ids
+		 *
+		 * @param {int[]} $course_ids Course IDs for which the current user is the teacher.
+		 * @param {int}   $teacher_id Teacher ID.
+		 * @return {int[]} Filtered course IDs associated with a given teacher.
+		 */
+		$teacher_course_ids = apply_filters( 'sensei_teacher_course_ids', $this->get_teacher_courses( get_current_user_id(), true ), get_current_user_id() );
+
 		if ( ! $teacher_course_ids ) {
 			$teacher_course_ids = [ 0 ]; // Show no learners.
 		}
@@ -1129,6 +1145,13 @@ AND comments.comment_type = 'sensei_course_status'";
 			return false;
 		}
 
+		/**
+		 * Fires before sending the email.
+		 *
+		 * @hook sensei_before_mail
+		 *
+		 * @param {string} $recipient The recipient email.
+		 */
 		do_action( 'sensei_before_mail', $recipient );
 
 		/**
@@ -1190,6 +1213,11 @@ AND comments.comment_type = 'sensei_course_status'";
 		// Send mail
 		Sensei()->emails->send( $recipient, $subject, Sensei()->emails->get_content( $template ) );
 
+		/**
+		 * Fires after sending the email.
+		 *
+		 * @hook sensei_after_sending_email
+		 */
 		do_action( 'sensei_after_sending_email' );
 
 	}

@@ -469,13 +469,15 @@ class Sensei_Learner {
 	 */
 	private function before_enrolled_courses_query( $user_id ) {
 		/**
-		 * Fire before we query a user's enrolled courses. This needs to be called before
-		 * building the query arguments because `active` courses might be incomplete if we
-		 * haven't verified a user's enrolment is up-to-date.
+		 * Fire before we query a user's enrolled courses.
+		 * This needs to be called before building the query arguments,
+		 * because `active` courses might be incomplete if we haven't verified a user's enrolment is up-to-date.
 		 *
 		 * @since 3.0.0
 		 *
-		 * @param int $user_id User ID.
+		 * @hook sensei_before_learners_enrolled_courses_query
+		 *
+		 * @param {int} $user_id User ID.
 		 */
 		do_action( 'sensei_before_learners_enrolled_courses_query', $user_id );
 	}

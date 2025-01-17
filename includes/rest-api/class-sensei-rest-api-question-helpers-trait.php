@@ -109,7 +109,7 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 		$post_title = sprintf( esc_html__( '%1$s Question(s) from %2$s', 'sensei-lms' ), $question_number, $question_category->name );
 
 		$post_args = [
-			'ID'          => $question_id,
+			'ID'          => (int) $question_id,
 			'post_title'  => $post_title,
 			'post_status' => 'publish',
 			'post_type'   => 'multiple_question',
@@ -119,12 +119,13 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 			],
 		];
 
-		$result = wp_insert_post( $post_args );
+		$result = $question_id ? wp_update_post( $post_args ) : wp_insert_post( $post_args );
 
 		/**
 		 * This action is triggered when a category question is created or updated by the lesson quiz REST endpoint.
 		 *
 		 * @since 3.9.0
+		 *
 		 * @hook  sensei_rest_api_category_question_saved
 		 *
 		 * @param {int|WP_Error} $result   Result of wp_insert_post. Post ID on success or WP_Error on failure.
@@ -174,8 +175,8 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 		$is_new = null === $question_id;
 
 		$post_args = [
-			'ID'         => $question_id,
-			'post_title' => $question['title'],
+			'ID'         => (int) $question_id,
+			'post_title' => (string) $question['title'],
 			'post_type'  => 'question',
 			'meta_input' => $this->get_question_meta( $question ),
 			'tax_input'  => [
@@ -184,7 +185,7 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 		];
 
 		if ( $status ) {
-			$post_args['post_status'] = $status;
+			$post_args['post_status'] = (string) $status;
 		}
 
 		// Force publish the question if it's part of a quiz.
@@ -193,10 +194,12 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 		}
 
 		if ( isset( $question['description'] ) ) {
-			$post_args['post_content'] = $question['description'];
+			$post_args['post_content'] = (string) $question['description'];
+		} else {
+			$post_args['post_content'] = '';
 		}
 
-		$result = wp_insert_post( $post_args );
+		$result = $question_id ? wp_update_post( $post_args ) : wp_insert_post( $post_args );
 
 		if ( ! $is_new && ! is_wp_error( $result ) ) {
 			$this->migrate_non_editor_question( $result, $question['type'] );
@@ -206,6 +209,7 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 		 * This action is triggered when a question is created or updated by the lesson quiz REST endpoint.
 		 *
 		 * @since 3.9.0
+		 *
 		 * @hook  sensei_rest_api_question_saved
 		 *
 		 * @param {int|WP_Error} $result        Result of wp_insert_post. Post ID on success or WP_Error on failure.
@@ -353,7 +357,7 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 			$meta['_answer_order']           = [];
 
 			foreach ( $question['answer']['answers'] ?? [] as $option ) {
-				if ( empty( $option['label'] ) ) {
+				if ( ! isset( $option['label'] ) || '' === $option['label'] ) {
 					continue;
 				}
 
@@ -437,7 +441,7 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 	 *
 	 * @return array
 	 */
-	private function get_category_question( WP_Post $question ) : array {
+	private function get_category_question( WP_Post $question ): array {
 		$category = (int) get_post_meta( $question->ID, 'category', true );
 		$number   = (int) get_post_meta( $question->ID, 'number', true );
 
@@ -494,7 +498,7 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 	 *
 	 * @return array Media info. It includes the type, id, url and title.
 	 */
-	private function get_question_media( int $question_media_id, int $question_id ) : array {
+	private function get_question_media( int $question_media_id, int $question_id ): array {
 		$question_media = [];
 		$mimetype       = get_post_mime_type( $question_media_id );
 		$attachment     = get_post( $question_media_id );

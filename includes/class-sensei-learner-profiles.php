@@ -13,20 +13,11 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Sensei_Learner_Profiles {
 	/**
-	 * @var string
-	 */
-	private $profile_url_base;
-
-	/**
 	 * Constructor.
 	 *
 	 * @since  1.4.0
 	 */
 	public function __construct() {
-
-		// Setup learner profile URL base
-		$this->profile_url_base = apply_filters( 'sensei_learner_profiles_url_base', __( 'learner', 'sensei-lms' ) );
-
 		// Setup permalink structure for learner profiles
 		add_action( 'init', array( $this, 'setup_permastruct' ) );
 		add_filter( 'wp_title', array( $this, 'page_title' ), 10, 2 );
@@ -39,6 +30,15 @@ class Sensei_Learner_Profiles {
 
 		// Add class to body tag
 		add_filter( 'body_class', array( $this, 'learner_profile_body_class' ), 10, 1 );
+	}
+
+	/**
+	 * Get the profile URL base.
+	 *
+	 * @return string
+	 */
+	private function get_profile_url_base() {
+		return (string) apply_filters( 'sensei_learner_profiles_url_base', __( 'learner', 'sensei-lms' ) );
 	}
 
 	/**
@@ -68,7 +68,7 @@ class Sensei_Learner_Profiles {
 		if ( isset( Sensei()->settings->settings['learner_profile_enable'] )
 			&& Sensei()->settings->settings['learner_profile_enable'] ) {
 
-			add_rewrite_rule( '^' . $this->profile_url_base . '/([^/]*)/?', 'index.php?learner_profile=$matches[1]', 'top' );
+			add_rewrite_rule( '^' . $this->get_profile_url_base() . '/([^/]*)/?', 'index.php?learner_profile=$matches[1]', 'top' );
 			add_rewrite_tag( '%learner_profile%', '([^&]+)' );
 
 		}
@@ -130,7 +130,7 @@ class Sensei_Learner_Profiles {
 
 		if ( $user ) {
 			if ( get_option( 'permalink_structure' ) ) {
-				$permalink = trailingslashit( get_home_url() ) . $this->profile_url_base . '/' . $user->user_nicename;
+				$permalink = trailingslashit( get_home_url() ) . $this->get_profile_url_base() . '/' . $user->user_nicename;
 			} else {
 				$permalink = trailingslashit( get_home_url() ) . '?learner_profile=' . $user->user_nicename;
 			}
@@ -201,9 +201,13 @@ class Sensei_Learner_Profiles {
 
 		/**
 		 * This hooke fires inside the Sensei_Learner_Profiles::user_info function.
-		 * just before the htmls is generated.
+		 * Just before the HTML is generated.
 		 *
 		 * @since 1.0.0
+		 *
+		 * @hook sensei_learner_profile_info
+		 *
+		 * @param {object} $user The user object.
 		 */
 		do_action( 'sensei_learner_profile_info', $user );
 

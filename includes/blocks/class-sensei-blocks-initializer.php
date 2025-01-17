@@ -132,8 +132,12 @@ abstract class Sensei_Blocks_Initializer {
 			return $post_type ? $post_type : null;
 		}
 
-		if ( 'post-new.php' === $pagenow && isset( $_GET['post_type'] ) && post_type_exists( $_GET['post_type'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification, WordPress.Security.ValidatedSanitizedInput -- Only reading the post type.
-			return $_GET['post_type']; // phpcs:ignore WordPress.Security.NonceVerification, WordPress.Security.ValidatedSanitizedInput -- Already validated.
+		if ( 'post-new.php' === $pagenow ) {
+			if ( isset( $_GET['post_type'] ) && post_type_exists( $_GET['post_type'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification, WordPress.Security.ValidatedSanitizedInput -- Only reading the post type.
+				return $_GET['post_type']; // phpcs:ignore WordPress.Security.NonceVerification, WordPress.Security.ValidatedSanitizedInput -- Already validated.
+			} else {
+				return 'post';
+			}
 		}
 
 		return null;

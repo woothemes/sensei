@@ -8,7 +8,6 @@ import { ExternalLink } from '@wordpress/components';
 import { select, dispatch } from '@wordpress/data';
 import { store as blockEditorStore } from '@wordpress/block-editor';
 import { store as editPostStore } from '@wordpress/edit-post';
-import { store as editorStore } from '@wordpress/editor';
 
 /**
  * Internal dependencies
@@ -59,7 +58,7 @@ export const focusOnQuizBlock = () => {
 	if ( ! quizBlock ) {
 		return;
 	}
-	dispatch( editorStore ).selectBlock( quizBlock.clientId );
+	dispatch( blockEditorStore ).selectBlock( quizBlock.clientId );
 };
 
 export const focusOnQuestionBlock = () => {
@@ -67,7 +66,7 @@ export const focusOnQuestionBlock = () => {
 	if ( ! questionBlock ) {
 		return;
 	}
-	dispatch( editorStore ).selectBlock( questionBlock.clientId );
+	dispatch( blockEditorStore ).selectBlock( questionBlock.clientId );
 };
 
 export const focusOnBooleanQuestionBlock = () => {
@@ -75,7 +74,7 @@ export const focusOnBooleanQuestionBlock = () => {
 	if ( ! questionBlock ) {
 		return;
 	}
-	dispatch( editorStore ).selectBlock( questionBlock.clientId );
+	dispatch( blockEditorStore ).selectBlock( questionBlock.clientId );
 };
 
 export const ensureBooleanQuestionIsInEditor = () => {

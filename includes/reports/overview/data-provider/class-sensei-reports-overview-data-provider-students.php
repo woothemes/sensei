@@ -134,8 +134,9 @@ class Sensei_Reports_Overview_Data_Provider_Students implements Sensei_Reports_O
 		/**
 		 * Fires before the user query is executed.
 		 *
-		 * @hook sensei_reports_overview_students_data_provider_pre_user_query
 		 * @since 4.6.0
+		 *
+		 * @hook sensei_reports_overview_students_data_provider_pre_user_query
 		 *
 		 * @param {WP_User_Query} $query The user query.
 		 */

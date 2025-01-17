@@ -15,6 +15,13 @@ class Sensei_Course_Progress_Block_Test extends WP_UnitTestCase {
 	private $block;
 
 	/**
+	 * The course post.
+	 *
+	 * @var WP_Post
+	 */
+	private $course;
+
+	/**
 	 * Factory for setting up testing data.
 	 *
 	 * @var Sensei_Factory

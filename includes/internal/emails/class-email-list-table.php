@@ -8,8 +8,6 @@
 namespace Sensei\Internal\Emails;
 
 use Sensei_List_Table;
-use WP_Post;
-use WP_Query;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -130,7 +128,7 @@ class Email_List_Table extends Sensei_List_Table {
 		$description = $is_available ?
 			sprintf(
 				'<strong><a href="%1$s" class="row-title">%2$s</a></strong>%3$s',
-				esc_url( get_edit_post_link( $post ) ),
+				esc_url( (string) get_edit_post_link( $post ) ),
 				get_post_meta( $post->ID, '_sensei_email_description', true ),
 				$this->row_actions( $actions )
 			) : sprintf(

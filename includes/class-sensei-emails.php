@@ -50,7 +50,13 @@ class Sensei_Emails {
 		add_action( 'sensei_new_private_message', array( $this, 'teacher_new_message' ), 10, 1 );
 		add_action( 'sensei_private_message_reply', array( $this, 'new_message_reply' ), 10, 2 );
 
-		// Let 3rd parties unhook the above via this hook
+		/**
+		 * Action hook to allow 3rd parties to unhook Sensei's email actions.
+		 *
+		 * @hook sensei_emails
+		 *
+		 * @param {Sensei_Emails} $emails The Sensei_Emails object.
+		 */
 		do_action( 'sensei_emails', $this );
 	}
 
@@ -170,7 +176,7 @@ class Sensei_Emails {
 		// Set content type
 		$this->_content_type = $content_type;
 
-		// Filters for the email
+		// Filters for the email.
 		add_filter( 'wp_mail_from', array( $this, 'get_from_address' ) );
 		add_filter( 'wp_mail_from_name', array( $this, 'get_from_name' ) );
 		add_filter( 'wp_mail_content_type', array( $this, 'get_content_type' ) );
@@ -179,24 +185,26 @@ class Sensei_Emails {
 		 * Filter Sensei's ability to send out emails.
 		 *
 		 * @since 1.8.0
-		 * @since $$next-version$$ The `$identifier` parameter was added.
+		 * @since 1.24.0 The `$identifier` parameter was added.
 		 *
 		 * @hook sensei_send_emails
 		 *
-		 * @param {bool} $send_email Whether to send the email or not.
-		 * @param {mixed} $to The email address(es) to send the email to.
-		 * @param {mixed} $subject The subject of the email.
-		 * @param {mixed} $message The message of the email.
-		 * @param {string} $identifier Unique identifier of the email, not for legacy emails.
+		 * @param {bool}   $send_email   Whether to send the email or not.
+		 * @param {mixed}  $to           The email address(es) to send the email to.
+		 * @param {mixed}  $subject      The subject of the email.
+		 * @param {mixed}  $message      The message of the email.
+		 * @param {string} $identifier   Unique identifier of the email, not for legacy emails.
+		 * @param {array}  $replacements The replacements values for the email, not for legacy emails.
+		 *
 		 * @return {bool} Whether to send the email or not.
 		 */
-		if ( apply_filters( 'sensei_send_emails', true, $to, $subject, $message, 'legacy-email' ) ) {
+		if ( apply_filters( 'sensei_send_emails', true, $to, $subject, $message, 'legacy-email', [] ) ) {
 
 			wp_mail( $to, $subject, $message, $headers, $attachments );
 
 		}
 
-		// Unhook filters
+		// Unhook filters.
 		remove_filter( 'wp_mail_from', array( $this, 'get_from_address' ) );
 		remove_filter( 'wp_mail_from_name', array( $this, 'get_from_name' ) );
 		remove_filter( 'wp_mail_content_type', array( $this, 'get_content_type' ) );
@@ -232,8 +240,24 @@ class Sensei_Emails {
 
 		ob_start();
 
+		/**
+		 * Action hook before email template is loaded.
+		 *
+		 * @hook sensei_before_email_template
+		 *
+		 * @param {string} $email_template The email template.
+		 */
 		do_action( 'sensei_before_email_template', $email_template );
+
 		include $template;
+
+		/**
+		 * Action hook after email template is loaded.
+		 *
+		 * @hook sensei_after_email_template
+		 *
+		 * @param {string} $email_template The email template.
+		 */
 		do_action( 'sensei_after_email_template', $email_template );
 
 		$email_template = '';

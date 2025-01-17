@@ -95,6 +95,12 @@ class Sensei_Renderer_Single_Post implements Sensei_Renderer_Interface {
 
 		// Even though the header is not being displayed, the action hooked to it still needs to fire. Remove default wrapper.
 		remove_action( 'sensei_before_main_content', array( Sensei()->frontend, 'sensei_output_content_wrapper' ) );
+
+		/**
+		 * Fires before the main content is output.
+		 *
+		 * @hook sensei_before_main_content
+		 */
 		do_action( 'sensei_before_main_content' );
 
 		// Render the template.
@@ -107,6 +113,11 @@ class Sensei_Renderer_Single_Post implements Sensei_Renderer_Interface {
 
 		// Render pagination if needed.
 		if ( $this->show_pagination ) {
+			/**
+			 * Fires when the pagination is displayed.
+			 *
+			 * @hook sensei_pagination
+			 */
 			do_action( 'sensei_pagination' );
 		}
 		$output = ob_get_clean();

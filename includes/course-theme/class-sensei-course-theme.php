@@ -174,6 +174,7 @@ class Sensei_Course_Theme {
 		 * Fires when learning mode is loaded for a page.
 		 *
 		 * @since 4.0.2
+		 *
 		 * @hook  sensei_course_learning_mode_load_theme
 		 */
 		do_action( 'sensei_course_learning_mode_load_theme' );
@@ -197,6 +198,7 @@ class Sensei_Course_Theme {
 		 * Fires when the theme is override is added for learning mode.
 		 *
 		 * @since 4.0.2
+		 *
 		 * @hook  sensei_course_learning_mode_override_theme
 		 */
 		do_action( 'sensei_course_learning_mode_override_theme' );
@@ -393,6 +395,7 @@ class Sensei_Course_Theme {
 			 * Fires when the override theme styles are loaded for learning mode.
 			 *
 			 * @since 4.0.2
+			 *
 			 * @hook  sensei_course_learning_mode_load_override_styles
 			 */
 			do_action( 'sensei_course_learning_mode_load_override_styles' );

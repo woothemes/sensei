@@ -3,7 +3,7 @@
  * The template used to render a single email subscription setting in the user profile page.
  *
  * @package sensei
- * @since $$next-version$$
+ * @since 1.24.0
  *
  * @var string $identifier The email identifier.
  * @var string $description The email description.
