@@ -21,13 +21,6 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 	const REMOVE_PROGRESS                         = 'remove_progress';
 
 	/**
-	 * The available bulk actions.
-	 *
-	 * @var array|null
-	 */
-	private $known_bulk_actions;
-
-	/**
 	 * The page slug.
 	 *
 	 * @var string
@@ -56,19 +49,12 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 	private $learner;
 
 	/**
-	 * The name of the page
-	 *
-	 * @var string
-	 */
-	private $name;
-
-	/**
 	 * Get the name of the page.
 	 *
 	 * @return string|void
 	 */
 	public function get_name() {
-		return $this->name;
+		return __( 'Bulk Student Actions', 'sensei-lms' );
 	}
 
 	/**
@@ -117,15 +103,8 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 	public function __construct( $management, $learner ) {
 		$this->learner_management = $management;
 		$this->learner            = $learner;
-		$this->name               = __( 'Bulk Student Actions', 'sensei-lms' );
 		$this->page_slug          = $management->page_slug;
 		$this->view               = 'sensei_learner_admin';
-
-		$this->known_bulk_actions = [
-			self::ENROL_RESTORE_ENROLMENT => __( 'Add to Course', 'sensei-lms' ),
-			self::REMOVE_ENROLMENT        => __( 'Remove from Course', 'sensei-lms' ),
-			self::REMOVE_PROGRESS         => __( 'Reset Progress', 'sensei-lms' ),
-		];
 
 		if ( is_admin() ) {
 			$this->register_hooks();
@@ -190,8 +169,20 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 	 * @return array
 	 */
 	public function get_known_bulk_actions() {
-		$known_bulk_actions = $this->known_bulk_actions;
+		$known_bulk_actions = [
+			self::ENROL_RESTORE_ENROLMENT => __( 'Add to Course', 'sensei-lms' ),
+			self::REMOVE_ENROLMENT        => __( 'Remove from Course', 'sensei-lms' ),
+			self::REMOVE_PROGRESS         => __( 'Reset Progress', 'sensei-lms' ),
+		];
 
+		/**
+		 * Filter the known bulk actions.
+		 *
+		 * @hook sensei_learners_admin_get_known_bulk_actions
+		 *
+		 * @param {array} $known_bulk_actions The known bulk actions.
+		 * @return {array} Filtered known bulk actions.
+		 */
 		return (array) apply_filters( 'sensei_learners_admin_get_known_bulk_actions', $known_bulk_actions );
 	}
 
@@ -323,10 +314,23 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 		$sensei_learners_main_view->prepare_items();
 
 		// Wrappers.
+		/**
+		 * Fires before rendering the students page.
+		 *
+		 * @hook sensei_learner_admin_before_container
+		 */
 		do_action( 'sensei_learner_admin_before_container' );
 		?>
 		<div id="woothemes-sensei" class="wrap woothemes-sensei">
 		<?php
+		/**
+		 * Fires before rendering the students page container.
+		 * This hook allows to wrap the container.
+		 *
+		 * @hook sensei_learner_admin_wrapper_container
+		 *
+		 * @param {string} $position The position of the container ('top' here).
+		 */
 		do_action( 'sensei_learner_admin_wrapper_container', 'top' );
 		$sensei_learners_main_view->output_headers();
 		?>
@@ -335,14 +339,35 @@ class Sensei_Learners_Admin_Bulk_Actions_Controller {
 				<?php $sensei_learners_main_view->display(); ?>
 			</div>
 			<div class="sensei-learners-extra">
-				<?php do_action( 'sensei_learner_admin_extra' ); ?>
+				<?php
+				/**
+				 * Fires after rendering the main content of the students page.
+				 * Allowing for additional content to be added.
+				 *
+				 * @hook sensei_learner_admin_extra
+				 */
+				do_action( 'sensei_learner_admin_extra' );
+				?>
 			</div>
 		</div>
 		<?php
+		/**
+		 * Fires after rendering the students page container.
+		 * This hook allows to wrap the container.
+		 *
+		 * @hook sensei_learner_admin_wrapper_container
+		 *
+		 * @pram {string} $position The position of the container ('bottom' here).
+		 */
 		do_action( 'sensei_learner_admin_wrapper_container', 'bottom' );
 		?>
 		</div>
 		<?php
+		/**
+		 * Fires after rendering the students page container.
+		 *
+		 * @hook sensei_learner_admin_after_container
+		 */
 		do_action( 'sensei_learner_admin_after_container' );
 	}
 

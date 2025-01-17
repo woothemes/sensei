@@ -137,6 +137,18 @@ class Sensei_Unsupported_Theme_Handler_Course_Archive_Test extends WP_UnitTestCa
 		$this->assertStringContainsString( 'wp-block-sensei-lms-course-list', $post->post_content );
 	}
 
+	public function testHandleRequest_WhenCalled_SetsGlobalWpQueryWithCorrectIsSingularAndQueryObjectId() {
+		/* ARRANGE */
+		Sensei_Setup_Wizard::instance()->pages->create_pages();
+
+		/* ACT */
+		$this->handler->handle_request();
+
+		/* ASSERT */
+		$this->assertTrue( is_singular() );
+		$this->assertEquals( 0, get_queried_object_id() );
+	}
+
 	/**
 	 * Helper to set up the current request to be a course archive page. This request
 	 * will be handled by the unsupported theme handler if the theme is not

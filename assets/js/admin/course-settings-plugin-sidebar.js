@@ -3,10 +3,17 @@
  */
 import { applyFilters } from '@wordpress/hooks';
 import {
+	store as editPostStore,
+	PluginDocumentSettingPanel as DeprecatedPluginDocumentSettingPanel,
+	PluginSidebar as DeprecatedPluginSidebar,
+	PluginSidebarMoreMenuItem as DeprecatedPluginSidebarMoreMenuItem,
+} from '@wordpress/edit-post';
+import {
+	store as editorStore,
 	PluginDocumentSettingPanel,
 	PluginSidebar,
 	PluginSidebarMoreMenuItem,
-} from '@wordpress/edit-post';
+} from '@wordpress/editor';
 import { __ } from '@wordpress/i18n';
 import { dispatch, useSelect } from '@wordpress/data';
 import { Slot } from '@wordpress/components';
@@ -20,6 +27,18 @@ import CourseThemeSidebar from './course-theme/course-theme-sidebar';
 import CourseVideoSidebar from './course-video-sidebar';
 import CourseGeneralSidebar from './course-general-sidebar';
 import SenseiIcon from '../../icons/logo-tree.svg';
+
+if ( ! PluginDocumentSettingPanel ) {
+	PluginDocumentSettingPanel = DeprecatedPluginDocumentSettingPanel;
+}
+
+if ( ! PluginSidebar ) {
+	PluginSidebar = DeprecatedPluginSidebar;
+}
+
+if ( ! PluginSidebarMoreMenuItem ) {
+	PluginSidebarMoreMenuItem = DeprecatedPluginSidebarMoreMenuItem;
+}
 
 export const pluginSidebarHandle = 'sensei-lms-course-settings-sidebar';
 export const pluginDocumentHandle = 'sensei-lms-document-settings-sidebar';
@@ -51,14 +70,14 @@ export const CourseSidebar = () => {
 		<>
 			<PluginSidebarMoreMenuItem
 				target={ pluginSidebarHandle }
-				icon={ <SenseiIcon height="20" width="20" color="#43AF99" /> }
+				icon={ <SenseiIcon height="20" width="20" /> }
 			>
 				{ __( 'Course Settings', 'sensei-lms' ) }
 			</PluginSidebarMoreMenuItem>
 			<PluginSidebar
 				name={ pluginSidebarHandle }
 				title={ __( 'Course Settings', 'sensei-lms' ) }
-				icon={ <SenseiIcon height="20" width="20" color="#43AF99" /> }
+				icon={ <SenseiIcon height="20" width="20" /> }
 			>
 				{ ! hideCoursePricing && <CoursePricingPromoSidebar /> }
 				{ ! hideAccessPeriod && <CourseAccessPeriodPromoSidebar /> }
@@ -73,17 +92,26 @@ export const CourseSidebar = () => {
 
 export const SenseiSettingsDocumentSidebar = () => {
 	const isSenseiEditorPanelOpen = useSelect( ( select ) => {
-		return select( 'core/edit-post' ).isEditorPanelOpened(
+		const isEditorPanelOpened = select( editorStore ).isEditorPanelOpened
+			? select( editorStore ).isEditorPanelOpened
+			: select( editPostStore ).isEditorPanelOpened;
+
+		return isEditorPanelOpened(
 			`${ pluginDocumentHandle }/${ pluginDocumentHandle }`
 		);
 	} );
 	if ( isSenseiEditorPanelOpen ) {
+		const toggleEditorPanelOpened = dispatch( editorStore )
+			.toggleEditorPanelOpened
+			? dispatch( editorStore ).toggleEditorPanelOpened
+			: dispatch( editPostStore ).toggleEditorPanelOpened;
+
 		// when 'Course Settings' is clicked, isSenseiEditorPanelOpen returns true, so we open the 'Course Settings'
 		// plugin sidebar and then close the 'Sensei Settings' panel which sets isSenseiEditorPanelOpen back to false.
-		dispatch( 'core/edit-post' ).openGeneralSidebar(
+		dispatch( editPostStore ).openGeneralSidebar(
 			`${ pluginSidebarHandle }/${ pluginSidebarHandle }`
 		);
-		dispatch( 'core/edit-post' ).toggleEditorPanelOpened(
+		toggleEditorPanelOpened(
 			`${ pluginDocumentHandle }/${ pluginDocumentHandle }`
 		);
 	}

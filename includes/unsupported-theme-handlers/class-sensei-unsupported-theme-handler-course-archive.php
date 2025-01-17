@@ -59,6 +59,9 @@ class Sensei_Unsupported_Theme_Handler_Course_Archive
 
 		// Disable pagination.
 		Sensei_Unsupported_Theme_Handler_Utils::disable_theme_pagination();
+
+		// Fix infinite loop issue on Astra.
+		add_filter( 'astra_remove_entry_header_content', '__return_true' );
 	}
 
 	/**
@@ -72,8 +75,16 @@ class Sensei_Unsupported_Theme_Handler_Course_Archive
 		ob_start();
 		add_filter( 'sensei_show_main_header', '__return_false' );
 		add_filter( 'sensei_show_main_footer', '__return_false' );
+
 		Sensei_Templates::get_template( 'archive-course.php' );
+
+		/**
+		 * Fires when the pagination is displayed.
+		 *
+		 * @hook sensei_pagination
+		 */
 		do_action( 'sensei_pagination' );
+
 		return ob_get_clean();
 	}
 

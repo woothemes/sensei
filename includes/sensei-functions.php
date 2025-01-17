@@ -1,9 +1,4 @@
 <?php
-
-if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
-}
-
 /**
  * Global Sensei functions
  */
@@ -30,7 +25,7 @@ function is_sensei() {
 		$is_sensei = true;
 	} elseif ( is_object( $post ) && ! is_wp_error( $post ) ) {
 		$course_page_id           = intval( Sensei()->settings->settings['course_page'] );
-		$my_courses_page_id       = intval( Sensei()->settings->settings['my_course_page'] );
+		$my_courses_page_id       = Sensei()->settings->get_my_courses_page_id();
 		$course_completed_page_id = intval( Sensei()->settings->settings['course_completed_page'] );
 
 		if ( ! empty( $post->ID ) && in_array( $post->ID, [ $course_page_id, $my_courses_page_id, $course_completed_page_id ], true ) ) {
@@ -106,8 +101,11 @@ function sensei_all_access( $user_id = null ) {
 	 *
 	 * @since 3.0.0
 	 *
-	 * @param bool $access  True if user has all access.
-	 * @param int  $user_id User ID to check.
+	 * @hooks sensei_user_all_access
+	 *
+	 * @param {bool} $access  True if user has all access.
+	 * @param {int}  $user_id User ID to check.
+	 * @return {bool} Filtered access.
 	 */
 	return apply_filters( 'sensei_user_all_access', $access, $user_id );
 }
@@ -153,26 +151,42 @@ function sensei_can_user_view_lesson( $lesson_id = null, $user_id = null ) {
 	$pre_requisite_complete = Sensei_Lesson::is_prerequisite_complete( $lesson_id, $user_id );
 	$is_preview_lesson      = false;
 
-	if ( Sensei_Utils::is_preview_lesson( $lesson_id ) ) {
+	if ( $lesson_id && Sensei_Utils::is_preview_lesson( $lesson_id ) ) {
 		$is_preview_lesson      = true;
 		$pre_requisite_complete = true;
 	};
 
-	$can_user_view_lesson = ! sensei_is_login_required()
-							|| sensei_all_access( $user_id )
+	$login_not_required  = ! sensei_is_login_required();
+	$user_has_all_access = sensei_all_access( $user_id );
+
+	$can_user_view_lesson = $login_not_required
+							|| $user_has_all_access
 							|| ( $user_can_view_course_content && $pre_requisite_complete )
 							|| $is_preview_lesson;
+
+	$checks = array(
+		'login_not_required'           => $login_not_required,
+		'user_has_all_access'          => $user_has_all_access,
+		'user_can_view_course_content' => $user_can_view_course_content,
+		'pre_requisite_complete'       => $pre_requisite_complete,
+		'is_preview_lesson'            => $is_preview_lesson,
+	);
 
 	/**
 	 * Filter if the user can view lesson and quiz content.
 	 *
 	 * @since 1.9.0
+	 * @since 4.24.2 Added $checks parameter.
 	 *
-	 * @param bool $can_user_view_lesson True if they can view lesson/quiz content.
-	 * @param int  $lesson_id            Lesson post ID.
-	 * @param int  $user_id              User ID.
+	 * @hook sensei_can_user_view_lesson
+	 *
+	 * @param {bool}  $can_user_view_lesson True if they can view lesson/quiz content.
+	 * @param {int}   $lesson_id            Lesson post ID.
+	 * @param {int}   $user_id              User ID.
+	 * $param {array} $checks               Array of checks that were made to determine access.
+	 * @return {bool} Filtered access.
 	 */
-	return apply_filters( 'sensei_can_user_view_lesson', $can_user_view_lesson, $lesson_id, $user_id );
+	return apply_filters( 'sensei_can_user_view_lesson', $can_user_view_lesson, $lesson_id, $user_id, $checks );
 }
 
 if ( ! function_exists( 'sensei_light_or_dark' ) ) {
@@ -343,25 +357,27 @@ function sensei_is_a_course( $post ) {
  */
 function sensei_user_registration_url( bool $return_wp_registration_url = true, string $redirect = '' ) {
 	/**
-	 * Filter to force Sensei to output the default WordPress user
-	 * registration link.
-	 *
-	 * @param bool $wp_register_link default false
+	 * Filter to force Sensei to output the default WordPress user registration link.
 	 *
 	 * @since 1.9.0
+	 *
+	 * @hook sensei_use_wp_register_link
+	 *
+	 * @param {bool} $wp_register_link Whether to use the default WordPress registration link, default: false.
+	 * @return {bool} Filtered value.
 	 */
-	$wp_register_link = apply_filters( 'sensei_use_wp_register_link', false );
-	$registration_url = '';
-	$settings         = Sensei()->settings->get_settings();
+	$wp_register_link   = apply_filters( 'sensei_use_wp_register_link', false );
+	$registration_url   = '';
+	$my_courses_page_id = Sensei()->settings->get_my_courses_page_id();
 
-	if ( empty( $settings['my_course_page'] ) || $wp_register_link ) {
+	if ( empty( $my_courses_page_id ) || $wp_register_link ) {
 		if ( ! $return_wp_registration_url ) {
 			return null;
 		}
 
 		$registration_url = wp_registration_url();
 	} else {
-		$registration_url = get_permalink( intval( $settings['my_course_page'] ) );
+		$registration_url = get_permalink( $my_courses_page_id );
 	}
 
 	if ( ! empty( $redirect ) ) {
@@ -372,11 +388,11 @@ function sensei_user_registration_url( bool $return_wp_registration_url = true, 
 	 * Filter the registration URL.
 	 *
 	 * @since 4.4.1
+	 *
 	 * @hook sensei_registration_url
 	 *
 	 * @param {string} $registration_url Registration URL.
 	 * @param {string} $redirect         Redirect url after registration.
-	 *
 	 * @return {string} Returns filtered registration URL.
 	 */
 	return apply_filters( 'sensei_registration_url', $registration_url, $redirect );
@@ -398,7 +414,7 @@ function sensei_user_registration_url( bool $return_wp_registration_url = true, 
  */
 function sensei_user_login_url( string $redirect = '' ) {
 	$login_url          = '';
-	$my_courses_page_id = intval( Sensei()->settings->get( 'my_course_page' ) );
+	$my_courses_page_id = Sensei()->settings->get_my_courses_page_id();
 	$page               = get_post( $my_courses_page_id );
 
 	if ( $my_courses_page_id && isset( $page->ID ) && 'page' == get_post_type( $page->ID ) ) {
@@ -416,11 +432,11 @@ function sensei_user_login_url( string $redirect = '' ) {
 	 * Filter the login URL.
 	 *
 	 * @since 4.4.1
+	 *
 	 * @hook sensei_login_url
 	 *
 	 * @param {string} $login_url Login URL.
 	 * @param {string} $redirect  Redirect url after login.
-	 *
 	 * @return {string} Returns filtered login URL.
 	 */
 	return apply_filters( 'sensei_login_url', $login_url, $redirect );
@@ -442,8 +458,7 @@ function sensei_is_login_required() {
 	$login_required = isset( Sensei()->settings->settings['access_permission'] ) && ( true == Sensei()->settings->settings['access_permission'] );
 
 	/**
-	 * Filters the access_permission that says if the user must be logged
-	 * to view the lesson content.
+	 * Filters the access_permission that says if the user must be logged to view the lesson content.
 	 *
 	 * @since 3.5.2
 	 *
@@ -451,7 +466,6 @@ function sensei_is_login_required() {
 	 *
 	 * @param {bool}     $must_be_logged_to_view_lesson True if user need to be logged to see the lesson.
 	 * @param {int|null} $course_id                     Course post ID.
-	 *
 	 * @return {bool} Whether the user needs to be logged in to view content.
 	 */
 	return apply_filters( 'sensei_is_login_required', $login_required, $course_id );
@@ -489,9 +503,12 @@ function sensei_log_event( $event_name, $properties = [] ) {
 	 *
 	 * @since 2.1.0
 	 *
-	 * @param bool   $log_event    Whether we should log the event.
-	 * @param string $event_name   The name of the event, without the `sensei_` prefix.
-	 * @param array  $properties   The event properties to be sent.
+	 * @hook sensei_log_event
+	 *
+	 * @param {bool}   $log_event    Whether we should log the event.
+	 * @param {string} $event_name   The name of the event, without the `sensei_` prefix.
+	 * @param {array}  $properties   The event properties to be sent.
+	 * @return {bool} Whether we should log the event.
 	 */
 	if ( false === apply_filters( 'sensei_log_event', true, $event_name, $properties ) ) {
 		return;

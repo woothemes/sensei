@@ -6,20 +6,17 @@ import { keyBy, merge, isEqual } from 'lodash';
 /**
  * WordPress dependencies
  */
-import {
-	createReduxStore,
-	register,
-	select,
-	dispatch,
-	createRegistrySelector,
-} from '@wordpress/data';
+import { select, dispatch, createRegistrySelector } from '@wordpress/data';
 import { controls, apiFetch } from '@wordpress/data-controls';
 import { __, sprintf } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
  */
-import { createReducerFromActionMap } from '../shared/data/store-helpers';
+import {
+	createStore,
+	createReducerFromActionMap,
+} from '../shared/data/store-helpers';
 import { logEvent } from '../shared/helpers/log-event';
 import '../shared/data/api-fetch-preloaded-once';
 
@@ -279,7 +276,6 @@ const selectors = {
 	),
 	getEntities: ( { entities }, entity ) => entities[ entity ],
 	getConnectionStatus: ( { connected } ) => connected,
-	getLayout: ( { layout } ) => layout,
 	getNextProcess: ( { queue } ) => queue[ 0 ] || null,
 	getError: ( { error } ) => error,
 };
@@ -296,7 +292,6 @@ const resolvers = {
 			path: '/sensei-internal/v1/sensei-extensions?type=plugin',
 		} );
 
-		yield actions.setLayout( response.layout );
 		yield actions.setEntities( {
 			extensions: keyBy( response.extensions, 'product_slug' ),
 		} );
@@ -359,12 +354,10 @@ const reducer = {
 	DEFAULT: ( action, state ) => state,
 };
 
-export const EXTENSIONS_STORE = createReduxStore( 'sensei/extensions', {
+export const EXTENSIONS_STORE = createStore( 'sensei/extensions', {
 	reducer: createReducerFromActionMap( reducer, DEFAULT_STATE ),
 	actions,
 	selectors,
 	resolvers,
 	controls,
 } );
-
-register( EXTENSIONS_STORE );

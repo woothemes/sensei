@@ -72,13 +72,23 @@ class Sensei_Block_View_Results {
 			return '';
 		}
 
-		return '<div class="sensei-block-wrapper sensei-cta">' .
+		$results_link = Sensei_Course::get_view_results_link( $course_id );
+
+		parse_str( (string) wp_parse_url( $results_link, PHP_URL_QUERY ), $results_link_query_params );
+
+		$form_inputs = '';
+		foreach ( $results_link_query_params as $name => $value ) {
+			$form_inputs .= '<input type="hidden" name="' . esc_attr( $name ) . '" value="' . esc_attr( $value ) . '">';
+		}
+
+		return '<form method="get" action="' . esc_url( $results_link ) . '" class="sensei-block-wrapper sensei-cta">' .
+			$form_inputs .
 			preg_replace(
 				'/<a(.*)>/',
-				'<a href="' . esc_url( Sensei_Course::get_view_results_link( $course_id ) ) . '" $1>',
+				'<button type="submit" $1>',
 				$content,
 				1
 			) .
-		'</div>';
+		'</form>';
 	}
 }

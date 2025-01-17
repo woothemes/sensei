@@ -9,6 +9,7 @@ class Sensei_Course_List_Filter_Block_Test extends WP_UnitTestCase {
 	use Sensei_Course_Enrolment_Test_Helpers;
 	use Sensei_Course_Enrolment_Manual_Test_Helpers;
 	use Sensei_Test_Login_Helpers;
+	use Sensei_Test_Redirect_Helpers;
 
 	/**
 	 * Factory for setting up testing data.
@@ -59,10 +60,19 @@ class Sensei_Course_List_Filter_Block_Test extends WP_UnitTestCase {
 <!-- wp:post-title {"level":1,"isLink":true,"fontSize":"large"} /-->
 <!-- /wp:post-template --></div>
 <!-- /wp:query -->';
+
+	/**
+	 * Course archive
+	 *
+	 * @var Sensei_Unsupported_Theme_Handler_Course_Archive
+	 */
+	private $handler;
+
 	/**
 	 * Set up the test.
 	 */
 	public function setUp(): void {
+		Sensei()->setup_wizard->pages->create_pages();
 		global $wp_version;
 
 		$version = str_replace( '-src', '', $wp_version );
@@ -254,7 +264,11 @@ class Sensei_Course_List_Filter_Block_Test extends WP_UnitTestCase {
 		$this->login_as( $student );
 		$this->manuallyEnrolStudentInCourse( $student, $this->course1->ID );
 		$this->manuallyEnrolStudentInCourse( $student, $this->course2->ID );
+		$this->prevent_wp_redirect();
+
+		$this->expectException( Sensei_WP_Redirect_Exception::class );
 		Sensei_Utils::update_course_status( $student, $this->course2->ID, 'complete' );
+
 		$_GET['course-list-student-course-filter-13'] = 'completed';
 
 		/* ACT */
@@ -276,6 +290,9 @@ class Sensei_Course_List_Filter_Block_Test extends WP_UnitTestCase {
 		$this->manuallyEnrolStudentInCourse( $student, $this->course1->ID );
 		$this->manuallyEnrolStudentInCourse( $student, $this->course2->ID );
 		// Complete.
+		$this->prevent_wp_redirect();
+
+		$this->expectException( Sensei_WP_Redirect_Exception::class );
 		Sensei_Utils::update_course_status( $student, $this->course1->ID, 'complete' );
 
 		// Featured.
@@ -305,6 +322,10 @@ class Sensei_Course_List_Filter_Block_Test extends WP_UnitTestCase {
 		$this->manuallyEnrolStudentInCourse( $student, $this->course1->ID );
 		$this->manuallyEnrolStudentInCourse( $student, $this->course2->ID );
 		// Complete.
+
+		$this->prevent_wp_redirect();
+
+		$this->expectException( Sensei_WP_Redirect_Exception::class );
 		Sensei_Utils::update_course_status( $student, $this->course1->ID, 'complete' );
 
 		// Featured.
@@ -358,5 +379,105 @@ class Sensei_Course_List_Filter_Block_Test extends WP_UnitTestCase {
 		/* ASSERT */
 		$this->assertStringContainsString( $this->course1->post_title, $result );
 		$this->assertStringNotContainsString( $this->course2->post_title, $result );
+	}
+
+	public function testFilterForArchivePage_FeaturedCourseFilterIsSelected_UpdatesQueryWithProperParams() {
+		if ( $this->skip_tests ) {
+			$this->markTestSkipped( 'This test requires WordPress 5.8 or higher.' );
+		}
+
+		/* ARRANGE */
+		$this->handler = new Sensei_Unsupported_Theme_Handler_Course_Archive();
+		$this->handler->handle_request();
+
+		/* ACT */
+		$this->go_to(
+			add_query_arg(
+				[ 'course_filter' => 'featured' ],
+				get_permalink( (int) Sensei()->settings->get( 'course_page' ) )
+			)
+		);
+
+		/* ASSERT */
+		global $wp_query;
+		$this->assertEquals( '_course_featured', $wp_query->query_vars['meta_key'] );
+		$this->assertEquals( 'featured', $wp_query->query_vars['meta_value'] );
+	}
+
+	public function testFilterForArchivePage_CategoryCourseFilterIsSelected_UpdatesQueryWithProperParams() {
+		if ( $this->skip_tests ) {
+			$this->markTestSkipped( 'This test requires WordPress 5.8 or higher.' );
+		}
+
+		/* ARRANGE */
+		$this->handler = new Sensei_Unsupported_Theme_Handler_Course_Archive();
+		$this->handler->handle_request();
+
+		/* ACT */
+		$this->go_to(
+			add_query_arg(
+				[ 'course_category_filter' => 123 ],
+				get_permalink( (int) Sensei()->settings->get( 'course_page' ) )
+			)
+		);
+
+		/* ASSERT */
+		global $wp_query;
+		$this->assertIsArray( $wp_query->query_vars['tax_query'] );
+		$this->assertEquals( 'course-category', $wp_query->query_vars['tax_query'][0]['taxonomy'] );
+		$this->assertEquals( 123, $wp_query->query_vars['tax_query'][0]['terms'] );
+	}
+
+	public function testFilterForArchivePage_StudentCourseStatusFilterIsSelected_UpdatesQueryWithProperParams() {
+		if ( $this->skip_tests ) {
+			$this->markTestSkipped( 'This test requires WordPress 5.8 or higher.' );
+		}
+
+		/* ARRANGE */
+		$student = $this->factory->user->create();
+		$this->login_as( $student );
+
+		$this->manuallyEnrolStudentInCourse( $student, $this->course1->ID );
+
+		$this->handler = new Sensei_Unsupported_Theme_Handler_Course_Archive();
+		$this->handler->handle_request();
+
+		/* ACT */
+		$this->go_to(
+			add_query_arg(
+				[ 'student_course_filter' => 'active' ],
+				get_permalink( (int) Sensei()->settings->get( 'course_page' ) )
+			)
+		);
+
+		/* ASSERT */
+		global $wp_query;
+		$this->assertEquals( [ $this->course1->ID ], $wp_query->query_vars['post__in'] );
+	}
+
+	public function testCourseFilterBlock_WhenFiltersAreInherited_ChangesFilterParamKeysToGlobal() {
+		if ( $this->skip_tests ) {
+			$this->markTestSkipped( 'This test requires WordPress 5.8 or higher.' );
+		}
+		/* ARRANGE */
+		$student = $this->factory->user->create();
+		$this->login_as( $student );
+
+		$this->manuallyEnrolStudentInCourse( $student, $this->course1->ID );
+
+		/* ACT */
+		$old_result = do_blocks( $this->content );
+
+		$modified_content = str_replace( ',"sticky":""', ',"sticky":"","inherit":true', $this->content );
+
+		$result = do_blocks( $modified_content );
+
+		/* ASSERT */
+		$this->assertStringNotContainsString( 'course_filter', $old_result );
+		$this->assertStringNotContainsString( 'course_category_filter', $old_result );
+		$this->assertStringNotContainsString( 'student_course_filter', $old_result );
+		$this->assertStringContainsString( 'course_filter', $result );
+		$this->assertStringContainsString( 'course_category_filter', $result );
+		$this->assertStringContainsString( 'student_course_filter', $result );
 	}
 }

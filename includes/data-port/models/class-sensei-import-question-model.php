@@ -32,6 +32,13 @@ class Sensei_Import_Question_Model extends Sensei_Import_Model {
 	private $question_type;
 
 	/**
+	 * Cached processed multiple choice answers.
+	 *
+	 * @var array|null
+	 */
+	private $processed_multiple_choice_answers;
+
+	/**
 	 * Create a new question or update an existing question.
 	 *
 	 * @return true|WP_Error
@@ -345,7 +352,7 @@ class Sensei_Import_Question_Model extends Sensei_Import_Model {
 
 		$taxonomy_terms[ Sensei_Data_Port_Question_Schema::TAXONOMY_QUESTION_CATEGORY ] = [];
 
-		$category_list = Sensei_Data_Port_Utilities::split_list_safely( $this->get_value( Sensei_Data_Port_Question_Schema::COLUMN_CATEGORIES ), true );
+		$category_list = Sensei_Data_Port_Utilities::split_list_safely( (string) $this->get_value( Sensei_Data_Port_Question_Schema::COLUMN_CATEGORIES ), true );
 		if ( ! empty( $category_list ) ) {
 			foreach ( $category_list as $category ) {
 				$category_term = Sensei_Data_Port_Utilities::get_term( $category, Sensei_Data_Port_Question_Schema::TAXONOMY_QUESTION_CATEGORY );

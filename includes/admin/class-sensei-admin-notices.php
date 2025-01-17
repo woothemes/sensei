@@ -25,17 +25,17 @@ class Sensei_Admin_Notices {
 	const DISMISSED_NOTICES_USER_META    = 'sensei-dismissed-notices';
 	const ALL_SENSEI_SCREENS_PLACEHOLDER = 'sensei*';
 
-	const ALLOWED_HTML = [
-		'strong' => [],
-		'em'     => [],
-		'a'      => [
-			'target' => [],
-			'href'   => [],
-			'rel'    => [],
-		],
-	];
+	const ALLOWED_HTML = array(
+		'strong' => array(),
+		'em'     => array(),
+		'a'      => array(
+			'target' => array(),
+			'href'   => array(),
+			'rel'    => array(),
+		),
+	);
 
-	const ALLOWED_CAP_CHECKS = [
+	const ALLOWED_CAP_CHECKS = array(
 		'activate_plugins',
 		'install_plugins',
 		'manage_options',
@@ -44,9 +44,9 @@ class Sensei_Admin_Notices {
 		'delete_plugins',
 		'edit_posts',
 		'edit_others_posts',
-	];
+	);
 
-	const SENSEI_SCREEN_IDS = [
+	const SENSEI_SCREEN_IDS = array(
 		'edit-course',
 		'edit-lesson',
 		'edit-question',
@@ -63,9 +63,9 @@ class Sensei_Admin_Notices {
 		'sensei-lms_page_sensei_grading',
 		'sensei-lms_page_sensei-tools',
 		'admin_page_lesson-order',
-	];
+	);
 
-	const OTHER_ALLOWED_SCREEN_IDS = [
+	const OTHER_ALLOWED_SCREEN_IDS = array(
 		'dashboard',
 		'update-core',
 		'themes',
@@ -76,7 +76,7 @@ class Sensei_Admin_Notices {
 		'plugins-network',
 		'woocommerce_page_wc-admin',
 		'woocommerce_page_wc-addons',
-	];
+	);
 
 	/**
 	 * Instance of class.
@@ -112,8 +112,8 @@ class Sensei_Admin_Notices {
 			return;
 		}
 
-		add_filter( 'admin_notices', [ $this, 'add_admin_notices' ] );
-		add_action( 'wp_ajax_sensei_dismiss_notice', [ $this, 'handle_notice_dismiss' ] );
+		add_filter( 'admin_notices', array( $this, 'add_admin_notices' ) );
+		add_action( 'wp_ajax_sensei_dismiss_notice', array( $this, 'handle_notice_dismiss' ) );
 	}
 
 	/**
@@ -139,13 +139,13 @@ class Sensei_Admin_Notices {
 	 * @return array
 	 */
 	protected function get_notices( $max_age = null ) {
-		$transient_key = implode( '_', [ 'sensei_notices', Sensei()->version, determine_locale() ] );
+		$cur_time      = Sensei()->clock->now()->getTimestamp();
+		$transient_key = implode( '_', array( 'sensei_notices', Sensei()->version, determine_locale() ) );
 		$data          = get_transient( $transient_key );
 		$notices       = false;
-
 		// If the data is too old, fetch it again.
 		if ( $max_age && is_array( $data ) ) {
-			$age = time() - ( $data['_fetched'] ?? 0 );
+			$age = $cur_time - ( $data['_fetched'] ?? 0 );
 			if ( $age > $max_age ) {
 				$data = false;
 			}
@@ -170,17 +170,17 @@ class Sensei_Admin_Notices {
 				$notices_response_body = json_decode( wp_remote_retrieve_body( $notices_response ), true );
 				if ( $notices_response_body && isset( $notices_response_body['notices'] ) ) {
 					$notices     = $notices_response_body['notices'];
-					$cached_data = [
-						'_fetched' => time(),
+					$cached_data = array(
+						'_fetched' => $cur_time,
 						'notices'  => $notices,
-					];
+					);
 					set_transient( $transient_key, $cached_data, DAY_IN_SECONDS );
 				}
 			}
 		}
 
 		if ( ! $notices || ! is_array( $notices ) ) {
-			$notices = [];
+			$notices = array();
 		}
 
 		/**
@@ -190,7 +190,6 @@ class Sensei_Admin_Notices {
 		 *
 		 * @param {array}    $notices The admin notices.
 		 * @param {int|null} $max_age The max age (seconds) of the source data.
-		 *
 		 * @return {array} The admin notices.
 		 */
 		$notices = apply_filters( 'sensei_admin_notices', $notices, $max_age );
@@ -233,35 +232,33 @@ class Sensei_Admin_Notices {
 	 */
 	private function add_admin_notice( $notice_id, $notice ) {
 		if ( empty( $notice['actions'] ) || ! is_array( $notice['actions'] ) ) {
-			$notice['actions'] = [];
+			$notice['actions'] = array();
 		}
 
-		$notice_class = '';
-		if ( ! empty( $notice['style'] ) ) {
-			$notice_class = 'sensei-notice-' . $notice['style'];
-		}
+		$notice_classes   = array();
+		$notice_classes[] = 'sensei-notice--' . $notice['level'];
 
 		$is_dismissible       = $notice['dismissible'];
 		$notice_wrapper_extra = '';
 		if ( $is_dismissible ) {
 			wp_enqueue_script( 'sensei-dismiss-notices' );
-			$notice_class        .= ' is-dismissible';
+			$notice_classes[]     = 'is-dismissible';
 			$notice_wrapper_extra = sprintf( ' data-dismiss-action="sensei_dismiss_notice" data-dismiss-notice="%1$s" data-dismiss-nonce="%2$s"', esc_attr( $notice_id ), esc_attr( wp_create_nonce( self::DISMISS_NOTICE_NONCE_ACTION ) ) );
 		}
 		?>
-		<div class="notice sensei-notice <?php echo esc_attr( $notice_class ); ?>"
+		<div class="notice sensei-notice <?php echo esc_attr( implode( ' ', $notice_classes ) ); ?>"
 			<?php
 			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped above.
 			echo $notice_wrapper_extra;
 			?>
 		>
 			<?php
+			echo '<div class="sensei-notice__content">';
 			if ( ! empty( $notice['icon'] ) ) {
 				// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- Dynamic parts escaped in the function.
 				echo Sensei()->assets->get_icon( $notice['icon'], 'sensei-notice__icon' );
 			}
-			echo '<div class="sensei-notice__wrapper">';
-			echo '<div class="sensei-notice__content">';
+			echo '<div>';
 			if ( ! empty( $notice['heading'] ) ) {
 				echo '<div class="sensei-notice__heading">';
 				echo wp_kses( $notice['heading'], self::ALLOWED_HTML );
@@ -305,7 +302,7 @@ class Sensei_Admin_Notices {
 	 * @return array
 	 */
 	public function get_notices_to_display( $screen_id = null, $max_age = null ) {
-		$notices = [];
+		$notices = array();
 		foreach ( $this->get_notices( $max_age ) as $notice_id => $notice ) {
 			$notice = $this->normalize_notice( $notice );
 
@@ -335,7 +332,7 @@ class Sensei_Admin_Notices {
 	 */
 	private function check_notice_conditions( $notice, $screen_id = null ) {
 		if ( ! isset( $notice['conditions'] ) || ! is_array( $notice['conditions'] ) ) {
-			$notice['conditions'] = [];
+			$notice['conditions'] = array();
 		}
 
 		$has_screen_condition = false;
@@ -413,11 +410,23 @@ class Sensei_Admin_Notices {
 						break 2;
 					}
 					break;
+
+				case 'date_range':
+					if ( ! isset( $condition['start_date'] ) && ! isset( $condition['end_date'] ) ) {
+						break;
+					}
+
+					if ( ! $this->condition_check_date_range( $condition['start_date'] ?? null, $condition['end_date'] ?? null ) ) {
+						$can_see_notice = false;
+						break 2;
+					}
+
+					break;
 			}
 		}
 
 		// If no screens condition was set, only show this message on Sensei screens.
-		if ( $can_see_notice && ! $has_screen_condition && ! $this->condition_check_screen( [ self::ALL_SENSEI_SCREENS_PLACEHOLDER ], $screen_id ) ) {
+		if ( $can_see_notice && ! $has_screen_condition && ! $this->condition_check_screen( array( self::ALL_SENSEI_SCREENS_PLACEHOLDER ), $screen_id ) ) {
 			$can_see_notice = false;
 		}
 
@@ -430,7 +439,7 @@ class Sensei_Admin_Notices {
 	 * @param string $min_version Minimum PHP version.
 	 * @return bool
 	 */
-	private function condition_check_min_php( string $min_version ) : bool {
+	private function condition_check_min_php( string $min_version ): bool {
 		return version_compare( phpversion(), $min_version, '>=' );
 	}
 
@@ -440,7 +449,7 @@ class Sensei_Admin_Notices {
 	 * @param string $min_version Minimum WP version.
 	 * @return bool
 	 */
-	private function condition_check_min_wp( string $min_version ) : bool {
+	private function condition_check_min_wp( string $min_version ): bool {
 		return version_compare( get_bloginfo( 'version' ), $min_version, '>=' );
 	}
 
@@ -450,7 +459,7 @@ class Sensei_Admin_Notices {
 	 * @param array $allowed_caps Array of capabilities that the user must have.
 	 * @return bool
 	 */
-	private function condition_check_capabilities( array $allowed_caps ) : bool {
+	private function condition_check_capabilities( array $allowed_caps ): bool {
 		$condition_pass = true;
 
 		foreach ( $allowed_caps as $cap ) {
@@ -475,12 +484,23 @@ class Sensei_Admin_Notices {
 	 *
 	 * @return bool
 	 */
-	private function condition_check_screen( array $allowed_screens, $screen_id = null ) : bool {
-		$allowed_screen_ids = array_merge( self::SENSEI_SCREEN_IDS, self::OTHER_ALLOWED_SCREEN_IDS );
+	private function condition_check_screen( array $allowed_screens, $screen_id = null ): bool {
+		/**
+		 * Filter the array of screen IDs that are part of Sensei, and where we should show Sensei notices on.
+		 *
+		 * @since 4.12.0
+		 *
+		 * @hook sensei_notices_screen_ids
+		 *
+		 * @param {array} Array of Screen IDs that are part of Sensei.
+		 * @return {array} Updated array of screen IDs that are part of Sensei.
+		 */
+		$sensei_screen_ids  = apply_filters( 'sensei_notices_screen_ids', self::SENSEI_SCREEN_IDS );
+		$allowed_screen_ids = array_merge( $sensei_screen_ids, self::OTHER_ALLOWED_SCREEN_IDS );
 		$condition_pass     = true;
 
 		if ( in_array( 'sensei*', $allowed_screens, true ) ) {
-			$allowed_screens = array_merge( $allowed_screens, self::SENSEI_SCREEN_IDS );
+			$allowed_screens = array_merge( $allowed_screens, $sensei_screen_ids );
 		}
 
 		$screens   = array_intersect( $allowed_screen_ids, $allowed_screens );
@@ -496,11 +516,13 @@ class Sensei_Admin_Notices {
 	/**
 	 * Check an "installed since" condition
 	 *
+	 * @since 4.10.0
+	 *
 	 * @param int|string $installed_since Time to check the installation time for.
 	 *
 	 * @return bool
 	 */
-	private function condition_installed_since( $installed_since ) : bool {
+	private function condition_installed_since( $installed_since ): bool {
 		$installed_at = get_option( 'sensei_installed_at' );
 		if ( $installed_since && is_string( $installed_since ) ) {
 			$installed_since = strtotime( '-' . $installed_since );
@@ -512,13 +534,46 @@ class Sensei_Admin_Notices {
 	}
 
 	/**
+	 * Check a date range condition.
+	 *
+	 * @since 4.14.0
+	 *
+	 * @param ?string $start_date_str Start date.
+	 * @param ?string $end_date_str   End date.
+	 *
+	 * @return bool
+	 */
+	private function condition_check_date_range( ?string $start_date_str, ?string $end_date_str ): bool {
+		$now = new DateTime();
+
+		// Defaults to WP timezone, but can be overridden by passing string that includes timezone.
+		$start_date = $start_date_str ? date_create( $start_date_str, wp_timezone() ) : null;
+		$end_date   = $end_date_str ? date_create( $end_date_str, wp_timezone() ) : null;
+
+		// If the passed date strings are invalid, don't show the notice.
+		if ( false === $start_date || false === $end_date ) {
+			return false;
+		}
+
+		if ( $start_date && $now < $start_date ) {
+			return false;
+		}
+
+		if ( $end_date && $now > $end_date ) {
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
 	 * Check a plugin condition.
 	 *
 	 * @param array $allowed_plugins Array of the plugins to check for.
 	 *
 	 * @return bool
 	 */
-	private function condition_check_plugin( array $allowed_plugins ) : bool {
+	private function condition_check_plugin( array $allowed_plugins ): bool {
 		$condition_pass = true;
 		$active_plugins = $this->get_active_plugins();
 
@@ -591,7 +646,7 @@ class Sensei_Admin_Notices {
 	 */
 	private function normalize_notice( $notice ) {
 		if ( ! isset( $notice['conditions'] ) || ! is_array( $notice['conditions'] ) ) {
-			$notice['conditions'] = [];
+			$notice['conditions'] = array();
 		}
 
 		if ( ! isset( $notice['type'] ) ) {
@@ -600,10 +655,15 @@ class Sensei_Admin_Notices {
 
 		if ( 'site-wide' === $notice['type'] ) {
 			// Only admins can see and manage site-wide notifications.
-			$notice['conditions'][] = [
+			$notice['conditions'][] = array(
 				'type'         => 'user_cap',
-				'capabilities' => [ 'manage_options' ],
-			];
+				'capabilities' => array( 'manage_options' ),
+			);
+		}
+
+		$notice_levels = array( 'error', 'warning', 'success', 'info' );
+		if ( ! isset( $notice['level'] ) || ! in_array( $notice['level'], $notice_levels, true ) ) {
+			$notice['level'] = 'info';
 		}
 
 		if ( ! isset( $notice['dismissible'] ) ) {
@@ -638,10 +698,10 @@ class Sensei_Admin_Notices {
 		if ( $is_user_notification ) {
 			$dismissed_notices = get_user_meta( get_current_user_id(), self::DISMISSED_NOTICES_USER_META, true );
 			if ( ! $dismissed_notices ) {
-				$dismissed_notices = [];
+				$dismissed_notices = array();
 			}
 		} else {
-			$dismissed_notices = get_option( self::DISMISSED_NOTICES_OPTION, [] );
+			$dismissed_notices = get_option( self::DISMISSED_NOTICES_OPTION, array() );
 		}
 
 		return $dismissed_notices;

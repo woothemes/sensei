@@ -3,6 +3,9 @@
  */
 import { select, dispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
+import { store as blockEditorStore } from '@wordpress/block-editor';
+import { store as editPostStore } from '@wordpress/edit-post';
+import { store as editorStore } from '@wordpress/editor';
 
 /**
  * Internal dependencies
@@ -39,9 +42,19 @@ const metaboxReplacements = {
 };
 
 // WordPress data.
-const blockEditorSelector = select( 'core/block-editor' );
-const editPostSelector = select( 'core/edit-post' );
-const editPostDispatcher = dispatch( 'core/edit-post' );
+const blockEditorSelector = select( blockEditorStore );
+const editorSelector = select( editorStore );
+const editorDispatcher = dispatch( editorStore );
+const editPostSelector = select( editPostStore );
+const editPostDispatcher = dispatch( editPostStore );
+
+const isEditorPanelEnabled = editorSelector.isEditorPanelEnabled
+	? editorSelector.isEditorPanelEnabled
+	: editPostSelector.isEditorPanelEnabled;
+
+const toggleEditorPanelEnabled = editorDispatcher.toggleEditorPanelEnabled
+	? editorDispatcher.toggleEditorPanelEnabled
+	: editPostDispatcher.toggleEditorPanelEnabled;
 
 /**
  * Start blocks toggling control.
@@ -86,11 +99,8 @@ export const startBlocksTogglingControl = ( postType ) => {
 		Object.entries( metaboxReplacements[ postType ] ).forEach(
 			( [ metaboxName, blockDeps ] ) => {
 				const enable = ! hasSomeBlocks( blockDeps );
-				if (
-					enable !==
-					editPostSelector.isEditorPanelEnabled( metaboxName )
-				) {
-					editPostDispatcher.toggleEditorPanelEnabled( metaboxName );
+				if ( enable !== isEditorPanelEnabled( metaboxName ) ) {
+					toggleEditorPanelEnabled( metaboxName );
 				}
 			}
 		);
@@ -99,7 +109,7 @@ export const startBlocksTogglingControl = ( postType ) => {
 		document
 			.querySelectorAll( '#module_course_mb input' )
 			.forEach( ( input ) => {
-				input.disabled = ! editPostSelector.isEditorPanelEnabled(
+				input.disabled = ! isEditorPanelEnabled(
 					'meta-box-module_course_mb'
 				);
 			} );
@@ -108,7 +118,7 @@ export const startBlocksTogglingControl = ( postType ) => {
 		document
 			.querySelectorAll( '#lesson-info input, #lesson-info select' )
 			.forEach( ( input ) => {
-				input.disabled = ! editPostSelector.isEditorPanelEnabled(
+				input.disabled = ! isEditorPanelEnabled(
 					'meta-box-lesson-info'
 				);
 			} );

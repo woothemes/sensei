@@ -4,7 +4,7 @@
 import path from 'path';
 import type { APIRequestContext, Browser, Page } from '@playwright/test';
 import { User } from './api';
-import { ADMIN } from '@e2e/factories/users';
+import { ADMIN, API, EDITOR, STUDENT, TEACHER } from '@e2e/factories/users';
 
 const CONTEXT_DIR = path.resolve( __dirname, '../contexts' );
 
@@ -19,20 +19,24 @@ const CONTEXT_DIR = path.resolve( __dirname, '../contexts' );
 export const getContextByRole = ( userRole: string ): string =>
 	path.resolve( CONTEXT_DIR, `${ userRole }.json` );
 
+export const adminApiRole = (): Record< string, string > => ( {
+	storageState: getContextByRole( API.username ),
+} );
+
 export const studentRole = (): Record< string, string > => ( {
-	storageState: getContextByRole( 'student' ),
+	storageState: getContextByRole( STUDENT.username ),
 } );
 
 export const teacherRole = (): Record< string, string > => ( {
-	storageState: getContextByRole( 'teacher' ),
+	storageState: getContextByRole( TEACHER.username ),
 } );
 
 export const adminRole = (): Record< string, string > => ( {
-	storageState: getContextByRole( 'admin' ),
+	storageState: getContextByRole( ADMIN.username ),
 } );
 
 export const editorRole = (): Record< string, string > => ( {
-	storageState: getContextByRole( 'editor' ),
+	storageState: getContextByRole( EDITOR.username ),
 } );
 
 export const useAdminContext = async (
@@ -56,10 +60,18 @@ export const createAdminContext = async (
 };
 
 export const login = async ( page: Page, user: User ): Promise< Page > => {
-	await page.goto( 'http://localhost:8889/wp-login.php' );
-	await page.locator( 'input[name="log"]' ).fill( user.username );
-	await page.locator( 'input[name="pwd"]' ).fill( user.password );
-	await page.locator( 'text=Log In' ).click();
+	const response = await page.request.post(
+		'http://localhost:8889/wp-login.php',
+		{
+			failOnStatusCode: true,
+			form: {
+				log: user.username,
+				pwd: user.password,
+			},
+		}
+	);
+
+	await response.dispose();
 
 	return page;
 };

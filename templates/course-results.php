@@ -21,6 +21,8 @@ get_sensei_header();
  *
  * @since 1.9.0
  *
+ * @hook sensei_course_results_content_before
+ *
  * @hooked Sensei_Course_Results::deprecate_sensei_course_results_content_hook() - 20
  */
 do_action( 'sensei_course_results_content_before' );
@@ -33,14 +35,15 @@ $course = get_page_by_path( $wp_query->query_vars['course_results'], OBJECT, 'co
 
 <div class="course course-results">
 
-
 		<?php
 		/**
 		 * This hook fire inside learner-profile.php inside directly before the content
 		 *
 		 * @since 1.9.0
 		 *
-		 * @param integer $course_id
+		 * @hook sensei_course_results_content_inside_before
+		 *
+		 * @param {int} $course_id The course ID.
 		 */
 		do_action( 'sensei_course_results_content_inside_before', $course->ID );
 		?>
@@ -61,13 +64,14 @@ $course = get_page_by_path( $wp_query->query_vars['course_results'], OBJECT, 'co
 			 *
 			 * @since 1.9.0
 			 *
-			 * @param integer $course_id
+			 * @hook sensei_course_results_content_inside_before_lessons
+			 *
+			 * @param {int} $course_id The course ID.
 			 *
 			 * @hooked Sensei_Course_Results::course_info() - 20
 			 */
 			do_action( 'sensei_course_results_content_inside_before_lessons', $course->ID );
 			?>
-
 
 			<section class="course-results-lessons">
 				<?php
@@ -87,7 +91,9 @@ $course = get_page_by_path( $wp_query->query_vars['course_results'], OBJECT, 'co
 		 *
 		 * @since 1.9.0
 		 *
-		 * @param integer $course_id
+		 * @hook sensei_course_results_content_inside_after
+		 *
+		 * @param {int} $course_id The course ID.
 		 *
 		 * @hooked Sensei()->course_results->course_info - 20
 		 */
@@ -101,6 +107,8 @@ $course = get_page_by_path( $wp_query->query_vars['course_results'], OBJECT, 'co
  * This hook fire inside course-results.php before the content
  *
  * @since 1.9.0
+ *
+ * @hook sensei_course_results_content_after
  */
 do_action( 'sensei_course_results_content_after' );
 

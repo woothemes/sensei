@@ -132,7 +132,7 @@ class Sensei_Course_Component_Widget extends WP_Widget {
 		$instance = $old_instance;
 
 		/* Strip tags for title and name to remove HTML (important for text inputs). */
-		$instance['title'] = strip_tags( $new_instance['title'] );
+		$instance['title'] = wp_strip_all_tags( $new_instance['title'] );
 
 		/* The select box is returning a text value, so we escape it. */
 		$instance['component'] = esc_attr( $new_instance['component'] );
@@ -221,6 +221,8 @@ class Sensei_Course_Component_Widget extends WP_Widget {
 			 */
 			$courses = apply_filters( 'sensei_widget_course_component_get_courses_' . $component, array(), $instance );
 		}
+
+		$courses = is_array( $courses ) ? $courses : [];
 
 		// course_query() is buggy, it doesn't honour the 1st arg if includes are provided, so instead slice the includes.
 		if ( ! empty( $instance['limit'] ) && intval( $instance['limit'] ) >= 1 && intval( $instance['limit'] ) < count( $courses ) ) {
@@ -331,7 +333,7 @@ class Sensei_Course_Component_Widget extends WP_Widget {
 			}
 
 			if ( 'activecourses' == esc_attr( $this->instance['component'] ) || 'completedcourses' == esc_attr( $this->instance['component'] ) ) {
-				$my_account_page_id = intval( Sensei()->settings->settings['my_course_page'] );
+				$my_account_page_id = Sensei()->settings->get_my_courses_page_id();
 				echo '<li class="my-account fix"><a href="' . esc_url( get_permalink( $my_account_page_id ) ) . '">'
 					 . esc_html__( 'My Courses', 'sensei-lms' )
 					 . '<span class="meta-nav"></span></a></li>';

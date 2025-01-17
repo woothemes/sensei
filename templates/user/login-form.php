@@ -7,7 +7,7 @@
  * @author      Automattic
  * @package     Sensei
  * @category    Templates
- * @version     2.0.0
+ * @version     4.18.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -15,9 +15,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- *  Executes before the Sensei Login form markup begins.
+ * Executes before the Sensei Login form markup begins.
  *
  * @since 1.9.0
+ *
+ * @hook sensei_login_form_before
  */
 do_action( 'sensei_login_form_before' );
 ?>
@@ -28,18 +30,20 @@ do_action( 'sensei_login_form_before' );
 
 	<?php
 	/**
-	 *  Executes inside the sensei login form before all the default fields.
+	 * Executes inside the sensei login form before all the default fields.
 	 *
 	 * @since 1.6.2
+	 *
+	 * @hook sensei_login_form_inside_before
 	 */
-		do_action( 'sensei_login_form_inside_before' );
+	do_action( 'sensei_login_form_inside_before' );
 	?>
 
 	<p class="sensei-login-username form-row form-row-wide">
 
 				<label for="sensei_user_login"><?php esc_html_e( 'Username or Email', 'sensei-lms' ); ?> </label>
 
-				<input type="text" name="log" id="sensei_user_login" class="input" value="" size="20">
+				<input type="text" name="log" id="sensei_user_login" class="input input-text" value="" size="20">
 
 	</p>
 
@@ -47,24 +51,25 @@ do_action( 'sensei_login_form_before' );
 
 				<label for="sensei_user_pass"> <?php esc_html_e( 'Password', 'sensei-lms' ); ?>  </label>
 
-				<input type="password" name="pwd" id="sensei_user_pass" class="input txt text" value="" size="20">
+				<input type="password" name="pwd" id="sensei_user_pass" class="input txt text input-text" value="" size="20">
 
 	</p>
 
 	<?php
 	/**
-	 *  Executes inside the sensei login form after the password field.
-	 *
-	 *  You can use the action to add extra form login fields.
+	 * Executes inside the sensei login form after the password field.
+	 * You can use the action to add extra form login fields.
 	 *
 	 * @since 1.6.2
+	 *
+	 * @hook sensei_login_form_inside_after_password_field
 	 */
-		do_action( 'sensei_login_form_inside_after_password_field' );
+	do_action( 'sensei_login_form_inside_after_password_field' );
 	?>
 
 	<p class='sensei-login-submit'>
 
-		<input type="submit" class="button" name="login" value="<?php esc_attr_e( 'Login', 'sensei-lms' ); ?>" />
+		<input type="submit" class="button wp-element-button" name="login" value="<?php esc_attr_e( 'Login', 'sensei-lms' ); ?>" />
 
 		<a href="<?php echo esc_url( wp_lostpassword_url() ); ?>"><?php esc_html_e( 'Lost your password?', 'sensei-lms' ); ?></a>
 
@@ -82,11 +87,13 @@ do_action( 'sensei_login_form_before' );
 
 	<?php
 	/**
-	 *  Executes inside the sensei login form after all the default fields.
+	 * Executes inside the sensei login form after all the default fields.
 	 *
 	 * @since 1.6.2
+	 *
+	 * @hook sensei_login_form_inside_after
 	 */
-		do_action( 'sensei_login_form_inside_after' );
+	do_action( 'sensei_login_form_inside_after' );
 	?>
 
 	<?php wp_nonce_field( 'sensei-login' ); ?>
@@ -101,9 +108,11 @@ do_action( 'sensei_login_form_before' );
 
 <?php
 /**
- *  Executes after the Login form markup closes.
+ * Executes after the Login form markup closes.
  *
- *  @since 1.9.0
+ * @since 1.9.0
+ *
+ * @hook sensei_login_form_after
  */
 do_action( 'sensei_login_form_after' );
 ?>

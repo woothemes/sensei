@@ -13,20 +13,11 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Sensei_Learner_Profiles {
 	/**
-	 * @var string
-	 */
-	private $profile_url_base;
-
-	/**
 	 * Constructor.
 	 *
 	 * @since  1.4.0
 	 */
 	public function __construct() {
-
-		// Setup learner profile URL base
-		$this->profile_url_base = apply_filters( 'sensei_learner_profiles_url_base', __( 'learner', 'sensei-lms' ) );
-
 		// Setup permalink structure for learner profiles
 		add_action( 'init', array( $this, 'setup_permastruct' ) );
 		add_filter( 'wp_title', array( $this, 'page_title' ), 10, 2 );
@@ -39,6 +30,15 @@ class Sensei_Learner_Profiles {
 
 		// Add class to body tag
 		add_filter( 'body_class', array( $this, 'learner_profile_body_class' ), 10, 1 );
+	}
+
+	/**
+	 * Get the profile URL base.
+	 *
+	 * @return string
+	 */
+	private function get_profile_url_base() {
+		return (string) apply_filters( 'sensei_learner_profiles_url_base', __( 'learner', 'sensei-lms' ) );
 	}
 
 	/**
@@ -68,7 +68,7 @@ class Sensei_Learner_Profiles {
 		if ( isset( Sensei()->settings->settings['learner_profile_enable'] )
 			&& Sensei()->settings->settings['learner_profile_enable'] ) {
 
-			add_rewrite_rule( '^' . $this->profile_url_base . '/([^/]*)/?', 'index.php?learner_profile=$matches[1]', 'top' );
+			add_rewrite_rule( '^' . $this->get_profile_url_base() . '/([^/]*)/?', 'index.php?learner_profile=$matches[1]', 'top' );
 			add_rewrite_tag( '%learner_profile%', '([^&]+)' );
 
 		}
@@ -92,8 +92,19 @@ class Sensei_Learner_Profiles {
 
 			$name = Sensei_Learner::get_full_name( $learner_user->ID );
 
-			// translators: Placeholder is the name of the student.
-			$title = apply_filters( 'sensei_learner_profile_courses_heading', sprintf( __( 'Courses %s is taking', 'sensei-lms' ), $name ) ) . ' ' . $sep . ' ';
+			/**
+			 * Filter the title for the learner profile page.
+			 *
+			 * @hook sensei_learner_profile_courses_heading
+			 *
+			 * @param {string} $title The title.
+			 * @return {string} The filtered title.
+			 */
+			$title = apply_filters(
+				'sensei_learner_profile_courses_heading',
+				// translators: Placeholder is the name of the student.
+				sprintf( __( 'Courses %s is taking', 'sensei-lms' ), $name )
+			) . ' ' . $sep . ' ';
 		}
 		return $title;
 	}
@@ -119,7 +130,7 @@ class Sensei_Learner_Profiles {
 
 		if ( $user ) {
 			if ( get_option( 'permalink_structure' ) ) {
-				$permalink = trailingslashit( get_home_url() ) . $this->profile_url_base . '/' . $user->user_nicename;
+				$permalink = trailingslashit( get_home_url() ) . $this->get_profile_url_base() . '/' . $user->user_nicename;
 			} else {
 				$permalink = trailingslashit( get_home_url() ) . '?learner_profile=' . $user->user_nicename;
 			}
@@ -129,6 +140,12 @@ class Sensei_Learner_Profiles {
 		 * This allows filtering of the Learner Profile permalinks.
 		 *
 		 * @since 1.9.13
+		 *
+		 * @hook sensei_learner_profile_permalink
+		 *
+		 * @param {string} $permalink The profile permalink.
+		 * @param {object} $user      The user object.
+		 * @return {string} The filtered permalink.
 		 */
 		return apply_filters( 'sensei_learner_profile_permalink', $permalink, $user );
 	}
@@ -146,9 +163,31 @@ class Sensei_Learner_Profiles {
 		} else {
 			$name = $user->display_name;
 		}
+
+		/**
+		 * Filter the name for the heading in the courses section of the learner profile.
+		 *
+		 * @hook sensei_learner_profile_courses_heading_name
+		 *
+		 * @param {string} $name The name.
+		 * @return {string} The filtered name.
+		 */
 		$name = apply_filters( 'sensei_learner_profile_courses_heading_name', $name );
-		// translators: Placeholder is the name of the student.
-		echo '<h2>' . wp_kses_post( apply_filters( 'sensei_learner_profile_courses_heading', sprintf( __( 'Courses %s is taking', 'sensei-lms' ), $name ) ) ) . '</h2>';
+
+		/**
+		 * Filter the title for the learner profile page.
+		 *
+		 * @hook sensei_learner_profile_courses_heading
+		 *
+		 * @param {string} $title The title.
+		 * @return {string} The filtered title.
+		 */
+		$title = apply_filters(
+			'sensei_learner_profile_courses_heading',
+			// translators: Placeholder is the name of the student.
+			sprintf( __( 'Courses %s is taking', 'sensei-lms' ), $name )
+		);
+		echo '<h2>' . wp_kses_post( $title ) . '</h2>';
 	}
 
 	/**
@@ -162,9 +201,13 @@ class Sensei_Learner_Profiles {
 
 		/**
 		 * This hooke fires inside the Sensei_Learner_Profiles::user_info function.
-		 * just before the htmls is generated.
+		 * Just before the HTML is generated.
 		 *
 		 * @since 1.0.0
+		 *
+		 * @hook sensei_learner_profile_info
+		 *
+		 * @param {object} $user The user object.
 		 */
 		do_action( 'sensei_learner_profile_info', $user );
 
@@ -174,7 +217,11 @@ class Sensei_Learner_Profiles {
 		 *
 		 * @since 1.0.0
 		 *
-		 * @param false|string `<img>` $user_avatar
+		 * @hook sensei_learner_profile_info_avatar
+		 *
+		 * @param {false|string} $user_avatar The user avatar.
+		 * @param {int}          $user_id     The user ID.
+		 * @return {false|string} The filtered avatar.
 		 */
 		$learner_avatar = apply_filters( 'sensei_learner_profile_info_avatar', get_avatar( $user->ID, 120 ), $user->ID );
 
@@ -184,8 +231,11 @@ class Sensei_Learner_Profiles {
 		 *
 		 * @since 1.0.0
 		 *
-		 * @param string $user_display_name
-		 * @param string $user_id
+		 * @hook sensei_learner_profile_info_name
+		 *
+		 * @param {string} $user_display_name The user display name.
+		 * @param {string} $user_id           The user ID.
+		 * @return {string} The filtered display name.
 		 */
 		$learner_name = apply_filters( 'sensei_learner_profile_info_name', $user->display_name, $user->ID );
 
@@ -196,8 +246,11 @@ class Sensei_Learner_Profiles {
 		 *
 		 * @since 1.0.0
 		 *
-		 * @param string $user_description
-		 * @param string $user_id
+		 * @hook sensei_learner_profile_info_bio
+		 *
+		 * @param {string} $user_description The user description.
+		 * @param {string} $user_id          The user ID.
+		 * @return {string} The filtered description.
 		 */
 		$learner_bio = apply_filters( 'sensei_learner_profile_info_bio', $user->description, $user->ID );
 		?>

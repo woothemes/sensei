@@ -27,6 +27,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	 * irrespective of irrespective the course has any modules or not.
 	 *
 	 * @since 1.8.0
+	 *
+	 * @hook sensei_single_course_modules_before
 	 */
 	do_action( 'sensei_single_course_modules_before' );
 
@@ -53,9 +55,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 				 * @since 1.9.0
 				 * @since 1.9.7 Added the module ID to the parameters.
 				 *
-				 * @hooked Sensei()->modules->course_modules_title - 20
+				 * @hook sensei_single_course_modules_inside_before
 				 *
-				 * @param int sensei_get_the_module_id() Module ID.
+				 * @param {int} $module_id Module ID.
+				 *
+				 * @hooked Sensei()->modules->course_modules_title - 20
 				 */
 				do_action( 'sensei_single_course_modules_inside_before', sensei_get_the_module_id() );
 
@@ -151,7 +155,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 				 * @since 1.9.0
 				 * @since 1.9.7 Added the module ID to the parameters.
 				 *
-				 * @param int sensei_get_the_module_id() Module ID.
+				 * @hook sensei_single_course_modules_inside_after
+				 *
+				 * @param {int} $module_id Module ID.
 				 */
 				do_action( 'sensei_single_course_modules_inside_after', sensei_get_the_module_id() );
 
@@ -173,5 +179,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * It runs after the modules are shown. This hook fires on the single course page,but only if the course has modules.
  *
  * @since 1.8.0
+ *
+ * @hook sensei_single_course_modules_after
  */
 do_action( 'sensei_single_course_modules_after' );

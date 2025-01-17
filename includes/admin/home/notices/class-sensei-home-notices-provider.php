@@ -47,7 +47,13 @@ class Sensei_Home_Notices_Provider {
 	 */
 	private function local_only( $max_age = null ) : array {
 		/**
-		 * This filter is documented in `class-sensei-admin-notices.php`.
+		 * Filters the admin notices.
+		 *
+		 * @hook sensei_admin_notices
+		 *
+		 * @param {array}    $notices The admin notices.
+		 * @param {int|null} $max_age The max age (seconds) of the source data.
+		 * @return {array} The admin notices.
 		 */
 		$notices = apply_filters( 'sensei_admin_notices', [], $max_age );
 
@@ -96,14 +102,8 @@ class Sensei_Home_Notices_Provider {
 	 * @return array
 	 */
 	private function format_item( $notice ) {
-		$level = 'info';
-		if ( array_key_exists( 'level', $notice ) ) {
-			$level = $notice['level'];
-		} elseif ( array_key_exists( 'style', $notice ) ) {
-			$level = $notice['style'];
-		}
 		return [
-			'level'       => $level,
+			'level'       => $notice['level'] ?? 'info',
 			'heading'     => $notice['heading'] ?? null,
 			'message'     => $notice['message'],
 			'info_link'   => $notice['info_link'] ?? null,

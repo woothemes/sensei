@@ -53,13 +53,13 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 		/**
 		 * Modify or add REST API schema for a question type.
 		 *
-		 * @since  3.9.0
-		 * @hook   sensei_rest_api_schema_question_type
+		 * @since 3.9.0
 		 *
-		 * @param  {Array}  $schema Schema for a single question.
-		 * @param  {string} $type   Question type.
+		 * @hook sensei_rest_api_schema_question_type
 		 *
-		 * @return {array}
+		 * @param {Array}  $schema Schema for a single question.
+		 * @param {string} $type   Question type.
+		 * @return {array} Filtered schema.
 		 */
 		return apply_filters( 'sensei_rest_api_schema_question_type', $schema, $type );
 	}
@@ -109,7 +109,7 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 		$post_title = sprintf( esc_html__( '%1$s Question(s) from %2$s', 'sensei-lms' ), $question_number, $question_category->name );
 
 		$post_args = [
-			'ID'          => $question_id,
+			'ID'          => (int) $question_id,
 			'post_title'  => $post_title,
 			'post_status' => 'publish',
 			'post_type'   => 'multiple_question',
@@ -119,12 +119,13 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 			],
 		];
 
-		$result = wp_insert_post( $post_args );
+		$result = $question_id ? wp_update_post( $post_args ) : wp_insert_post( $post_args );
 
 		/**
 		 * This action is triggered when a category question is created or updated by the lesson quiz REST endpoint.
 		 *
 		 * @since 3.9.0
+		 *
 		 * @hook  sensei_rest_api_category_question_saved
 		 *
 		 * @param {int|WP_Error} $result   Result of wp_insert_post. Post ID on success or WP_Error on failure.
@@ -174,8 +175,8 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 		$is_new = null === $question_id;
 
 		$post_args = [
-			'ID'         => $question_id,
-			'post_title' => $question['title'],
+			'ID'         => (int) $question_id,
+			'post_title' => (string) $question['title'],
 			'post_type'  => 'question',
 			'meta_input' => $this->get_question_meta( $question ),
 			'tax_input'  => [
@@ -184,7 +185,7 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 		];
 
 		if ( $status ) {
-			$post_args['post_status'] = $status;
+			$post_args['post_status'] = (string) $status;
 		}
 
 		// Force publish the question if it's part of a quiz.
@@ -193,10 +194,12 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 		}
 
 		if ( isset( $question['description'] ) ) {
-			$post_args['post_content'] = $question['description'];
+			$post_args['post_content'] = (string) $question['description'];
+		} else {
+			$post_args['post_content'] = '';
 		}
 
-		$result = wp_insert_post( $post_args );
+		$result = $question_id ? wp_update_post( $post_args ) : wp_insert_post( $post_args );
 
 		if ( ! $is_new && ! is_wp_error( $result ) ) {
 			$this->migrate_non_editor_question( $result, $question['type'] );
@@ -206,6 +209,7 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 		 * This action is triggered when a question is created or updated by the lesson quiz REST endpoint.
 		 *
 		 * @since 3.9.0
+		 *
 		 * @hook  sensei_rest_api_question_saved
 		 *
 		 * @param {int|WP_Error} $result        Result of wp_insert_post. Post ID on success or WP_Error on failure.
@@ -287,6 +291,10 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 			$meta['_question_grade'] = $options['grade'];
 		}
 
+		if ( isset( $options['hideAnswerFeedback'] ) ) {
+			$meta['_hide_answer_feedback'] = $options['hideAnswerFeedback'];
+		}
+
 		// Common meta.
 		switch ( $question['type'] ) {
 			case 'multiple-choice':
@@ -349,7 +357,7 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 			$meta['_answer_order']           = [];
 
 			foreach ( $question['answer']['answers'] ?? [] as $option ) {
-				if ( empty( $option['label'] ) ) {
+				if ( ! isset( $option['label'] ) || '' === $option['label'] ) {
 					continue;
 				}
 
@@ -433,7 +441,7 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 	 *
 	 * @return array
 	 */
-	private function get_category_question( WP_Post $question ) : array {
+	private function get_category_question( WP_Post $question ): array {
 		$category = (int) get_post_meta( $question->ID, 'category', true );
 		$number   = (int) get_post_meta( $question->ID, 'number', true );
 
@@ -462,7 +470,8 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 			'title'       => 'auto-draft' !== $question->post_status ? $question->post_title : '',
 			'description' => $question->post_content,
 			'options'     => [
-				'grade' => Sensei()->question->get_question_grade( $question->ID ),
+				'grade'              => Sensei()->question->get_question_grade( $question->ID ),
+				'hideAnswerFeedback' => get_post_meta( $question->ID, '_hide_answer_feedback', true ),
 			],
 			'type'        => Sensei()->question->get_question_type( $question->ID ),
 			'shared'      => ! empty( $question_meta['_quiz_id'] ) && count( $question_meta['_quiz_id'] ) > 1,
@@ -489,7 +498,7 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 	 *
 	 * @return array Media info. It includes the type, id, url and title.
 	 */
-	private function get_question_media( int $question_media_id, int $question_id ) : array {
+	private function get_question_media( int $question_media_id, int $question_id ): array {
 		$question_media = [];
 		$mimetype       = get_post_mime_type( $question_media_id );
 		$attachment     = get_post( $question_media_id );
@@ -499,7 +508,15 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 
 			if ( ! empty( $mimetype_array[0] ) ) {
 				if ( 'image' === $mimetype_array[0] ) {
-					// This filter is documented in class-sensei-question.php.
+					/**
+					 * Filter the size of the question image.
+					 *
+					 * @hook sensei_question_image_size
+					 *
+					 * @param {string} $size        Image size.
+					 * @param {int}    $question_id Question ID.
+					 * @return {string} Image size.
+					 */
 					$image_size            = apply_filters( 'sensei_question_image_size', 'medium', $question_id );
 					$attachment_src        = wp_get_attachment_image_src( $question_media_id, $image_size );
 					$question_media['url'] = esc_url( $attachment_src[0] );
@@ -565,14 +582,14 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 		/**
 		 * Allows modification of type specific question properties.
 		 *
-		 * @since  3.9.0
-		 * @hook   sensei_question_type_specific_properties
+		 * @since 3.9.0
 		 *
-		 * @param  {array}   $type_specific_properties The properties of the question.
-		 * @param  {string}  $question_type            The question type.
-		 * @param  {WP_Post} $question                 The question post.
+		 * @hook sensei_question_type_specific_properties
 		 *
-		 * @return {array}
+		 * @param {array}   $type_specific_properties The properties of the question.
+		 * @param {string}  $question_type            The question type.
+		 * @param {WP_Post} $question                 The question post.
+		 * @return {array} Filtered properties.
 		 */
 		return apply_filters( 'sensei_question_type_specific_properties', $type_specific_properties, $question_type, $question );
 	}
@@ -599,7 +616,7 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 		$text_values = explode( '||', $right_answer_meta );
 
 		$result['before'] = isset( $text_values[0] ) ? $text_values[0] : '';
-		$result['gap']    = empty( $text_values[1] ) ? [] : explode( '|', $text_values[1] );
+		$result['gap']    = ( ! isset( $text_values[1] ) || '' === $text_values[1] ) ? [] : explode( '|', $text_values[1] );
 		$result['after']  = isset( $text_values[2] ) ? $text_values[2] : '';
 
 		return $result;
@@ -690,11 +707,11 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 		 * Add additional question types to the REST API schema.
 		 *
 		 * @since 3.9.0
+		 *
 		 * @hook sensei_rest_api_schema_single_question
 		 *
 		 * @param {Array} $schema Schema for a single question.
-		 *
-		 * @return {array}
+		 * @return {array} Filtered schema.
 		 */
 		return apply_filters( 'sensei_rest_api_schema_single_question', $single_question_schema );
 	}
@@ -764,12 +781,17 @@ trait Sensei_REST_API_Question_Helpers_Trait {
 			'options'     => [
 				'type'       => 'object',
 				'properties' => [
-					'grade' => [
+					'grade'              => [
 						'type'        => 'integer',
 						'description' => 'Points this question is worth',
 						'minimum'     => 0,
 						'maximum'     => 100,
 						'default'     => 1,
+					],
+					'hideAnswerFeedback' => [
+						'type'        => 'string',
+						'description' => 'Hide/show answer feedback for the question',
+						'default'     => '',
 					],
 				],
 			],

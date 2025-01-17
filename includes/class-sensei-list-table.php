@@ -102,11 +102,19 @@ class Sensei_List_Table extends WP_List_Table {
 	 */
 	public function extra_tablenav( $which ) {
 		if ( $which == 'top' ) {
-			// The code that goes before the table is here
+			/**
+			 * Fires before the list table.
+			 *
+			 * @hook sensei_before_list_table
+			 */
 			do_action( 'sensei_before_list_table' );
 		}
 		if ( $which == 'bottom' ) {
-			// The code that goes after the table is there
+			/**
+			 * Fires after the list table.
+			 *
+			 * @hook sensei_after_list_table
+			 */
 			do_action( 'sensei_after_list_table' );
 		}
 	}
@@ -124,7 +132,18 @@ class Sensei_List_Table extends WP_List_Table {
 		?><form method="get">
 			<?php
 			Sensei_Utils::output_query_params_as_inputs( [ 's' ] );
-			$this->search_box( apply_filters( 'sensei_list_table_search_button_text', __( 'Search Users', 'sensei-lms' ) ), 'search_id' );
+
+			/**
+			 * Filter search button text in Sensei list table.
+			 *
+			 * @hook sensei_list_table_search_button_text
+			 *
+			 * @param {string} $button_text Search button text.
+			 * @return {string} Filtered search button text.
+			 */
+			$search_button_text = apply_filters( 'sensei_list_table_search_button_text', __( 'Search Users', 'sensei-lms' ) );
+
+			$this->search_box( $search_button_text, 'search_id' );
 			?>
 		</form>
 		<?php
@@ -212,10 +231,8 @@ class Sensei_List_Table extends WP_List_Table {
 	 * @param object $item The current item
 	 */
 	function single_row( $item ) {
-		static $row_class = '';
-
-		$row_class   = ( $row_class == '' ? 'alternate' : '' );
 		$column_data = $this->get_row_data( $item );
+		$row_class   = $this->get_row_class( $item );
 
 		echo '<tr class="' . esc_attr( $row_class ) . '">';
 
@@ -257,7 +274,7 @@ class Sensei_List_Table extends WP_List_Table {
 				echo $column_data[ $column_name ];
 			}
 
-			if ( $column_name === $primary ) {
+			if ( ! $this->has_native_row_actions() && $column_name === $primary ) {
 				echo '<button type="button" class="toggle-row"><span class="screen-reader-text">' . esc_html__( 'Show more details', 'sensei-lms' ) . '</span></button>';
 			}
 
@@ -272,12 +289,38 @@ class Sensei_List_Table extends WP_List_Table {
 	}
 
 	/**
+	 * Returns if current implementation uses native row actions.
+	 *
+	 * @since 4.12.0
+	 *
+	 * @return bool
+	 */
+	protected function has_native_row_actions() {
+		return false;
+	}
+
+	/**
 	 * @since 1.7.0
 	 * @access public
 	 * @abstract
 	 */
 	protected function get_row_data( $item ) {
 		die( 'either function Sensei_List_Table::get_row_data() must be over-ridden in a sub-class or Sensei_List_Table::single_row() should be.' );
+	}
+
+	/**
+	 * Get the CSS class of the row.
+	 *
+	 * @param object|array $item The current item.
+	 *
+	 * @return string
+	 */
+	protected function get_row_class( $item ): string {
+		static $row_class = '';
+
+		$row_class = '' === $row_class ? 'alternate' : '';
+
+		return $row_class;
 	}
 
 	/**
@@ -304,13 +347,55 @@ class Sensei_List_Table extends WP_List_Table {
 	}
 
 	/**
-	 * bulk_actions output for the bulk actions area
+	 * Bulk_actions output for the bulk actions area.
+	 *
+	 * @param string $which The location of the bulk actions: 'top' or 'bottom'. Default 'top'.
 	 *
 	 * @since  1.2.0
 	 */
 	public function bulk_actions( $which = '' ) {
-		// This will be output Above the table headers on the left
-		echo wp_kses_post( apply_filters( 'sensei_list_bulk_actions', '' ) );
+		ob_start();
+
+		parent::bulk_actions( $which );
+
+		$bulk_action_html = ob_get_clean();
+
+		// This will be output Above the table headers on the left.
+		echo wp_kses(
+			/**
+			 * Filter the output of bulk action for sensei list table.
+			 *
+			 * @hook sensei_list_bulk_actions
+			 *
+			 * @param {string} $bulk_action_html Output of bulk action function.
+			 * @return {string} Filtered output of bulk action function.
+			 */
+			apply_filters( 'sensei_list_bulk_actions', $bulk_action_html ),
+			[
+				'div'    => [
+					'class' => [],
+				],
+				'label'  => [
+					'for'   => [],
+					'class' => [],
+				],
+				'select' => [
+					'name'  => [],
+					'id'    => [],
+					'class' => [],
+				],
+				'option' => [
+					'value' => [],
+				],
+				'input'  => [
+					'type'  => [],
+					'id'    => [],
+					'name'  => [],
+					'value' => [],
+					'class' => [],
+				],
+			]
+		);
 	}
 
 	/**
