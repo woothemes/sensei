@@ -143,12 +143,12 @@ $breakpoint: 782px;
 .sensei-course-theme .wp-block-button,
 .sensei-course-theme__button {
 	.wp-block-button__link {
-		border: none;
+		background-color: var(--sensei-secondary-color);
+		border: solid 1px var(--sensei-secondary-color);
+		color: var(--sensei-button-text-color);
 		font-family: inherit;
-		font-weight: inherit;
 		font-size: inherit;
-		background-color: inherit;
-		color: inherit;
+		font-weight: inherit;
 		text-transform: unset;
 
 		&:hover {
@@ -158,8 +158,6 @@ $breakpoint: 782px;
 		}
 	}
 
-	border: none;
-	border-radius: 2px;
 	cursor: pointer;
 	font-family: var(--wp--preset--font-family--body-font);
 	font-size: 1.125rem;
@@ -191,8 +189,6 @@ $breakpoint: 782px;
 	&.is-primary,
 	&.is-secondary,
 	&.wp-block-button {
-		border: solid 1px var(--sensei-secondary-color);
-
 		&.wp-block-button__link {
 			border: none;
 		}
@@ -204,9 +200,6 @@ $breakpoint: 782px;
 
 	&.is-primary,
 	&.wp-block-button:not(.is-style-outline, .is-style-link) {
-		background-color: var(--sensei-secondary-color);
-		color: var(--sensei-button-text-color);
-
 		&:not(.sensei-course-theme-quiz-graded-notice__pending-grade):hover {
 			color: var(--sensei-button-fill-hover-color);
 			background-color: var(--sensei-primary-color);
