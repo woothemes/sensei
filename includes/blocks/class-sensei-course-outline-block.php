@@ -105,7 +105,6 @@ class Sensei_Course_Outline_Block {
 			],
 			Sensei()->assets->src_path( 'blocks/course-outline/lesson-block' )
 		);
-
 	}
 
 	/**
@@ -174,7 +173,7 @@ class Sensei_Course_Outline_Block {
 			$context = 'edit';
 		}
 
-		$structure = Sensei_Course_Structure::instance( $post->ID )->get( $context );
+		$structure = Sensei_Course_Structure::instance( $post->ID )->get( $context, wp_using_ext_object_cache() );
 
 		$this->add_block_attributes( $structure );
 
@@ -183,7 +182,6 @@ class Sensei_Course_Outline_Block {
 			'attributes' => $attributes,
 			'blocks'     => $structure,
 		];
-
 	}
 
 	/**
@@ -233,7 +231,6 @@ class Sensei_Course_Outline_Block {
 
 		$this->block_content = $this->course->render_course_outline_block( $outline );
 		return $this->block_content;
-
 	}
 
 	/**
@@ -251,7 +248,7 @@ class Sensei_Course_Outline_Block {
 		}
 
 		$course_id       = $post->ID;
-		$structure       = Sensei_Course_Structure::instance( $course_id )->get( 'view' );
+		$structure       = Sensei_Course_Structure::instance( $course_id )->get( 'view', wp_using_ext_object_cache() );
 		$has_draft       = $this->has_draft( $structure );
 		$can_edit_course = Sensei_Course::can_current_user_edit_course( $course_id );
 
@@ -333,5 +330,4 @@ class Sensei_Course_Outline_Block {
 			Sensei()->notices->add_notice( $message, 'info', 'sensei-course-outline-drafts' );
 		}
 	}
-
 }
