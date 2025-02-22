@@ -142,6 +142,16 @@ $breakpoint: 782px;
 .editor-styles-wrapper .sensei-course-theme__main-content .wp-block-button,
 .sensei-course-theme .wp-block-button,
 .sensei-course-theme__button {
+	cursor: pointer;
+	font-family: var(--wp--preset--font-family--body-font);
+	font-size: 1.125rem;
+	font-weight: 400;
+	letter-spacing: normal;
+	margin: 0;
+	text-align: center;
+	text-decoration: none !important;
+	text-transform: unset;
+
 	.wp-block-button__link {
 		background-color: var(--sensei-secondary-color);
 		border: solid 1px var(--sensei-secondary-color);
@@ -157,16 +167,6 @@ $breakpoint: 782px;
 			text-decoration: none !important;
 		}
 	}
-
-	cursor: pointer;
-	font-family: var(--wp--preset--font-family--body-font);
-	font-size: 1.125rem;
-	font-weight: 400;
-	letter-spacing: normal;
-	margin: 0;
-	text-align: center;
-	text-decoration: none !important;
-	text-transform: unset;
 
 	&.is-primary,
 	&.is-secondary,
