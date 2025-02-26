@@ -1897,7 +1897,6 @@ class Sensei_Utils {
 		}
 
 		if ( $lesson_id > 0 && $user_id > 0 ) {
-
 			$user_lesson_status = self::sensei_check_for_activity(
 				array(
 					'post_id' => $lesson_id,
@@ -1908,11 +1907,9 @@ class Sensei_Utils {
 			);
 
 			// Check if there is a valid status for the user yet.
-			if ( empty( $user_lesson_status ) ) {
-				return false;
+			if ( $user_lesson_status instanceof WP_Comment ) {
+				return $user_lesson_status;
 			}
-
-			return $user_lesson_status;
 		}
 
 		return false;
