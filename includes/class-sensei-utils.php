@@ -1907,6 +1907,11 @@ class Sensei_Utils {
 				true
 			);
 
+			// Check if there is a valid status for the user yet.
+			if ( empty( $user_lesson_status ) ) {
+				return false;
+			}
+
 			return $user_lesson_status;
 		}
 
